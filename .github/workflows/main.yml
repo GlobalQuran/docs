@@ -14,5 +14,3 @@ jobs:
 
             # Run Spectral
             - uses: stoplightio/spectral-action@latest
-              with:
-                  file_glob: 'ruleset.yaml'
