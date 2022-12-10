@@ -69,11 +69,11 @@ paths:
 
                 ***Demo***
 
-                [quran list](examples/quran-list.html)
+                [quran list](/examples/quran-list.html)
 
-                [translation list](examples/quran-list-translation.html)
+                [translation list](/examples/quran-list-translation.html)
 
-                [recitor list](examples/quran-list-recitors.html)
+                [recitor list](/examples/quran-list-recitors.html)
             parameters:
                 - $ref: '#/components/parameters/jsoncallback'
     '/page/{pageNo}/{quranId}':
@@ -103,7 +103,7 @@ paths:
 
                 ***Demo***
 
-                [quran by page](examples/quran-by-page.html)
+                [quran by page](/examples/quran-by-page.html)
     '/surah/{surahNo}/{quranId}':
         parameters:
             - $ref: '#/components/parameters/surahNo'
@@ -123,7 +123,7 @@ paths:
 
                 ***Demo***
 
-                [quran by surah](examples/quran-by-surah.html)
+                [quran by surah](/examples/quran-by-surah.html)
     '/surah/{juzNo}/{quranId}':
         parameters:
             - $ref: '#/components/parameters/juzNo'
@@ -143,7 +143,7 @@ paths:
 
                 ***Demo***
 
-                [quran by juz](examples/quran-by-juz.html)
+                [quran by juz](/examples/quran-by-juz.html)
     '/ayah/{ayahNo}/{quranId}':
         parameters:
             - $ref: '#/components/parameters/ayahNo'
@@ -164,7 +164,7 @@ paths:
 
                 ***Demo***
 
-                [quran by ayah](examples/quran-by-ayah.html)
+                [quran by ayah](/examples/quran-by-ayah.html)
     '/complete/{quranId}':
         parameters:
             - $ref: '#/components/parameters/quranId'
@@ -183,7 +183,7 @@ paths:
 
                 ***Demo***
 
-                [complete quran](examples/quran-complete.html)
+                [complete quran](/examples/quran-complete.html)
     '/all/{dataIn}/{dataInNo}/{quranId}/{langCode}':
         parameters:
             - $ref: '#/components/parameters/dataIn'
@@ -206,7 +206,7 @@ paths:
 
                 ***Demo***
 
-                [all request in one](examples/quran-all-in-one-request.html)
+                [all request in one](/examples/quran-all-in-one-request.html)
 components:
     schemas:
         quranList:
