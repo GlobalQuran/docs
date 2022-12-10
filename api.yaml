@@ -1,14 +1,56 @@
 openapi: 3.1.0
 info:
-    title: GlobalQuran.com
+    title: GlobalQuran.com API Documentation
     version: '1.0'
-    description: ''
+    description: |-
+        ## Getting started
+
+        _**GlobalQuran is a well-written ecosystem of UI pages, widgets, APIs, and searches that anyone can use to embed Quran directly on their site.**_
+
+        _This is whether you use **WordPress, Facebook, PHP, just plain html**__**+js,**_ or anything else.
+
+        GlobalQuran (GQ) aims to enable different website, mobile, and desktop developers to reuse existing codebases and quickly embed Quran on their websites.
+
+        * allow max reuse; avoid everyone reinventing the wheel
+        * fully and allow user customizations. overwrite CSS styles or pretty much anything else
+        * all the code is up on git and APIs are well documented below
+
+        **Get My API Key**
+
+        To get started with API requests, you will need an API key. Get your [API KEY](http://globalquran.com/contribute/signup.php) now.
+
+
+        **About GlobalQuran**
+
+        * [About us](http://blog.globalquran.com/about-us/)
+        * [Contributors](http://blog.globalquran.com/about-us/)
+        * [Download Code](https://github.com/GlobalQuran/site)
+        * [Blog](http://blog.globalquran.com/)
+        * [Features](http://blog.globalquran.com/feature-list/)
+        * [Donate]([http://globalquran.com/donate)
+
+
+        **Plugins**
+
+        * [wordpress plugin](http://blog.globalquran.com/help/wordpress-plugin/)
+
+
+        **Javascript API**
+
+        * [Quran](https://docs.globalquran.com/index.php/API:Javascript/Quran)
+        * [gq](https://docs.globalquran.com/index.php/API:Javascript/gq)
+
+
+        **PHP API**
+
+        * [Quran](https://docs.globalquran.com/index.php/API:PHP/Quran)
     contact:
         email: info@globalquran.com
         name: Global Quran
         url: 'https://blog.globalquran.com/contact-us/'
     license:
         identifier: W3C
+    summary: 'GlobalQuran (GQ) aims to enable different website, mobile, and desktop developers to reuse existing codebases and quickly embed Quran on their websites.'
 servers:
     - url: 'https://api.globalquran.com'
 paths:
@@ -24,6 +66,14 @@ paths:
                 Get Quran, Translation and Recitor available list.
 
                 Basic information about the saved data and each key will be used to fetch further data of quran, translation or available audios using the available apis.
+
+                ***Demo***
+
+                [quran list](examples/quran-list.html)
+
+                [translation list](examples/quran-list-translation.html)
+
+                [recitor list](examples/quran-list-recitors.html)
             parameters:
                 - $ref: '#/components/parameters/jsoncallback'
     '/page/{pageNo}/{quranId}':
@@ -51,24 +101,9 @@ paths:
                 55 (page number will be pulled)
                 2:1 (page will be pulled for surah 2 and ayah number 1)
 
+                ***Demo***
 
-
-                ***jQuery Code Example:***
-                ```
-                <script src="http://code.jquery.com/jquery-latest.js"></script>
-                <script>
-                $.ajaxSetup({cache: true, jsonpCallback: 'quranData'}); // define ajax setup
-                $.getJSON("http://api.globalquran.com/page/604/quran-simple?key=api_key&jsoncallback=?", {
-                    format: "jsonp"
-                }, function (data) {
-                    $.each(data.quran, function (i, by) {
-                        $.each(by, function (verseNo, line) {
-                            $("<p>").html(line.surah + ':' + line.ayah + ' ' + line.verse).appendTo("#demo-1");
-                        });
-                    });
-                });
-                </script>
-                ```
+                [quran by page](examples/quran-by-page.html)
     '/surah/{surahNo}/{quranId}':
         parameters:
             - $ref: '#/components/parameters/surahNo'
@@ -81,6 +116,14 @@ paths:
                 '200':
                     $ref: '#/components/responses/quranTextList'
             operationId: get-quran-surah
+            description: |-
+                Quran data content surah by surah
+
+                There are total 114 surah
+
+                ***Demo***
+
+                [quran by surah](examples/quran-by-surah.html)
     '/surah/{juzNo}/{quranId}':
         parameters:
             - $ref: '#/components/parameters/juzNo'
@@ -93,6 +136,14 @@ paths:
                 '200':
                     $ref: '#/components/responses/quranTextList'
             operationId: get-quran-juz
+            description: |-
+                Quran data content juz by juz.
+
+                There are total 30 juz
+
+                ***Demo***
+
+                [quran by juz](examples/quran-by-juz.html)
     '/ayah/{ayahNo}/{quranId}':
         parameters:
             - $ref: '#/components/parameters/ayahNo'
@@ -105,6 +156,15 @@ paths:
                 '200':
                     $ref: '#/components/responses/quranTextAyah'
             operationId: get-quran-ayah
+            description: |-
+                This will pull the single ayah content only
+
+                There are total 6236 ayahs
+
+
+                ***Demo***
+
+                [quran by ayah](examples/quran-by-ayah.html)
     '/complete/{quranId}':
         parameters:
             - $ref: '#/components/parameters/quranId'
@@ -117,6 +177,13 @@ paths:
             responses:
                 '200':
                     $ref: '#/components/responses/quranCompleteData'
+            description: |-
+                Get's the complete quran with one request. useful for offline mode.
+
+
+                ***Demo***
+
+                [complete quran](examples/quran-complete.html)
     '/all/{dataIn}/{dataInNo}/{quranId}/{langCode}':
         parameters:
             - $ref: '#/components/parameters/dataIn'
@@ -131,40 +198,19 @@ paths:
                 '200':
                     $ref: '#/components/responses/requestAll'
             operationId: get-all
+            description: |-
+                Fetchs the quran data, quran list, recitor list, language list, user country, user country language list and user country default language. This method we use on GlobalQuran.com 3.0.
+
+                Use this method only on first time call, on next call use quran data for pages, surah, juz or ayah only.
+
+
+                ***Demo***
+
+                [all request in one](examples/quran-all-in-one-request.html)
 components:
     schemas:
         quranList:
             type: object
-            x-examples:
-                Example 1:
-                    quranList:
-                        ar.muyassar:
-                            language_code: ar
-                            english_name: King Fahad Quran Complex
-                            native_name: تفسير المیسر
-                            format: text
-                            type: tafsir
-                            source: Tanzil.info
-                            default: null
-                            last_update: '1969-12-31'
-                        quran-simple:
-                            language_code: ar
-                            english_name: simple
-                            native_name: ''
-                            format: text
-                            type: quran
-                            source: Tanzil.info
-                            default: null
-                            last_update: '2010-06-04'
-                        ar.jalalayn:
-                            language_code: ar
-                            english_name: Jalal ad-Din al-Mahalli and Jalal ad-Din as-Suyuti
-                            native_name: تفسير الجلالين
-                            format: text
-                            type: tafsir
-                            source: Tanzil.net
-                            default: null
-                            last_update: '1969-12-31'
             examples:
                 - quranList:
                       ar.muyassar:
@@ -1955,7 +2001,7 @@ components:
             schema:
                 type: string
                 example: callback
-            description: callback function name (optional)
+            description: callback function name (optional) - useful when needed for jsonp method - which helps with cors issues
             allowEmptyValue: true
         quranId:
             name: quranId
