@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>#demo-1{ color:lightBlue; }</style>
+    <script src="http://code.jquery.com/jquery-latest.js"></script>
+</head>
+<body>
+<div id="demo-1">
+</div>
+<script>
+    $.ajaxSetup({ cache: true, jsonpCallback: 'quranData' }); // define ajax setup
+    $.getJSON("http://api.globalquran.com/quran?key=api_key&jsoncallback=?", {
+        format: "jsonp"
+    }, function(data)
+    {
+        /* Quran List */
+        $('#demo-1').append('Select Quran: <br/>');
+        $("<select>").attr('id', 'quranList').appendTo("#demo-1");
+        $("<option>").attr('selected', 'selected').html('Select Quran').appendTo('#quranList');
+        $.each(data.quranList, function(quranID, by)
+        {
+            if (by.format === 'text' && by.type === 'quran')
+                $("<option>").val(quranID).html(by.english_name).appendTo('#quranList');
+        });
+    });
+</script>
+</body>
+</html>
