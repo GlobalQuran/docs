@@ -22,12 +22,12 @@ info:
 
         **About GlobalQuran**
 
-        * [About us](http://blog.globalquran.com/about-us/)
-        * [Contributors](http://blog.globalquran.com/about-us/)
+        * [About us](https://blog.globalquran.com/about-us/)
+        * [Contributors](https://blog.globalquran.com/about-us/)
         * [Download Code](https://github.com/GlobalQuran/site)
-        * [Blog](http://blog.globalquran.com/)
-        * [Features](http://blog.globalquran.com/feature-list/)
-        * [Donate]([http://globalquran.com/donate)
+        * [Blog](https://blog.globalquran.com/)
+        * [Features](https://blog.globalquran.com/feature-list/)
+        * [Donate](https://globalquran.com/donate)
 
 
         **Plugins**
@@ -35,15 +35,15 @@ info:
         * [wordpress plugin](http://blog.globalquran.com/help/wordpress-plugin/)
 
 
-        **Javascript API**
+        **Javascript Library**
 
-        * [Quran](https://docs.globalquran.com/index.php/API:Javascript/Quran)
-        * [gq](https://docs.globalquran.com/index.php/API:Javascript/gq)
+        * [Quran](https://github.com/GlobalQuran/v3/blob/main/javascript/Quran.js)
+        * [GQ](https://github.com/GlobalQuran/v3/blob/main/javascript/GQ.js)
 
 
-        **PHP API**
+        **PHP Library**
 
-        * [Quran](https://docs.globalquran.com/index.php/API:PHP/Quran)
+        * [Quran](https://github.com/GlobalQuran/lab/blob/master/plugins/quran-tool/quran.class.php)
     contact:
         email: info@globalquran.com
         name: Global Quran
@@ -69,11 +69,11 @@ paths:
 
                 ***Demo***
 
-                [quran list](/examples/quran-list.html)
+                [quran list](https://docs.globalquran.com/examples/quran-list.html)
 
-                [translation list](/examples/quran-list-translation.html)
+                [translation list](https://docs.globalquran.com/examples/quran-list-translation.html)
 
-                [recitor list](/examples/quran-list-recitors.html)
+                [recitor list](https://docs.globalquran.com/examples/quran-list-recitors.html)
             parameters:
                 - $ref: '#/components/parameters/jsoncallback'
     '/page/{pageNo}/{quranId}':
@@ -103,7 +103,7 @@ paths:
 
                 ***Demo***
 
-                [quran by page](/examples/quran-by-page.html)
+                [quran by page](https://docs.globalquran.com/examples/quran-by-page.html)
     '/surah/{surahNo}/{quranId}':
         parameters:
             - $ref: '#/components/parameters/surahNo'
@@ -123,7 +123,7 @@ paths:
 
                 ***Demo***
 
-                [quran by surah](/examples/quran-by-surah.html)
+                [quran by surah](https://docs.globalquran.com/examples/quran-by-surah.html)
     '/surah/{juzNo}/{quranId}':
         parameters:
             - $ref: '#/components/parameters/juzNo'
@@ -143,7 +143,7 @@ paths:
 
                 ***Demo***
 
-                [quran by juz](/examples/quran-by-juz.html)
+                [quran by juz](https://docs.globalquran.com/examples/quran-by-juz.html)
     '/ayah/{ayahNo}/{quranId}':
         parameters:
             - $ref: '#/components/parameters/ayahNo'
@@ -164,7 +164,7 @@ paths:
 
                 ***Demo***
 
-                [quran by ayah](/examples/quran-by-ayah.html)
+                [quran by ayah](https://docs.globalquran.com/examples/quran-by-ayah.html)
     '/complete/{quranId}':
         parameters:
             - $ref: '#/components/parameters/quranId'
@@ -183,7 +183,7 @@ paths:
 
                 ***Demo***
 
-                [complete quran](/examples/quran-complete.html)
+                [complete quran](https://docs.globalquran.com/examples/quran-complete.html)
     '/all/{dataIn}/{dataInNo}/{quranId}/{langCode}':
         parameters:
             - $ref: '#/components/parameters/dataIn'
@@ -206,7 +206,7 @@ paths:
 
                 ***Demo***
 
-                [all request in one](/examples/quran-all-in-one-request.html)
+                [all request in one](https://docs.globalquran.com/examples/quran-all-in-one-request.html)
 components:
     schemas:
         quranList:
