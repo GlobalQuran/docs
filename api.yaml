@@ -69,11 +69,11 @@ paths:
 
                 ***Demo***
 
-                [quran list](https://docs.globalquran.com/examples/quran-list.html)
+                [quran list](https://docs.globalquran.com/examples/quran-list.html) - ([source](https://github.com/GlobalQuran/docs/blob/main/examples/quran-list.html))
 
-                [translation list](https://docs.globalquran.com/examples/quran-list-translation.html)
+                [translation list](https://docs.globalquran.com/examples/quran-list-translation.html) - ([source](https://github.com/GlobalQuran/docs/blob/main/examples/quran-list-translation.html))
 
-                [recitor list](https://docs.globalquran.com/examples/quran-list-recitors.html)
+                [recitor list](https://docs.globalquran.com/examples/quran-list-recitors.html) - ([source](https://github.com/GlobalQuran/docs/blob/main/examples/quran-list-recitors.html))
             parameters:
                 - $ref: '#/components/parameters/jsoncallback'
     '/page/{pageNo}/{quranId}':
@@ -123,7 +123,7 @@ paths:
 
                 ***Demo***
 
-                [quran by surah](https://docs.globalquran.com/examples/quran-by-surah.html)
+                [quran by surah](https://docs.globalquran.com/examples/quran-by-surah.html) - ([source](https://github.com/GlobalQuran/docs/blob/main/examples/quran-by-surah.html))
     '/surah/{juzNo}/{quranId}':
         parameters:
             - $ref: '#/components/parameters/juzNo'
@@ -164,7 +164,7 @@ paths:
 
                 ***Demo***
 
-                [quran by ayah](https://docs.globalquran.com/examples/quran-by-ayah.html)
+                [quran by ayah](https://docs.globalquran.com/examples/quran-by-ayah.html) - ([source](https://github.com/GlobalQuran/docs/blob/main/examples/quran-by-ayah.html))
     '/complete/{quranId}':
         parameters:
             - $ref: '#/components/parameters/quranId'
@@ -206,7 +206,7 @@ paths:
 
                 ***Demo***
 
-                [all request in one](https://docs.globalquran.com/examples/quran-all-in-one-request.html)
+                [all request in one](https://docs.globalquran.com/examples/quran-all-in-one-request.html) - ([source](https://github.com/GlobalQuran/docs/blob/main/examples/quran-all-in-one-request.html))
 components:
     schemas:
         quranList:
