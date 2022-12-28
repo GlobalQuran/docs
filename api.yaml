@@ -2018,8 +2018,10 @@ components:
             required: true
             schema:
                 type: string
-                example: quran-simple|en.pickthall
-                default: quran-simple
+                example: '604'
+                default: '604'
+                minLength: 1
+                maxLength: 604
             description: 'page number or can have surah:ayah number'
         surahNo:
             name: surahNo
@@ -2049,6 +2051,8 @@ components:
                 type: string
                 example: '2:1'
                 default: '6236'
+                minLength: 1
+                maxLength: 6236
             description: ayah number
         langCode:
             name: langCode
