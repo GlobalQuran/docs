@@ -103,7 +103,7 @@ paths:
 
                 ***Demo***
 
-                [quran by page](https://docs.globalquran.com/examples/quran-by-page.html)
+                [quran by page](https://docs.globalquran.com/examples/quran-by-page.html) - ([source](https://github.com/GlobalQuran/docs/blob/main/examples/quran-by-page.html))
     '/surah/{surahNo}/{quranId}':
         parameters:
             - $ref: '#/components/parameters/surahNo'
@@ -124,7 +124,7 @@ paths:
                 ***Demo***
 
                 [quran by surah](https://docs.globalquran.com/examples/quran-by-surah.html) - ([source](https://github.com/GlobalQuran/docs/blob/main/examples/quran-by-surah.html))
-    '/surah/{juzNo}/{quranId}':
+    '/juz/{juzNo}/{quranId}':
         parameters:
             - $ref: '#/components/parameters/juzNo'
             - $ref: '#/components/parameters/quranId'
@@ -143,7 +143,7 @@ paths:
 
                 ***Demo***
 
-                [quran by juz](https://docs.globalquran.com/examples/quran-by-juz.html)
+                [quran by juz](https://docs.globalquran.com/examples/quran-by-juz.html) - ([source](https://github.com/GlobalQuran/docs/blob/main/examples/quran-by-juz.html))
     '/ayah/{ayahNo}/{quranId}':
         parameters:
             - $ref: '#/components/parameters/ayahNo'
@@ -183,7 +183,7 @@ paths:
 
                 ***Demo***
 
-                [complete quran](https://docs.globalquran.com/examples/quran-complete.html)
+                [complete quran](https://docs.globalquran.com/examples/quran-complete.html) - ([source](https://github.com/GlobalQuran/docs/blob/main/examples/quran-complete.html))
     '/all/{dataIn}/{dataInNo}/{quranId}/{langCode}':
         parameters:
             - $ref: '#/components/parameters/dataIn'
