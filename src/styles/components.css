@@ -1,12 +1,11 @@
 /* Header and Logo */
 #logo {
   text-align: left;
-  margin: 20px 0;
   float: left;
 }
 
 #logo img {
-  max-height: 80px;
+  max-height: 158px;
 }
 
 /* Tables */

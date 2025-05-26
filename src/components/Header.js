@@ -19,24 +19,20 @@ const Header = () => {
             <i className="fab fa-github fa-lg"></i>
           </a>
           <br /><br />
-          <iframe 
-            src="https://ghbtns.com/github-btn.html?user=GlobalQuran&repo=site&type=star&count=true" 
-            allowtransparency="true" 
-            frameBorder="0" 
-            scrolling="0" 
-            width="95" 
-            height="20"
-            title="GitHub Stars"
-          />
-          <iframe 
-            src="https://ghbtns.com/github-btn.html?user=GlobalQuran&repo=site&type=fork&count=true" 
-            allowtransparency="true" 
-            frameBorder="0" 
-            scrolling="0" 
-            width="95" 
-            height="20"
-            title="GitHub Forks"
-          />
+          <a href="https://github.com/GlobalQuran/site/stargazers" target="_blank" rel="noopener noreferrer">
+            <img 
+              src="https://img.shields.io/github/stars/GlobalQuran/site?style=social" 
+              alt="GitHub Stars"
+              title="GitHub Stars"
+            />
+          </a>
+          <a href="https://github.com/GlobalQuran/site/network/members" target="_blank" rel="noopener noreferrer" style={{ marginLeft: '5px' }}>
+            <img 
+              src="https://img.shields.io/github/forks/GlobalQuran/site?style=social" 
+              alt="GitHub Forks"
+              title="GitHub Forks"
+            />
+          </a>
         </div>
       </div>
     </div>
