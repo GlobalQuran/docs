@@ -31,7 +31,7 @@ const Navigation = () => {
             <li><Link to="/data">Download</Link></li>
             <li><Link to="/audio">Audio</Link></li>
             <li><Link to="/assets">Assets</Link></li>
-            <li><a href="https://docs.globalquran.com/" target="_blank" rel="noopener noreferrer">API</a></li>
+            <li><Link to="/docs">Documentation</Link></li>
           </ul>
 
           <ul className="nav navbar-nav navbar-right">

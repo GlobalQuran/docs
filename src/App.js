@@ -8,6 +8,7 @@ import Navigation from './components/Navigation';
 import DataPage from './pages/DataPage';
 import AudioPage from './pages/AudioPage';
 import AssetsPage from './pages/AssetsPage';
+import DocsPage from './pages/DocsPage';
 
 function App() {
   return (
@@ -22,6 +23,7 @@ function App() {
               <Route path="/data" element={<DataPage />} />
               <Route path="/audio" element={<AudioPage />} />
               <Route path="/assets" element={<AssetsPage />} />
+              <Route path="/docs" element={<DocsPage />} />
             </Routes>
           </div>
         </div>
