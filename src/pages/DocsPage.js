@@ -1,4 +1,5 @@
 import React, { useEffect } from 'react';
+import { Link } from 'react-router-dom';
 
 const DocsPage = () => {
   useEffect(() => {
@@ -59,33 +60,33 @@ const DocsPage = () => {
             <div className="col-md-6">
               <h5>Basic Examples:</h5>
               <ul>
-                <li><a href="/examples/quran-complete">Complete Quran Data</a> - Fetch complete Quran text with translations</li>
-                <li><a href="/examples/quran-by-surah">Quran by Surah</a> - Retrieve specific chapters</li>
-                <li><a href="/examples/quran-by-ayah">Quran by Ayah</a> - Fetch individual verses</li>
-                <li><a href="/examples/quran-list-translation">List Translations</a> - Available translations</li>
-                <li><a href="/examples/quran-list">Quran List</a> - All available resources</li>
+                <li><Link to="/examples/quran-complete">Complete Quran Data</Link> - Fetch complete Quran text with translations</li>
+                <li><Link to="/examples/quran-by-surah">Quran by Surah</Link> - Retrieve specific chapters</li>
+                <li><Link to="/examples/quran-by-ayah">Quran by Ayah</Link> - Fetch individual verses</li>
+                <li><Link to="/examples/quran-list-translation">List Translations</Link> - Available translations</li>
+                <li><Link to="/examples/quran-list">Quran List</Link> - All available resources</li>
               </ul>
             </div>
             <div className="col-md-6">
               <h5>Advanced Examples:</h5>
               <ul>
-                <li><a href="/examples/quran-list-recitors">List Recitors</a> - Audio recitors and formats</li>
-                <li><a href="/examples/quran-by-juz">Quran by Juz</a> - Access by Juz (Para)</li>
-                <li><a href="/examples/quran-by-page">Quran by Page</a> - Retrieve by page numbers</li>
-                <li><a href="/examples/quran-all-in-one-request">All-in-One Request</a> - Comprehensive example</li>
+                <li><Link to="/examples/quran-list-recitors">List Recitors</Link> - Audio recitors and formats</li>
+                <li><Link to="/examples/quran-by-juz">Quran by Juz</Link> - Access by Juz (Para)</li>
+                <li><Link to="/examples/quran-by-page">Quran by Page</Link> - Retrieve by page numbers</li>
+                <li><Link to="/examples/quran-all-in-one-request">All-in-One Request</Link> - Comprehensive example</li>
               </ul>
             </div>
           </div>
           <div style={{ marginTop: '15px' }}>
-            <a href="/examples/quran-complete" className="btn btn-primary">
+            <Link to="/examples/quran-complete" className="btn btn-primary">
               <i className="fas fa-play"></i> Start with Basic Example
-            </a>
+            </Link>
           </div>
         </div>
 
         <div className="docs-container">
           <elements-api
-            apiDescriptionUrl="/docs-assets/api.yaml"
+            apiDescriptionUrl={`${process.env.PUBLIC_URL}/docs-assets/api.yaml`}
             router="hash"
             style={{ height: '80vh', border: '1px solid #ddd', borderRadius: '4px' }}
           />
