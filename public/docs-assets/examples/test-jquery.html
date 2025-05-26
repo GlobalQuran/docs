@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>jQuery Test Example</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <style>
+        .highlight { background-color: yellow; }
+        .hidden { display: none; }
+    </style>
+</head>
+<body>
+    <div id="container">
+        <h1>jQuery Syntax Highlighting Test</h1>
+        <button id="testBtn">Click Me</button>
+        <p class="text-content">This is a test paragraph.</p>
+        <div id="result"></div>
+    </div>
+
+    <script>
+        $(document).ready(function() {
+            // jQuery selector examples
+            $('#testBtn').click(function() {
+                $('.text-content').toggleClass('highlight');
+                $('#result').html('<strong>Button clicked!</strong>');
+            });
+
+            // More jQuery methods
+            $('h1').css('color', 'blue');
+            $('.text-content').attr('data-test', 'value');
+            
+            // AJAX example
+            $.ajax({
+                url: 'https://api.globalquran.com/quran/1/1',
+                method: 'GET',
+                success: function(data) {
+                    console.log('Data loaded:', data);
+                },
+                error: function() {
+                    console.log('Error loading data');
+                }
+            });
+
+            // Event handling
+            $('body').on('click', '.dynamic-element', function() {
+                $(this).fadeOut();
+            });
+
+            // Chaining methods
+            $('#container')
+                .find('p')
+                .addClass('processed')
+                .text('Text updated via jQuery')
+                .slideDown();
+        });
+    </script>
+</body>
+</html> 
