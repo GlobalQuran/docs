@@ -1,0 +1,16 @@
+:root {
+  --primary-color: #b99c45;
+  --primary-hover: #9b833a;
+  --primary-border: #a68c3e;
+  --primary-dark: #816d30;
+  --background-color: #758989;
+  --navbar-background: #b99c45;
+  --navbar-border: #8c7634;
+  --navbar-hover: #b09442;
+  --text-color: #333;
+  --text-muted: #999;
+  --border-color: #ddd;
+  --table-striped: #f9f9f9;
+  --table-hover: #f5f5f5;
+  --jumbotron-bg: #eee;
+} 
