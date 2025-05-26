@@ -14,7 +14,7 @@ import ExamplePage from './pages/ExamplePage';
 function App() {
   return (
     <Provider store={store}>
-      <Router>
+      <Router basename="/docs">
         <div className="App">
           <div id="container" className="container">
             <Header />

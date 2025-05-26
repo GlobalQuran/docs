@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { fetchQuranData, clearError } from '../store/slices/quranSlice';
+import { fetchQuranData } from '../store/slices/quranSlice';
 import JSZip from 'jszip';
 import { saveAs } from 'file-saver';
 
