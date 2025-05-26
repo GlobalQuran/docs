@@ -20,11 +20,11 @@ function App() {
             <Header />
             <Navigation />
             <Routes>
-              <Route path="/" element={<Navigate to="/data" replace />} />
+              <Route path="/" element={<Navigate to="/docs" replace />} />
+              <Route path="/docs" element={<DocsPage />} />
               <Route path="/data" element={<DataPage />} />
               <Route path="/audio" element={<AudioPage />} />
               <Route path="/assets" element={<AssetsPage />} />
-              <Route path="/docs" element={<DocsPage />} />
               <Route path="/examples/:exampleName" element={<ExamplePage />} />
             </Routes>
           </div>

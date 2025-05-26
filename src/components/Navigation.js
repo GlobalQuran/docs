@@ -28,10 +28,10 @@ const Navigation = () => {
         <div className={`collapse navbar-collapse navbar-ex1-collapse ${!isCollapsed ? 'in' : ''}`}>
           <ul className="nav navbar-nav">
             <li><a href="https://globalquran.com/" target="_blank" rel="noopener noreferrer">Home</a></li>
-            <li><Link to="/data">Download</Link></li>
+            <li><Link to="/docs">Documentation</Link></li>
+            <li><Link to="/data">Download Data</Link></li>
             <li><Link to="/audio">Audio</Link></li>
             <li><Link to="/assets">Assets</Link></li>
-            <li><Link to="/docs">Documentation</Link></li>
           </ul>
 
           <ul className="nav navbar-nav navbar-right">
