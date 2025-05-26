@@ -1,5 +1,5 @@
 import React from 'react';
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { Provider } from 'react-redux';
 import { store } from './store';
 import './App.css';
@@ -14,14 +14,13 @@ import ExamplePage from './pages/ExamplePage';
 function App() {
   return (
     <Provider store={store}>
-      <Router basename="/docs">
+      <Router basename="/">
         <div className="App">
           <div id="container" className="container">
             <Header />
             <Navigation />
             <Routes>
-              <Route path="/" element={<Navigate to="/docs" replace />} />
-              <Route path="/docs" element={<DocsPage />} />
+              <Route path="/" element={<DocsPage />} />
               <Route path="/data" element={<DataPage />} />
               <Route path="/audio" element={<AudioPage />} />
               <Route path="/assets" element={<AssetsPage />} />

@@ -86,7 +86,7 @@ const DocsPage = () => {
 
         <div className="docs-container">
           <elements-api
-            apiDescriptionUrl={`${process.env.PUBLIC_URL}/docs-assets/api.yaml`}
+            apiDescriptionUrl="/docs-assets/api.yaml"
             router="hash"
             style={{ height: '80vh', border: '1px solid #ddd', borderRadius: '4px' }}
           />
