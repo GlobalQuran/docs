@@ -27,8 +27,10 @@ const Navigation = () => {
 
         <div className={`collapse navbar-collapse navbar-ex1-collapse ${!isCollapsed ? 'in' : ''}`}>
           <ul className="nav navbar-nav">
-            <li><Link to="/">Home</Link></li>
+            <li><a href="https://globalquran.com/" target="_blank" rel="noopener noreferrer">Home</a></li>
             <li><Link to="/data">Download</Link></li>
+            <li><Link to="/audio">Audio</Link></li>
+            <li><Link to="/assets">Assets</Link></li>
             <li><a href="https://docs.globalquran.com/" target="_blank" rel="noopener noreferrer">API</a></li>
           </ul>
 
@@ -39,7 +41,7 @@ const Navigation = () => {
                 onClick={() => window.open('/pay/donate-now.php', '_blank')} 
                 className="btn btn-sm btn-primary"
               >
-                <i className="icon-usd"></i> Donate
+                <i className="fas fa-dollar-sign"></i> Donate
               </button>
             </li>
           </ul>

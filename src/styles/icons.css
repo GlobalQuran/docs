@@ -1,37 +1,37 @@
-/* Icon classes using FontAwesome */
+/* Icon classes using FontAwesome 6 */
 .icon-usd:before { 
   font-family: "Font Awesome 6 Free";
-  content: "\24"; 
+  content: "\f155"; /* dollar-sign */
   font-weight: 900;
 }
 
 .icon-cloud-download:before { 
   font-family: "Font Awesome 6 Free";
-  content: "\f0ed"; 
+  content: "\f019"; /* download */
   font-weight: 900;
 }
 
 .icon-github:before { 
   font-family: "Font Awesome 6 Brands";
-  content: "\f09b"; 
+  content: "\f09b"; /* github */
   font-weight: 400;
 }
 
 .icon-volume-up:before { 
   font-family: "Font Awesome 6 Free";
-  content: "\f028"; 
+  content: "\f028"; /* volume-high */
   font-weight: 900;
 }
 
 .icon-font:before { 
   font-family: "Font Awesome 6 Free";
-  content: "\f031"; 
+  content: "\f031"; /* font */
   font-weight: 900;
 }
 
 .icon-exclamation-sign:before { 
   font-family: "Font Awesome 6 Free";
-  content: "\f06a"; 
+  content: "\f06a"; /* exclamation-circle */
   font-weight: 900;
 }
 
@@ -46,6 +46,9 @@
   line-height: 1;
   display: inline-block;
   margin-right: 0.3em;
+  font-variant: normal;
+  text-transform: none;
+  speak: never;
 }
 
 /* Alternative FontAwesome classes for easier use */
@@ -54,4 +57,9 @@
 .fa-github { }
 .fa-volume-up { }
 .fa-font { }
-.fa-exclamation-circle { } 
+.fa-exclamation-circle { }
+
+/* Fallback for icon display issues */
+.icon-test:before {
+  content: "🔽"; /* Unicode fallback if FontAwesome fails */
+} 

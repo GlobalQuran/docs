@@ -1,83 +1,25 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
+import { fetchQuranData, clearError } from '../store/slices/quranSlice';
 import JSZip from 'jszip';
 import { saveAs } from 'file-saver';
 
 const DataPage = () => {
   const [selectedItems, setSelectedItems] = useState([]);
+  const dispatch = useDispatch();
+  
+  // Get data from Redux store
+  const { textFormats: quranData, loading, error, lastFetched } = useSelector(state => state.quran);
 
-  // Sample data based on the original HTML
-  const quranData = [
-    {
-      id: 'ar.muyassar',
-      language: 'ar',
-      name: 'King Fahad Quran Complex',
-      localName: 'تفسير المیسر',
-      type: 'tafsir'
-    },
-    {
-      id: 'az.mammadaliyev',
-      language: 'az',
-      name: 'Vasim Mammadaliyev and Ziya Bunyadov',
-      localName: 'Məmmədəliyev & Bünyadov',
-      type: 'translation'
-    },
-    {
-      id: 'az.musayev',
-      language: 'az',
-      name: 'Alikhan Musayev',
-      localName: 'Musayev',
-      type: 'translation'
-    },
-    {
-      id: 'bn.bengali',
-      language: 'bn',
-      name: 'Muhiuddin Khan',
-      localName: 'মুহিউদ্দীন খান',
-      type: 'translation'
-    },
-    {
-      id: 'cs.hrbek',
-      language: 'cs',
-      name: 'Preklad I. Hrbek',
-      localName: 'Hrbek',
-      type: 'translation'
-    },
-    {
-      id: 'cs.nykl',
-      language: 'cs',
-      name: 'A. R. Nykl',
-      localName: 'Nykl',
-      type: 'translation'
-    },
-    {
-      id: 'en.sahih',
-      language: 'en',
-      name: 'Sahih International',
-      localName: 'Sahih International',
-      type: 'translation'
-    },
-    {
-      id: 'en.pickthall',
-      language: 'en',
-      name: 'Mohammed Marmaduke William Pickthall',
-      localName: 'Pickthall',
-      type: 'translation'
-    },
-    {
-      id: 'en.yusufali',
-      language: 'en',
-      name: 'Abdullah Yusuf Ali',
-      localName: 'Yusuf Ali',
-      type: 'translation'
-    },
-    {
-      id: 'fr.hamidullah',
-      language: 'fr',
-      name: 'Muhammad Hamidullah',
-      localName: 'Hamidullah',
-      type: 'translation'
+  // Fetch data on component mount or if data is stale (older than 5 minutes)
+  useEffect(() => {
+    const CACHE_DURATION = 5 * 60 * 1000; // 5 minutes
+    const isDataStale = !lastFetched || (Date.now() - lastFetched) > CACHE_DURATION;
+    
+    if (quranData.length === 0 || isDataStale) {
+      dispatch(fetchQuranData());
     }
-  ];
+  }, [dispatch, quranData.length, lastFetched]);
 
   const handleSelectAll = (e) => {
     if (e.target.checked) {
@@ -189,7 +131,38 @@ API Documentation: https://docs.globalquran.com/
   return (
     <div className="row" id="top">
       <div className="col-md-12">
-        <div className="pull-right">
+        {loading && (
+          <div className="alert alert-info text-center">
+            <div style={{ fontSize: '48px', marginBottom: '15px' }}>
+              <i className="fas fa-spinner fa-spin"></i>
+            </div>
+            <h4>Loading Quran Data...</h4>
+            <p>Please wait while we fetch the latest Quran translations and resources from the API.</p>
+          </div>
+        )}
+        
+        {error && (
+          <div className="alert alert-danger">
+            <h4>Error Loading Data</h4>
+            <p>{error}</p>
+            <button 
+              className="btn btn-primary" 
+              onClick={() => window.location.reload()}
+            >
+              Try Again
+            </button>
+          </div>
+        )}
+        
+        {!loading && !error && quranData.length === 0 && (
+          <div className="alert alert-warning">
+            <h4>No Data Available</h4>
+            <p>No Quran translations found. Please check back later.</p>
+          </div>
+        )}
+        {!loading && !error && quranData.length > 0 && (
+          <>
+            <div className="pull-right">
           <div className="btn-group">
             <button 
               type="button" 
@@ -198,7 +171,7 @@ API Documentation: https://docs.globalquran.com/
               disabled={selectedItems.length === 0}
               title="Download selected items as text files"
             >
-              <i className="icon-cloud-download"></i> Text
+              <i className="fas fa-download"></i> Text
             </button>
             <button 
               type="button" 
@@ -208,7 +181,7 @@ API Documentation: https://docs.globalquran.com/
               title="Download selected items as JSON files"
               style={{ marginLeft: '5px' }}
             >
-              <i className="icon-cloud-download"></i> JSON
+              <i className="fas fa-download"></i> JSON
             </button>
             <button 
               type="button" 
@@ -218,7 +191,7 @@ API Documentation: https://docs.globalquran.com/
               title="Download selected items as JSONP files"
               style={{ marginLeft: '5px' }}
             >
-              <i className="icon-cloud-download"></i> JSONP
+              <i className="fas fa-download"></i> JSONP
             </button>
           </div>
           {selectedItems.length > 0 && (
@@ -247,7 +220,7 @@ API Documentation: https://docs.globalquran.com/
                 <a href="https://docs.globalquran.com/#/operations/get-quran-juz">by juz</a>,{' '}
                 <a href="https://docs.globalquran.com/#/operations/get-quran-page">by page</a>,{' '}
                 <a href="https://docs.globalquran.com/#/operations/get-quran-ayah">by ayah</a>
-                <i className="icon-exclamation-sign"></i>
+                <i className="fas fa-exclamation-circle"></i>
               </td>
             </tr>
           </thead>
@@ -335,6 +308,8 @@ API Documentation: https://docs.globalquran.com/
           </ul>
           <p>© <a href="https://globalquran.com/">GlobalQuran.com</a> 2025</p>
         </footer>
+        </>
+        )}
       </div>
     </div>
   );

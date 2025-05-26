@@ -1,25 +1,32 @@
 import React from 'react';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { Provider } from 'react-redux';
+import { store } from './store';
 import './App.css';
 import Header from './components/Header';
 import Navigation from './components/Navigation';
-import Home from './pages/Home';
 import DataPage from './pages/DataPage';
+import AudioPage from './pages/AudioPage';
+import AssetsPage from './pages/AssetsPage';
 
 function App() {
   return (
-    <Router>
-      <div className="App">
-        <div id="container" className="container">
-          <Header />
-          <Navigation />
-          <Routes>
-            <Route path="/" element={<Home />} />
-            <Route path="/data" element={<DataPage />} />
-          </Routes>
+    <Provider store={store}>
+      <Router>
+        <div className="App">
+          <div id="container" className="container">
+            <Header />
+            <Navigation />
+            <Routes>
+              <Route path="/" element={<Navigate to="/data" replace />} />
+              <Route path="/data" element={<DataPage />} />
+              <Route path="/audio" element={<AudioPage />} />
+              <Route path="/assets" element={<AssetsPage />} />
+            </Routes>
+          </div>
         </div>
-      </div>
-    </Router>
+      </Router>
+    </Provider>
   );
 }
 

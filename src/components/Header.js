@@ -13,15 +13,15 @@ const Header = () => {
         <div style={{ textAlign: 'right' }}>
           Download GlobalQuran Code:<br />
           V3: <a href="https://github.com/GlobalQuran/site/archive/v3.4.0.zip">
-            <i className="icon-cloud-download icon-large"></i>
+            <i className="fas fa-download fa-lg"></i>
           </a>
           <a href="https://github.com/GlobalQuran/site/tree/v3.4.0">
-            <i className="icon-github icon-large"></i>
+            <i className="fab fa-github fa-lg"></i>
           </a>
           <br /><br />
           <iframe 
             src="https://ghbtns.com/github-btn.html?user=GlobalQuran&repo=site&type=star&count=true" 
-            allowTransparency="true" 
+            allowtransparency="true" 
             frameBorder="0" 
             scrolling="0" 
             width="95" 
@@ -30,7 +30,7 @@ const Header = () => {
           />
           <iframe 
             src="https://ghbtns.com/github-btn.html?user=GlobalQuran&repo=site&type=fork&count=true" 
-            allowTransparency="true" 
+            allowtransparency="true" 
             frameBorder="0" 
             scrolling="0" 
             width="95" 

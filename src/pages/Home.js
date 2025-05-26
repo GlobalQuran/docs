@@ -40,11 +40,11 @@ const Home = () => {
           <ul className="list-unstyled">
             <li>
               <a href="https://audio.globalquran.com/">Verse by Verse Audio Files</a> 
-              <i className="icon-volume-up"></i>
+              <i className="fas fa-volume-up"></i>
             </li>
             <li>
               <a href="https://audio.globalquran.com/resources/quran-fonts.zip">Quran Fonts</a> 
-              <i className="icon-font"></i>
+              <i className="fas fa-font"></i>
             </li>
             <li>
               <a href="https://audio.globalquran.com/resources/quran-ayah-images.zip">6236 Ayah Images</a>
