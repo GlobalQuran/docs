@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>GlobalQuran.com - API Documentation</title>
+
+    <link rel="icon" type="image/x-icon" href="favicon.ico">
+    <script src="https://unpkg.com/@stoplight/elements/web-components.min.js"></script>
+    <link rel="stylesheet" href="https://unpkg.com/@stoplight/elements/styles.min.css">
+    <style>
+        .sl-elements h4 {
+            text-indent: -9999px;
+            background-image: url("./logo-alternate.png");
+            background-repeat: no-repeat;
+            height: 188px;
+            width: 158px;
+        }
+        .sl-elements .sl-pt-8 {
+            padding-top:0px;
+        }
+        .sl-elements-api > div:first-child {
+            --color-canvas-100: #fff;
+        }
+    </style>
+</head>
+<body>
+<elements-api
+        apiDescriptionUrl="api.yaml"
+        router="hash"
+/>
+</body>
+</html>

@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>#demo-1{ color:lightBlue; }</style>
+    <script src="https://code.jquery.com/jquery-latest.js"></script>
+</head>
+<body>
+<div id="demo-1">
+</div>
+<script>
+    $.ajaxSetup({ cache: true, jsonpCallback: 'quranData' }); // define ajax setup
+    $.getJSON("https://api.globalquran.com/quran?key=api_key&jsoncallback=?", {
+        format: "jsonp"
+    }, function(data)
+    {
+        /* Recitor List */
+        $('#demo-1').append('Select Recitor: <br/>');
+        $("<select>").attr('id', 'recitorList').appendTo("#demo-1");
+        $("<option>").attr('selected', 'selected').html('Select Translation').appendTo('#recitorList');
+        $.each(data.quranList, function(quranID, by)
+        {
+            if (by.format === 'audio')
+                $("<option>").val(quranID).html(by.english_name+' '+by.native_name).appendTo('#recitorList');
+        });
+    });
+</script>
+</body>
+</html>
