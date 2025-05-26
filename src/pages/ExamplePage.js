@@ -1,11 +1,21 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
+import Prism from 'prismjs';
+import 'prismjs/themes/prism-tomorrow.css'; // Dark theme that looks great
+import 'prismjs/components/prism-markup'; // HTML
+import 'prismjs/components/prism-css'; // CSS
+import 'prismjs/components/prism-javascript'; // JavaScript/jQuery
+import 'prismjs/components/prism-markup-templating'; // For mixed content
+import 'prismjs/plugins/line-numbers/prism-line-numbers.css';
+import 'prismjs/plugins/line-numbers/prism-line-numbers';
+import '../styles/prism-custom.css';
 
 const ExamplePage = () => {
   const { exampleName } = useParams();
   const navigate = useNavigate();
   const [sourceCode, setSourceCode] = useState('');
   const [loading, setLoading] = useState(true);
+  const codeRef = useRef(null);
 
   const examples = [
     {
@@ -61,11 +71,43 @@ const ExamplePage = () => {
       title: 'Quran List',
       description: 'Get a complete list of all available Quran resources including text formats, translations, and audio recitations.',
       category: 'Basic'
+    },
+    {
+      id: 'test-jquery',
+      title: 'jQuery Highlighting Test',
+      description: 'Test example showcasing jQuery syntax highlighting with various jQuery methods and patterns.',
+      category: 'Advanced'
     }
   ];
 
   const currentExample = examples.find(ex => ex.id === exampleName) || examples[0];
   const currentIndex = examples.findIndex(ex => ex.id === exampleName);
+
+  // Function to detect the primary language of the code
+  const detectLanguage = (code) => {
+    if (!code) return 'markup';
+    
+    // Check if it's primarily HTML
+    if (code.includes('<!DOCTYPE') || code.includes('<html') || code.includes('<head') || code.includes('<body')) {
+      return 'markup';
+    }
+    
+    // Check if it's primarily JavaScript/jQuery
+    if (code.includes('$(') || code.includes('jQuery(') || code.includes('function(') || code.includes('var ') || code.includes('let ') || code.includes('const ')) {
+      return 'javascript';
+    }
+    
+    // Default to markup for mixed content
+    return 'markup';
+  };
+
+  // Function to check if code contains jQuery
+  const hasJQuery = (code) => {
+    if (!code) return false;
+    return code.includes('$(') || code.includes('jQuery(') || code.includes('.ready(') || 
+           code.includes('.click(') || code.includes('.ajax(') || code.includes('.get(') ||
+           code.includes('.post(') || code.includes('.load(');
+  };
 
   useEffect(() => {
     const fetchSourceCode = async () => {
@@ -88,6 +130,27 @@ const ExamplePage = () => {
 
     fetchSourceCode();
   }, [currentExample.id]);
+
+  // Effect to apply syntax highlighting
+  useEffect(() => {
+    if (!loading && sourceCode && codeRef.current) {
+      // Small delay to ensure DOM is ready
+      setTimeout(() => {
+        Prism.highlightAll();
+      }, 100);
+    }
+  }, [loading, sourceCode]);
+
+  // Function to copy code to clipboard
+  const copyToClipboard = async () => {
+    try {
+      await navigator.clipboard.writeText(sourceCode);
+      // You could add a toast notification here
+      alert('Code copied to clipboard!');
+    } catch (err) {
+      console.error('Failed to copy code: ', err);
+    }
+  };
 
   const navigateToExample = (exampleId) => {
     navigate(`/examples/${exampleId}`);
@@ -169,6 +232,24 @@ const ExamplePage = () => {
               <div className="panel-heading">
                 <h3 className="panel-title">
                   <i className="fas fa-code"></i> Source Code
+                  <small style={{ marginLeft: '10px', color: '#666' }}>
+                    ({detectLanguage(sourceCode).toUpperCase()})
+                  </small>
+                  <div className="btn-group pull-right" style={{ marginTop: '-2px' }}>
+                    <button 
+                      className="btn btn-xs btn-default"
+                      onClick={copyToClipboard}
+                      title="Copy to Clipboard"
+                      disabled={loading}
+                    >
+                      <i className="fas fa-copy"></i> Copy
+                    </button>
+                    {hasJQuery(sourceCode) && (
+                      <span className="btn btn-xs btn-success" style={{ cursor: 'default' }}>
+                        <i className="fab fa-js-square"></i> jQuery
+                      </span>
+                    )}
+                  </div>
                 </h3>
               </div>
               <div className="panel-body" style={{ padding: '0' }}>
@@ -177,16 +258,27 @@ const ExamplePage = () => {
                     <i className="fas fa-spinner fa-spin"></i> Loading source code...
                   </div>
                 ) : (
-                  <pre style={{ 
-                    margin: '0', 
-                    padding: '15px', 
-                    backgroundColor: '#f8f9fa',
-                    fontSize: '12px',
-                    maxHeight: '600px',
-                    overflowY: 'auto',
-                    border: 'none'
-                  }}>
-                    <code>{sourceCode}</code>
+                  <pre 
+                    className="line-numbers"
+                    style={{ 
+                      margin: '0', 
+                      fontSize: '12px',
+                      maxHeight: '600px',
+                      overflowY: 'auto',
+                      border: 'none',
+                      backgroundColor: '#2d3748'
+                    }}
+                  >
+                    <code 
+                      ref={codeRef}
+                      className={`language-${detectLanguage(sourceCode)}`}
+                      style={{ 
+                        whiteSpace: 'pre-wrap',
+                        wordBreak: 'break-word'
+                      }}
+                    >
+                      {sourceCode}
+                    </code>
                   </pre>
                 )}
               </div>

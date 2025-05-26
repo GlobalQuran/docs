@@ -1,0 +1,156 @@
+/* Custom Prism.js styling for enhanced jQuery highlighting */
+
+/* Override some default colors for better jQuery visibility */
+.token.function {
+  color: #82aaff !important; /* Light blue for functions like $() */
+}
+
+.token.keyword {
+  color: #c792ea !important; /* Purple for keywords */
+}
+
+.token.string {
+  color: #c3e88d !important; /* Light green for strings */
+}
+
+.token.number {
+  color: #f78c6c !important; /* Orange for numbers */
+}
+
+.token.operator {
+  color: #89ddff !important; /* Cyan for operators */
+}
+
+.token.punctuation {
+  color: #89ddff !important; /* Cyan for punctuation */
+}
+
+/* Special highlighting for jQuery selectors and methods */
+.token.selector {
+  color: #ffcb6b !important; /* Yellow for CSS selectors */
+}
+
+.token.property {
+  color: #82aaff !important; /* Light blue for properties */
+}
+
+.token.attr-name {
+  color: #ffcb6b !important; /* Yellow for HTML attributes */
+}
+
+.token.attr-value {
+  color: #c3e88d !important; /* Light green for attribute values */
+}
+
+.token.tag {
+  color: #f07178 !important; /* Pink/red for HTML tags */
+}
+
+/* Custom class for jQuery specific highlighting */
+.jquery-highlight {
+  background-color: rgba(130, 170, 255, 0.1) !important;
+  border-radius: 3px;
+  padding: 1px 2px;
+}
+
+/* Enhanced script tag styling */
+.language-markup .token.script {
+  background-color: rgba(199, 146, 234, 0.1);
+  border-radius: 3px;
+}
+
+/* Line numbers styling */
+.line-numbers .line-numbers-rows {
+  border-right: 1px solid #4a5568;
+  background-color: #2d3748;
+}
+
+.line-numbers-rows > span:before {
+  color: #718096;
+  font-size: 11px;
+}
+
+/* Scrollbar styling for dark theme */
+pre[class*="language-"]::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+pre[class*="language-"]::-webkit-scrollbar-track {
+  background: #1a202c;
+}
+
+pre[class*="language-"]::-webkit-scrollbar-thumb {
+  background: #4a5568;
+  border-radius: 4px;
+}
+
+pre[class*="language-"]::-webkit-scrollbar-thumb:hover {
+  background: #718096;
+}
+
+/* Ensure proper spacing and readability */
+pre[class*="language-"] {
+  padding: 15px !important;
+  line-height: 1.4;
+}
+
+/* Highlight jQuery $ symbol specifically */
+.token.function-variable {
+  color: #82aaff !important;
+  font-weight: bold;
+}
+
+/* Style for comments to make them less prominent but readable */
+.token.comment {
+  color: #636f88 !important;
+  font-style: italic;
+}
+
+/* Special styling for document.ready and common jQuery patterns */
+.jquery-pattern {
+  background-color: rgba(130, 170, 255, 0.15) !important;
+  border-left: 3px solid #82aaff;
+  padding-left: 8px;
+  margin: 2px 0;
+}
+
+/* Enhanced jQuery $ symbol highlighting */
+.token.punctuation.dollar {
+  color: #82aaff !important;
+  font-weight: bold;
+  font-size: 1.1em;
+}
+
+/* jQuery method chaining highlighting */
+.token.property.method {
+  color: #ffcb6b !important;
+  font-weight: 500;
+}
+
+/* Special highlighting for common jQuery selectors */
+.token.string.selector {
+  color: #c3e88d !important;
+  background-color: rgba(195, 232, 141, 0.1);
+  border-radius: 2px;
+  padding: 1px 2px;
+}
+
+/* Highlight jQuery object methods */
+.language-markup .token.script .token.function {
+  color: #82aaff !important;
+  font-weight: 600;
+}
+
+/* Make script tags more prominent when they contain jQuery */
+.language-markup .token.tag.script {
+  background-color: rgba(130, 170, 255, 0.05);
+  border-radius: 4px;
+  padding: 2px;
+}
+
+/* Enhanced visibility for jQuery AJAX methods */
+.token.property.ajax {
+  color: #f78c6c !important;
+  font-weight: bold;
+} 
