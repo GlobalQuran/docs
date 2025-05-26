@@ -7,17 +7,28 @@ const DocsPage = () => {
       const script = document.createElement('script');
       script.src = 'https://unpkg.com/@stoplight/elements/web-components.min.js';
       script.async = true;
+      script.onload = () => {
+        console.log('Stoplight Elements loaded successfully');
+      };
+      script.onerror = (error) => {
+        console.error('Failed to load Stoplight Elements:', error);
+      };
       document.head.appendChild(script);
 
       const link = document.createElement('link');
       link.rel = 'stylesheet';
       link.href = 'https://unpkg.com/@stoplight/elements/styles.min.css';
+      link.onload = () => {
+        console.log('Stoplight Elements CSS loaded successfully');
+      };    
+      link.onerror = (error) => {
+        console.error('Failed to load Stoplight Elements CSS:', error);
+      };
       document.head.appendChild(link);
 
       // Add custom styles for documentation
       const style = document.createElement('style');
       style.textContent = `
-        
         .sl-elements .sl-pt-8 {
           padding-top: 0px;
         }
@@ -42,26 +53,33 @@ const DocsPage = () => {
         </p>
         
         <div className="alert alert-info">
-          <h4>Quick Links</h4>
+          <h4>Interactive Examples</h4>
+          <p>Explore our comprehensive examples with source code and live demos side by side.</p>
           <div className="row">
             <div className="col-md-6">
-              <h5>Common Examples:</h5>
+              <h5>Basic Examples:</h5>
               <ul>
-                <li><a href="/docs-assets/examples/quran-complete.html" target="_blank" rel="noopener noreferrer">Complete Quran Data</a></li>
-                <li><a href="/docs-assets/examples/quran-by-surah.html" target="_blank" rel="noopener noreferrer">Quran by Surah</a></li>
-                <li><a href="/docs-assets/examples/quran-by-ayah.html" target="_blank" rel="noopener noreferrer">Quran by Ayah</a></li>
-                <li><a href="/docs-assets/examples/quran-list-translation.html" target="_blank" rel="noopener noreferrer">List Translations</a></li>
+                <li><a href="/examples/quran-complete">Complete Quran Data</a> - Fetch complete Quran text with translations</li>
+                <li><a href="/examples/quran-by-surah">Quran by Surah</a> - Retrieve specific chapters</li>
+                <li><a href="/examples/quran-by-ayah">Quran by Ayah</a> - Fetch individual verses</li>
+                <li><a href="/examples/quran-list-translation">List Translations</a> - Available translations</li>
+                <li><a href="/examples/quran-list">Quran List</a> - All available resources</li>
               </ul>
             </div>
             <div className="col-md-6">
               <h5>Advanced Examples:</h5>
               <ul>
-                <li><a href="/docs-assets/examples/quran-list-recitors.html" target="_blank" rel="noopener noreferrer">List Recitors</a></li>
-                <li><a href="/docs-assets/examples/quran-by-juz.html" target="_blank" rel="noopener noreferrer">Quran by Juz</a></li>
-                <li><a href="/docs-assets/examples/quran-by-page.html" target="_blank" rel="noopener noreferrer">Quran by Page</a></li>
-                <li><a href="/docs-assets/examples/quran-all-in-one-request.html" target="_blank" rel="noopener noreferrer">All-in-One Request</a></li>
+                <li><a href="/examples/quran-list-recitors">List Recitors</a> - Audio recitors and formats</li>
+                <li><a href="/examples/quran-by-juz">Quran by Juz</a> - Access by Juz (Para)</li>
+                <li><a href="/examples/quran-by-page">Quran by Page</a> - Retrieve by page numbers</li>
+                <li><a href="/examples/quran-all-in-one-request">All-in-One Request</a> - Comprehensive example</li>
               </ul>
             </div>
+          </div>
+          <div style={{ marginTop: '15px' }}>
+            <a href="/examples/quran-complete" className="btn btn-primary">
+              <i className="fas fa-play"></i> Start with Basic Example
+            </a>
           </div>
         </div>
 

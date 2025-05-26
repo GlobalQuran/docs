@@ -9,6 +9,7 @@ import DataPage from './pages/DataPage';
 import AudioPage from './pages/AudioPage';
 import AssetsPage from './pages/AssetsPage';
 import DocsPage from './pages/DocsPage';
+import ExamplePage from './pages/ExamplePage';
 
 function App() {
   return (
@@ -24,6 +25,7 @@ function App() {
               <Route path="/audio" element={<AudioPage />} />
               <Route path="/assets" element={<AssetsPage />} />
               <Route path="/docs" element={<DocsPage />} />
+              <Route path="/examples/:exampleName" element={<ExamplePage />} />
             </Routes>
           </div>
         </div>
