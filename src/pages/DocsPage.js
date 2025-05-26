@@ -10,6 +10,47 @@ const DocsPage = () => {
       script.async = true;
       script.onload = () => {
         console.log('Stoplight Elements loaded successfully');
+        // Test if the API file is accessible
+        const apiUrl = `${window.location.origin}/docs-assets/api.yaml`;
+        console.log('Trying to load API from:', apiUrl);
+        fetch(apiUrl)
+          .then(response => {
+            console.log('API file response status:', response.status);
+            if (!response.ok) {
+              console.error('API file not accessible:', response.status, response.statusText);
+            }
+            return response.text();
+          })
+          .then(text => {
+            console.log('API file loaded successfully, size:', text.length);
+          })
+          .catch(error => {
+            console.error('Error loading API file:', error);
+            // Show fallback if API file can't be loaded
+            setTimeout(() => {
+              const fallback = document.getElementById('api-fallback');
+              const elementsApi = document.querySelector('elements-api');
+              if (fallback && elementsApi) {
+                elementsApi.style.display = 'none';
+                fallback.style.display = 'block';
+              }
+            }, 3000);
+          });
+        
+        // Also listen for Stoplight Elements errors
+        setTimeout(() => {
+          const elementsApi = document.querySelector('elements-api');
+          if (elementsApi) {
+            elementsApi.addEventListener('error', (event) => {
+              console.error('Stoplight Elements error:', event);
+              const fallback = document.getElementById('api-fallback');
+              if (fallback) {
+                elementsApi.style.display = 'none';
+                fallback.style.display = 'block';
+              }
+            });
+          }
+        }, 1000);
       };
       script.onerror = (error) => {
         console.error('Failed to load Stoplight Elements:', error);
@@ -86,10 +127,32 @@ const DocsPage = () => {
 
         <div className="docs-container">
           <elements-api
-            apiDescriptionUrl="/docs-assets/api.yaml"
+            apiDescriptionUrl={`${window.location.origin}/docs-assets/api.yaml`}
             router="hash"
             style={{ height: '80vh', border: '1px solid #ddd', borderRadius: '4px' }}
+            hideInternal={true}
+            hideTryIt={false}
+            hideSchemas={false}
+            hideExport={false}
           />
+          
+          <div id="api-fallback" style={{ display: 'none', padding: '20px', textAlign: 'center' }}>
+            <div className="alert alert-warning">
+              <h4>API Documentation Loading Issue</h4>
+              <p>
+                The interactive API documentation is having trouble loading. 
+                You can still access the API directly or view our examples.
+              </p>
+              <div style={{ marginTop: '15px' }}>
+                <a href="/docs-assets/api.yaml" target="_blank" className="btn btn-primary" style={{ marginRight: '10px' }}>
+                  <i className="fas fa-download"></i> Download OpenAPI Spec
+                </a>
+                <Link to="/examples/quran-complete" className="btn btn-success">
+                  <i className="fas fa-play"></i> View Examples
+                </Link>
+              </div>
+            </div>
+          </div>
         </div>
 
         <div className="alert alert-success" style={{ marginTop: '20px' }}>
