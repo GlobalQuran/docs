@@ -1,70 +1,153 @@
-# Getting Started with Create React App
+# GlobalQuran.com - Documentation & Download Portal
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+![GlobalQuran Logo](public/logo-alternate.png)
 
-## Available Scripts
+The official documentation and download portal for GlobalQuran.com - providing free access to Quran data, translations, audio recitations, and development resources.
 
-In the project directory, you can run:
+**🌐 Live Site:** [https://docs.globalquran.com](https://docs.globalquran.com)
 
-### `npm start`
+## 📖 About GlobalQuran.com
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+GlobalQuran.com is an open-source project dedicated to making the Holy Quran accessible to everyone through technology. We provide comprehensive APIs, downloadable datasets, and development resources for building Quran-related applications.
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+## 🎯 What This Repository Provides
 
-### `npm test`
+### 📚 Interactive API Documentation
+- Complete OpenAPI specification with live examples
+- Interactive "Try it out" functionality
+- Code samples in multiple programming languages
+- Real-time API testing environment
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+### 💾 Data Downloads
+- **Text Formats**: Quran translations in 100+ languages
+- **Audio Recitations**: High-quality MP3/OGG files from renowned recitors
+- **Multiple Formats**: JSON, JSONP, TXT, and XML
+- **Bulk Downloads**: ZIP packages for offline use
 
-### `npm run build`
+### 🎨 Assets & Resources
+- **Quran Fonts**: Arabic fonts optimized for Quranic text
+- **Ayah Images**: 6,236 individual verse images in high resolution
+- **Development Tools**: SDKs and helper libraries
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+### 🔧 Developer Examples
+- **Basic Examples**: Simple API usage patterns
+- **Advanced Examples**: Complex integration scenarios
+- **Source Code**: Full HTML/JavaScript implementations
+- **Live Demos**: Working examples with real data
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+## 🚀 Features
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+### 🌍 Comprehensive Coverage
+- **6,236 Verses**: Complete Quran text
+- **100+ Languages**: Translations and transliterations
+- **50+ Recitors**: Audio recitations in various styles
+- **Multiple Formats**: Text, audio, and image resources
 
-### `npm run eject`
+### 🔄 Real-time API Access
+- **RESTful API**: Clean, documented endpoints
+- **JSONP Support**: Cross-origin requests
+- **Rate Limiting**: Fair usage policies
+- **High Availability**: 99.9% uptime
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+### 📱 Developer-Friendly
+- **Interactive Examples**: Side-by-side code and demos
+- **Copy-Paste Ready**: Working code snippets
+- **Multiple Languages**: Examples in JavaScript, Python, PHP, etc.
+- **Comprehensive Docs**: Detailed API reference
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+## 🛠️ Available Resources
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+### Text Data
+- **Quran Original**: Arabic text in multiple scripts
+- **Translations**: English, Urdu, French, Spanish, and 100+ more
+- **Transliterations**: Romanized Arabic text
+- **Metadata**: Surah names, verse counts, revelation info
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+### Audio Data
+- **Recitors**: Abdul Basit, Mishary Rashid, Saad Al-Ghamdi, and more
+- **Quality Options**: 32kbps to 192kbps
+- **Formats**: MP3 and OGG
+- **Individual Verses**: 6,236 separate audio files per recitor
 
-## Learn More
+### Visual Assets
+- **Fonts**: Specialized Arabic fonts for Quranic text
+- **Images**: High-resolution verse images
+- **Icons**: UI elements for Islamic applications
+- **Logos**: GlobalQuran.com branding assets
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+## 📋 API Endpoints
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+### Core Endpoints
+- `/quran` - List all available resources
+- `/complete/{translation}` - Full Quran text
+- `/surah/{number}/{translation}` - Specific chapter
+- `/ayah/{surah}/{ayah}/{translation}` - Individual verse
+- `/juz/{number}/{translation}` - Quran by Juz (Para)
+- `/page/{number}/{translation}` - Quran by page
 
-### Code Splitting
+### Audio Endpoints
+- `/audio/{recitor}/{verse}.mp3` - Individual verse audio
+- `/recitors` - List available recitors
+- `/formats` - Available audio formats
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+## 🎓 Getting Started
 
-### Analyzing the Bundle Size
+### 1. Explore the Documentation
+Visit [docs.globalquran.com](https://docs.globalquran.com) to:
+- Browse the interactive API documentation
+- Try live examples with real data
+- Download sample code and resources
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+### 2. Basic API Usage
+```javascript
+// Fetch list of available translations
+fetch('https://api.globalquran.com/quran')
+  .then(response => response.json())
+  .then(data => console.log(data.quranList));
 
-### Making a Progressive Web App
+// Get a specific verse
+fetch('https://api.globalquran.com/ayah/1/1/en.sahih')
+  .then(response => response.json())
+  .then(data => console.log(data.verse));
+```
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
+### 3. Download Resources
+- **Text Data**: Use the download portal to get ZIP packages
+- **Audio Files**: Bulk download recitations by recitor
+- **Assets**: Get fonts and images for your applications
 
-### Advanced Configuration
+## 🤝 Contributing
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
+We welcome contributions to improve the documentation and add new features:
 
-### Deployment
+1. **Report Issues**: [GitHub Issues](https://github.com/GlobalQuran/site/issues)
+2. **Submit PRs**: Help improve documentation and examples
+3. **Suggest Features**: Request new API endpoints or resources
+4. **Translate**: Help add more language translations
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
+## 📄 License
 
-### `npm run build` fails to minify
+This project is open source and available under the [MIT License](LICENSE).
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+## 🔗 Links
+
+- **Main Website**: [GlobalQuran.com](https://globalquran.com)
+- **API Documentation**: [docs.globalquran.com](https://docs.globalquran.com)
+- **GitHub Repository**: [github.com/GlobalQuran/site](https://github.com/GlobalQuran/site)
+- **Blog**: [blog.globalquran.com](https://blog.globalquran.com)
+- **Contact**: [Contact Us](https://blog.globalquran.com/contact-us/)
+
+## 💝 Support
+
+If you find this project useful, please consider:
+- ⭐ Starring the repository
+- 🐛 Reporting bugs and issues
+- 💡 Suggesting new features
+- 🤝 Contributing code or documentation
+- 💰 [Making a donation](https://globalquran.com/donate/)
+
+---
+
+**Made with ❤️ for the global Muslim community**
+
+*"And We have certainly made the Quran easy for remembrance, so is there any who will remember?" - Quran 54:17*
