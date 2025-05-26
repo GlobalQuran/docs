@@ -1,4 +1,6 @@
 import React, { useState } from 'react';
+import JSZip from 'jszip';
+import { saveAs } from 'file-saver';
 
 const DataPage = () => {
   const [selectedItems, setSelectedItems] = useState([]);
@@ -109,6 +111,81 @@ const DataPage = () => {
     return `https://globalquran.com/${id}/1.1`;
   };
 
+  const downloadSelectedFiles = async (format) => {
+    if (selectedItems.length === 0) {
+      alert('Please select at least one item to download.');
+      return;
+    }
+
+    const zip = new JSZip();
+    const selectedData = quranData.filter(item => selectedItems.includes(item.id));
+    
+    try {
+      // Create a folder for the selected format
+      const folder = zip.folder(`quran-data-${format}`);
+      
+      for (const item of selectedData) {
+        let url, filename, content;
+        
+        switch (format) {
+          case 'text':
+            url = getApiUrl(item.id, 'txt');
+            filename = `${item.id}.txt`;
+            break;
+          case 'json':
+            url = getApiUrl(item.id, 'json');
+            filename = `${item.id}.json`;
+            break;
+          case 'jsonp':
+            url = getApiUrl(item.id, 'jsonp');
+            filename = `${item.id}.jsonp`;
+            break;
+          default:
+            continue;
+        }
+        
+        try {
+          // Fetch the content from the API
+          const response = await fetch(url);
+          if (response.ok) {
+            content = await response.text();
+            folder.file(filename, content);
+          } else {
+            console.warn(`Failed to fetch ${filename}: ${response.status}`);
+            // Add a placeholder file indicating the error
+            folder.file(filename, `Error: Could not fetch data from ${url}\nStatus: ${response.status}`);
+          }
+        } catch (error) {
+          console.warn(`Error fetching ${filename}:`, error);
+          // Add a placeholder file indicating the error
+          folder.file(filename, `Error: Could not fetch data from ${url}\nError: ${error.message}`);
+        }
+      }
+      
+      // Add a README file with information about the download
+      const readme = `Quran Data Download - ${format.toUpperCase()} Format
+Generated on: ${new Date().toISOString()}
+Total files: ${selectedData.length}
+
+Files included:
+${selectedData.map(item => `- ${item.id} (${item.name})`).join('\n')}
+
+For more information, visit: https://globalquran.com/
+API Documentation: https://docs.globalquran.com/
+`;
+      
+      folder.file('README.txt', readme);
+      
+      // Generate and download the zip file
+      const zipBlob = await zip.generateAsync({ type: 'blob' });
+      saveAs(zipBlob, `quran-data-${format}-${new Date().toISOString().split('T')[0]}.zip`);
+      
+    } catch (error) {
+      console.error('Error creating zip file:', error);
+      alert('Error creating download file. Please try again.');
+    }
+  };
+
   return (
     <div className="row" id="top">
       <div className="col-md-12">
@@ -116,20 +193,39 @@ const DataPage = () => {
           <div className="btn-group">
             <button 
               type="button" 
-              className="btn btn-primary btn-lg dropdown-toggle" 
-              data-toggle="dropdown"
+              className="btn btn-primary btn-sm" 
+              onClick={() => downloadSelectedFiles('text')}
               disabled={selectedItems.length === 0}
+              title="Download selected items as text files"
             >
-              <i className="icon-cloud-download"></i> Download 
-              {selectedItems.length > 0 && ` (${selectedItems.length})`}
-              <span className="caret"></span>
+              <i className="icon-cloud-download"></i> Text
             </button>
-            <ul className="dropdown-menu" role="menu">
-              <li><a href="#" className="download" data-by="text">text</a></li>
-              <li><a href="#" className="download" data-by="json">json</a></li>
-              <li><a href="#" className="download" data-by="js">js (desktop app)</a></li>
-            </ul>
+            <button 
+              type="button" 
+              className="btn btn-primary btn-sm" 
+              onClick={() => downloadSelectedFiles('json')}
+              disabled={selectedItems.length === 0}
+              title="Download selected items as JSON files"
+              style={{ marginLeft: '5px' }}
+            >
+              <i className="icon-cloud-download"></i> JSON
+            </button>
+            <button 
+              type="button" 
+              className="btn btn-primary btn-sm" 
+              onClick={() => downloadSelectedFiles('jsonp')}
+              disabled={selectedItems.length === 0}
+              title="Download selected items as JSONP files"
+              style={{ marginLeft: '5px' }}
+            >
+              <i className="icon-cloud-download"></i> JSONP
+            </button>
           </div>
+          {selectedItems.length > 0 && (
+            <span style={{ marginLeft: '10px', color: '#666' }}>
+              {selectedItems.length} item{selectedItems.length !== 1 ? 's' : ''} selected
+            </span>
+          )}
         </div>
 
         <table className="table table-striped table-hover">

@@ -1,0 +1,57 @@
+/* Icon classes using FontAwesome */
+.icon-usd:before { 
+  font-family: "Font Awesome 6 Free";
+  content: "\24"; 
+  font-weight: 900;
+}
+
+.icon-cloud-download:before { 
+  font-family: "Font Awesome 6 Free";
+  content: "\f0ed"; 
+  font-weight: 900;
+}
+
+.icon-github:before { 
+  font-family: "Font Awesome 6 Brands";
+  content: "\f09b"; 
+  font-weight: 400;
+}
+
+.icon-volume-up:before { 
+  font-family: "Font Awesome 6 Free";
+  content: "\f028"; 
+  font-weight: 900;
+}
+
+.icon-font:before { 
+  font-family: "Font Awesome 6 Free";
+  content: "\f031"; 
+  font-weight: 900;
+}
+
+.icon-exclamation-sign:before { 
+  font-family: "Font Awesome 6 Free";
+  content: "\f06a"; 
+  font-weight: 900;
+}
+
+.icon-large:before { 
+  font-size: 1.3333333333333333em; 
+}
+
+[class^="icon-"]:before,
+[class*=" icon-"]:before {
+  font-style: normal;
+  font-weight: normal;
+  line-height: 1;
+  display: inline-block;
+  margin-right: 0.3em;
+}
+
+/* Alternative FontAwesome classes for easier use */
+.fa-usd, .fa-dollar-sign { }
+.fa-cloud-download, .fa-download { }
+.fa-github { }
+.fa-volume-up { }
+.fa-font { }
+.fa-exclamation-circle { } 

@@ -7,18 +7,7 @@ const Home = () => {
       <div className="jumbotron">
         <h1>Download Anything and Everything!</h1>
         <div className="pull-right">
-          <iframe 
-            id="twitter-widget-0" 
-            scrolling="no" 
-            frameBorder="0" 
-            allowTransparency="true" 
-            allowFullScreen="true" 
-            className="twitter-follow-button twitter-follow-button-rendered" 
-            title="Twitter Follow Button" 
-            src="https://platform.twitter.com/widgets/follow_button.html?screen_name=GlobalQuran" 
-            style={{ position: 'static', visibility: 'visible', width: '78px', height: '20px' }}
-          />
-          <div style={{ marginTop: '-30px', position: 'absolute' }} className="fb-like">
+          <div className="fb-like">
             <iframe 
               name="facebook-like" 
               width="100px" 

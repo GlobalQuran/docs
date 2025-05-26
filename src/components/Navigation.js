@@ -34,7 +34,7 @@ const Navigation = () => {
 
           <ul className="nav navbar-nav navbar-right">
             <li><a href="https://globalquran.com/donate/" target="_blank" rel="noopener noreferrer">Why Donate?</a></li>
-            <li style={{ top: '.3em' }}>
+            <li style={{ paddingTop: '5px' }}>
               <button 
                 onClick={() => window.open('/pay/donate-now.php', '_blank')} 
                 className="btn btn-sm btn-primary"
