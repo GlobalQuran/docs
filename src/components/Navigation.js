@@ -35,7 +35,7 @@ const Navigation = () => {
           </ul>
 
           <ul className="nav navbar-nav navbar-right">
-            <li><Link to="/donate">Donate</Link></li>
+            <li><Link to="/donate">Why Donate?</Link></li>
             <li style={{ paddingTop: '5px' }}>
               <Link 
                 to="/donate" 
