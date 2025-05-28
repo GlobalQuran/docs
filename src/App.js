@@ -11,6 +11,7 @@ import AssetsPage from './pages/AssetsPage';
 import DocsPage from './pages/DocsPage';
 import ExamplePage from './pages/ExamplePage';
 import DonatePage from './pages/DonatePage';
+import AboutPage from './pages/AboutPage';
 
 function App() {
   return (
@@ -26,6 +27,7 @@ function App() {
               <Route path="/audio" element={<AudioPage />} />
               <Route path="/assets" element={<AssetsPage />} />
               <Route path="/donate" element={<DonatePage />} />
+              <Route path="/about" element={<AboutPage />} />
               <Route path="/examples/:exampleName" element={<ExamplePage />} />
             </Routes>
           </div>

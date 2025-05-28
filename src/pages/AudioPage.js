@@ -3,6 +3,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import { fetchQuranData } from '../store/slices/quranSlice';
 import JSZip from 'jszip';
 import { saveAs } from 'file-saver';
+import Footer from '../components/Footer';
 
 const AudioPage = () => {
   const [selectedRecitor, setSelectedRecitor] = useState(null);
@@ -84,8 +85,6 @@ const AudioPage = () => {
       setPlayingRecitor(null);
     }
   }, [playingRecitor]);
-
-
 
   const downloadAllVerses = async (recitor, format) => {
     if (!recitor.media[format]) {
@@ -400,8 +399,6 @@ Audio source: ${basePath}
               </tbody>
             </table>
 
-
-
             <div className="alert alert-info" style={{ marginTop: '20px' }}>
               <h4>About Audio Downloads</h4>
               <p>
@@ -421,17 +418,7 @@ Audio source: ${basePath}
 
         <hr />
 
-        <footer>
-          <ul className="list-unstyled list-inline pull-right">
-            <li><a href="https://github.com/GlobalQuran/site/issues">Feedback</a></li>
-            <li><a href="https://github.com/GlobalQuran/site/issues">Report Bug</a></li>
-            <li><a href="https://github.com/GlobalQuran/site/issues">Help</a></li>
-            <li><a href="https://blog.globalquran.com/">Blog</a></li>
-            <li><a href="https://blog.globalquran.com/about-us/">About us</a></li>
-            <li><a href="https://blog.globalquran.com/contact-us/">Contact us</a></li>
-          </ul>
-          <p>© <a href="https://globalquran.com/">GlobalQuran.com</a> 2025</p>
-        </footer>
+        <Footer />
       </div>
     </div>
   );

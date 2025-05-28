@@ -9,6 +9,7 @@ import 'prismjs/components/prism-markup-templating'; // For mixed content
 import 'prismjs/plugins/line-numbers/prism-line-numbers.css';
 import 'prismjs/plugins/line-numbers/prism-line-numbers';
 import '../styles/prism-custom.css';
+import Footer from '../components/Footer';
 
 const ExamplePage = () => {
   const { exampleName } = useParams();
@@ -363,17 +364,7 @@ const ExamplePage = () => {
 
         <hr />
 
-        <footer>
-          <ul className="list-unstyled list-inline pull-right">
-            <li><a href="https://github.com/GlobalQuran/site/issues">Feedback</a></li>
-            <li><a href="https://github.com/GlobalQuran/site/issues">Report Bug</a></li>
-            <li><a href="https://github.com/GlobalQuran/site/issues">Help</a></li>
-            <li><a href="https://blog.globalquran.com/">Blog</a></li>
-            <li><a href="https://blog.globalquran.com/about-us/">About us</a></li>
-            <li><a href="https://blog.globalquran.com/contact-us/">Contact us</a></li>
-          </ul>
-          <p>© <a href="https://globalquran.com/">GlobalQuran.com</a> 2025</p>
-        </footer>
+        <Footer />
       </div>
     </div>
   );
