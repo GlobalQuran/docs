@@ -171,7 +171,7 @@ const AboutPage = () => {
                 </li>
                 <li style={{ marginBottom: '10px' }}>
                   <i className="fas fa-star" style={{ color: '#b99c45', marginRight: '8px' }}></i>
-                  <strong>İbrahim</strong> - <a href="https://listen2quran.com" target="_blank" rel="noopener noreferrer">listen2quran.com</a>
+                  <strong>M Ali</strong> - <a href="https://deen-ul-islam.org" target="_blank" rel="noopener noreferrer">Deen-ul-Islam.org</a>
                 </li>
               </ul>
             </div>
@@ -212,10 +212,6 @@ const AboutPage = () => {
                 <li style={{ marginBottom: '10px' }}>
                   <i className="fas fa-star" style={{ color: '#b99c45', marginRight: '8px' }}></i>
                   <strong>Bassem Shama</strong> - <a href="https://quran.com" target="_blank" rel="noopener noreferrer">Quran.com</a>
-                </li>
-                <li style={{ marginBottom: '10px' }}>
-                  <i className="fas fa-star" style={{ color: '#b99c45', marginRight: '8px' }}></i>
-                  <strong>M Ali</strong> - <a href="https://deen-ul-islam.org" target="_blank" rel="noopener noreferrer">Deen-ul-Islam.org</a>
                 </li>
               </ul>
             </div>
