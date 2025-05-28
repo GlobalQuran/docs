@@ -35,14 +35,24 @@ const Navigation = () => {
           </ul>
 
           <ul className="nav navbar-nav navbar-right">
-            <li><a href="https://globalquran.com/donate/" target="_blank" rel="noopener noreferrer">Why Donate?</a></li>
+            <li><Link to="/donate">Donate</Link></li>
             <li style={{ paddingTop: '5px' }}>
-              <button 
-                onClick={() => window.open('/pay/donate-now.php', '_blank')} 
-                className="btn btn-sm btn-primary"
+              <Link 
+                to="/donate" 
+                className="btn btn-sm"
+                style={{
+                  background: 'linear-gradient(135deg, #b99c45 0%, #a08935 100%)',
+                  color: 'white',
+                  border: 'none',
+                  borderRadius: '20px',
+                  padding: '8px 16px',
+                  fontWeight: 'bold',
+                  textDecoration: 'none',
+                  display: 'inline-block'
+                }}
               >
-                <i className="fas fa-dollar-sign"></i> Donate
-              </button>
+                <i className="fas fa-heart" style={{ marginRight: '5px' }}></i> Donate Now
+              </Link>
             </li>
           </ul>
         </div>

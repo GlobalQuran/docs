@@ -1,0 +1,259 @@
+/* Donation Page Specific Styles */
+
+.donation-hero {
+  background: linear-gradient(135deg, #2c5530 0%, #1a3d1f 100%);
+  color: white;
+  text-align: center;
+  padding: 60px 20px;
+  position: relative;
+  overflow: hidden;
+}
+
+.donation-hero::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grain" width="100" height="100" patternUnits="userSpaceOnUse"><circle cx="50" cy="50" r="1" fill="rgba(255,255,255,0.1)"/></pattern></defs><rect width="100" height="100" fill="url(%23grain)"/></svg>');
+  opacity: 0.3;
+}
+
+.donation-hero .container {
+  position: relative;
+  z-index: 1;
+}
+
+.impact-card {
+  padding: 30px;
+  border-radius: 15px;
+  background: #f8f9fa;
+  border: 2px solid #e9ecef;
+  transition: all 0.3s ease;
+  height: 100%;
+}
+
+.impact-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+  border-color: #b99c45;
+}
+
+.impact-card i {
+  font-size: 3em;
+  color: #b99c45;
+  margin-bottom: 15px;
+  transition: all 0.3s ease;
+}
+
+.impact-card:hover i {
+  transform: scale(1.1);
+}
+
+.highlight-box {
+  background: #f8f9fa;
+  padding: 25px;
+  border-radius: 10px;
+  border-left: 5px solid #b99c45;
+  margin-bottom: 25px;
+  position: relative;
+}
+
+.highlight-box::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 5px;
+  height: 100%;
+  background: linear-gradient(to bottom, #b99c45, #a08935);
+  border-radius: 0 0 0 10px;
+}
+
+.donation-sidebar {
+  position: sticky;
+  top: 20px;
+  background: white;
+  border-radius: 15px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+  overflow: hidden;
+  transition: all 0.3s ease;
+}
+
+.donation-sidebar:hover {
+  box-shadow: 0 15px 40px rgba(0,0,0,0.15);
+}
+
+.donation-sidebar-header {
+  background: linear-gradient(135deg, #b99c45 0%, #a08935 100%);
+  color: white;
+  padding: 20px;
+  text-align: center;
+}
+
+.cta-section {
+  background: linear-gradient(135deg, #2c5530 0%, #1a3d1f 100%);
+  color: white;
+  padding: 40px;
+  border-radius: 15px;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.cta-section::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: radial-gradient(circle, rgba(185,156,69,0.1) 0%, transparent 70%);
+  animation: pulse 4s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { transform: scale(1); opacity: 0.5; }
+  50% { transform: scale(1.1); opacity: 0.8; }
+}
+
+.donor-wall-section {
+  background: #f8f9fa;
+  border-radius: 15px;
+  padding: 20px;
+  text-align: center;
+  margin-top: 60px;
+}
+
+.feature-list {
+  list-style: none;
+  padding: 0;
+}
+
+.feature-list li {
+  margin-bottom: 15px;
+  display: flex;
+  align-items: center;
+}
+
+.feature-list i {
+  color: #b99c45;
+  margin-right: 10px;
+  width: 20px;
+}
+
+.trusted-partners {
+  list-style: none;
+  padding: 0;
+}
+
+.trusted-partners li {
+  margin-bottom: 8px;
+  display: flex;
+  align-items: center;
+}
+
+.trusted-partners i {
+  color: #28a745;
+  margin-right: 8px;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .donation-hero {
+    padding: 40px 15px;
+  }
+  
+  .donation-hero h1 {
+    font-size: 2.5em !important;
+  }
+  
+  .donation-hero p {
+    font-size: 1.2em !important;
+  }
+  
+  .impact-card {
+    margin-bottom: 20px;
+  }
+  
+  .donation-sidebar {
+    position: static;
+    margin-top: 30px;
+  }
+  
+  .cta-section {
+    padding: 30px 20px;
+  }
+}
+
+@media (max-width: 576px) {
+  .donation-hero h1 {
+    font-size: 2em !important;
+  }
+  
+  .donation-hero p {
+    font-size: 1.1em !important;
+  }
+  
+  .impact-card {
+    padding: 20px;
+  }
+  
+  .highlight-box {
+    padding: 20px;
+  }
+}
+
+/* Animation for donation meter */
+.donation-meter {
+  animation: fadeInUp 1s ease-out;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Hover effects for buttons and links */
+.btn-donate {
+  background: linear-gradient(135deg, #b99c45 0%, #a08935 100%);
+  color: white;
+  border: none;
+  border-radius: 25px;
+  padding: 12px 24px;
+  font-weight: bold;
+  text-decoration: none;
+  display: inline-block;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(185,156,69,0.3);
+}
+
+.btn-donate:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(185,156,69,0.4);
+  color: white;
+  text-decoration: none;
+}
+
+/* Islamic pattern overlay */
+.islamic-pattern {
+  position: relative;
+}
+
+.islamic-pattern::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="60" height="60" viewBox="0 0 60 60"><g fill="none" fill-rule="evenodd"><g fill="rgba(255,255,255,0.05)" fill-opacity="0.1"><circle cx="30" cy="30" r="2"/></g></g></svg>');
+  pointer-events: none;
+} 
