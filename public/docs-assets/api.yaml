@@ -1,6 +1,6 @@
 openapi: 3.1.0
 info:
-    title: GlobalQuran.com API Documentation
+    title: API Documentation
     version: '1.0'
     description: |-
         ## Getting started
