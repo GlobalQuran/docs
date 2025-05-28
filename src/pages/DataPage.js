@@ -3,6 +3,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import { fetchQuranData } from '../store/slices/quranSlice';
 import JSZip from 'jszip';
 import { saveAs } from 'file-saver';
+import Footer from '../components/Footer';
 
 const DataPage = () => {
   const [selectedItems, setSelectedItems] = useState([]);
@@ -297,17 +298,7 @@ API Documentation: https://docs.globalquran.com/
 
         <hr />
 
-        <footer>
-          <ul className="list-unstyled list-inline pull-right">
-            <li><a href="https://github.com/GlobalQuran/site/issues">Feedback</a></li>
-            <li><a href="https://github.com/GlobalQuran/site/issues">Report Bug</a></li>
-            <li><a href="https://github.com/GlobalQuran/site/issues">Help</a></li>
-            <li><a href="https://blog.globalquran.com/">Blog</a></li>
-            <li><a href="https://blog.globalquran.com/about-us/">About us</a></li>
-            <li><a href="https://blog.globalquran.com/contact-us/">Contact us</a></li>
-          </ul>
-          <p>© <a href="https://globalquran.com/">GlobalQuran.com</a> 2025</p>
-        </footer>
+        <Footer />
         </>
         )}
       </div>

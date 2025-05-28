@@ -1,4 +1,5 @@
 import React from 'react';
+import Footer from '../components/Footer';
 
 const DonatePage = () => {
   return (
@@ -283,6 +284,8 @@ const DonatePage = () => {
           </div>
         </div>
       </div>
+
+      <Footer />
     </>
   );
 };
