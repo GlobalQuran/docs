@@ -146,6 +146,63 @@ If you find this project useful, please consider:
 - 🤝 Contributing code or documentation
 - 💰 [Making a donation](https://globalquran.com/donate/)
 
+## 🛠️ Development Setup
+
+### Prerequisites
+- Node.js (v18 or higher)
+- npm
+
+### Environment Configuration
+
+1. **Copy the environment template**:
+   ```bash
+   cp .env.example .env
+   ```
+
+2. **Configure reCAPTCHA** (required for contact form):
+   - Go to [Google reCAPTCHA Admin Console](https://www.google.com/recaptcha/admin/create)
+   - Create a new reCAPTCHA v2 "I'm not a robot" Checkbox site
+   - Add your domain(s) to the allowed domains list
+   - Copy the Site Key to your `.env` file:
+     ```
+     REACT_APP_RECAPTCHA_SITE_KEY=your_site_key_here
+     ```
+
+### Local Development
+
+1. **Clone the repository**:
+   ```bash
+   git clone https://github.com/GlobalQuran/site.git
+   cd site
+   ```
+
+2. **Install dependencies**:
+   ```bash
+   npm install
+   ```
+
+3. **Set up environment variables**:
+   ```bash
+   cp .env.example .env
+   # Edit .env with your configuration
+   ```
+
+4. **Start development server**:
+   ```bash
+   npm start
+   ```
+
+5. **Build for production**:
+   ```bash
+   npm run build
+   ```
+
+### Deployment
+
+The site automatically deploys to GitHub Pages when changes are pushed to the `main` branch. Make sure to add your environment variables as GitHub Secrets:
+
+- `RECAPTCHA_SITE_KEY`: Your reCAPTCHA v2 site key
+
 ---
 
 **Made with ❤️ for the global Muslim community**
