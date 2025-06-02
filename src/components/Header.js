@@ -4,7 +4,7 @@ const Header = () => {
   return (
     <div className="clearfix" style={{ marginBottom: '20px' }}>
       <div id="logo">
-        <a href="/" title="Global Quran">
+        <a href="https://GlobalQuran.com" title="Global Quran">
           <img src="/logo-alternate.png" alt="logo" />
         </a>
       </div>
