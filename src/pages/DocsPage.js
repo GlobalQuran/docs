@@ -81,6 +81,19 @@ const DocsPage = () => {
         .docs-container {
           min-height: 80vh;
         }
+        .example-link {
+          color: #007bff;
+          font-weight: 600;
+          text-decoration: none;
+        }
+        .example-link:hover {
+          color: #0056b3;
+          text-decoration: underline;
+        }
+        .example-description {
+          color: #6c757d;
+          font-weight: normal;
+        }
       `;
       document.head.appendChild(style);
     }
@@ -102,20 +115,20 @@ const DocsPage = () => {
             <div className="col-md-6">
               <h5>Basic Examples:</h5>
               <ul>
-                <li><Link to="/examples/quran-complete">Complete Quran Data</Link> - Fetch complete Quran text with translations</li>
-                <li><Link to="/examples/quran-by-surah">Quran by Surah</Link> - Retrieve specific chapters</li>
-                <li><Link to="/examples/quran-by-ayah">Quran by Ayah</Link> - Fetch individual verses</li>
-                <li><Link to="/examples/quran-list-translation">List Translations</Link> - Available translations</li>
-                <li><Link to="/examples/quran-list">Quran List</Link> - All available resources</li>
+                <li><Link to="/examples/quran-complete" className="example-link">Complete Quran Data</Link> <span className="example-description">- Fetch complete Quran text with translations</span></li>
+                <li><Link to="/examples/quran-by-surah" className="example-link">Quran by Surah</Link> <span className="example-description">- Retrieve specific chapters</span></li>
+                <li><Link to="/examples/quran-by-ayah" className="example-link">Quran by Ayah</Link> <span className="example-description">- Fetch individual verses</span></li>
+                <li><Link to="/examples/quran-list-translation" className="example-link">List Translations</Link> <span className="example-description">- Available translations</span></li>
+                <li><Link to="/examples/quran-list" className="example-link">Quran List</Link> <span className="example-description">- All available resources</span></li>
               </ul>
             </div>
             <div className="col-md-6">
               <h5>Advanced Examples:</h5>
               <ul>
-                <li><Link to="/examples/quran-list-recitors">List Recitors</Link> - Audio recitors and formats</li>
-                <li><Link to="/examples/quran-by-juz">Quran by Juz</Link> - Access by Juz (Para)</li>
-                <li><Link to="/examples/quran-by-page">Quran by Page</Link> - Retrieve by page numbers</li>
-                <li><Link to="/examples/quran-all-in-one-request">All-in-One Request</Link> - Comprehensive example</li>
+                <li><Link to="/examples/quran-list-recitors" className="example-link">List Recitors</Link> <span className="example-description">- Audio recitors and formats</span></li>
+                <li><Link to="/examples/quran-by-juz" className="example-link">Quran by Juz</Link> <span className="example-description">- Access by Juz (Para)</span></li>
+                <li><Link to="/examples/quran-by-page" className="example-link">Quran by Page</Link> <span className="example-description">- Retrieve by page numbers</span></li>
+                <li><Link to="/examples/quran-all-in-one-request" className="example-link">All-in-One Request</Link> <span className="example-description">- Comprehensive example</span></li>
               </ul>
             </div>
           </div>
