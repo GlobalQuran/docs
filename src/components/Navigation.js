@@ -1,11 +1,20 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 
 const Navigation = () => {
   const [isCollapsed, setIsCollapsed] = useState(true);
+  const location = useLocation();
 
   const toggleNavbar = () => {
     setIsCollapsed(!isCollapsed);
+  };
+
+  // Function to determine if a path is active
+  const isActive = (path) => {
+    if (path === '/' && location.pathname === '/') {
+      return true;
+    }
+    return path !== '/' && location.pathname.startsWith(path);
   };
 
   return (
@@ -28,15 +37,15 @@ const Navigation = () => {
         <div className={`collapse navbar-collapse navbar-ex1-collapse ${!isCollapsed ? 'in' : ''}`}>
           <ul className="nav navbar-nav">
             <li><a href="https://globalquran.com/" target="_blank" rel="noopener noreferrer">Home</a></li>
-            <li><Link to="/">Documentation</Link></li>
-            <li><Link to="/data">Download Data</Link></li>
-            <li><Link to="/audio">Audio</Link></li>
-            <li><Link to="/assets">Assets</Link></li>
+            <li className={isActive('/') ? 'active' : ''}><Link to="/">Documentation</Link></li>
+            <li className={isActive('/data') ? 'active' : ''}><Link to="/data">Download Data</Link></li>
+            <li className={isActive('/audio') ? 'active' : ''}><Link to="/audio">Audio</Link></li>
+            <li className={isActive('/assets') ? 'active' : ''}><Link to="/assets">Assets</Link></li>
           </ul>
 
           <ul className="nav navbar-nav navbar-right">
-            <li><Link to="/donate">Why Donate?</Link></li>
-            <li style={{ paddingTop: '5px' }}>
+            <li className={isActive('/donate') ? 'active' : ''}><Link to="/donate">Why Donate?</Link></li>
+            <li className={isActive('/donate') ? 'active' : ''} style={{ paddingTop: '5px' }}>
               <Link 
                 to="/donate" 
                 className="btn btn-sm"
