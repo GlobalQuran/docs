@@ -3,47 +3,94 @@ info:
     title: API Documentation
     version: '1.0'
     description: |-
-        ## Getting started
+        ## Getting Started
 
-        _**GlobalQuran is a well-written ecosystem of UI pages, widgets, APIs, and searches that anyone can use to embed Quran directly on their site.**_
+        _**GlobalQuran API is a high-performance REST API service, providing comprehensive access to Quranic text, translations, and audio recitations.**_
 
-        _This is whether you use **WordPress, Facebook, PHP, just plain html**__**+js,**_ or anything else.
+        This API enables developers to easily integrate Quranic content into their applications, websites, mobile apps, or any other platform. Whether you're building a **WordPress plugin, React app, mobile application, or desktop software**, our API provides the data you need.
 
-        GlobalQuran (GQ) aims to enable different website, mobile, and desktop developers to reuse existing codebases and quickly embed Quran on their websites.
+        ### Key Features
 
-        * allow max reuse; avoid everyone reinventing the wheel
-        * fully and allow user customizations. overwrite CSS styles or pretty much anything else
-        * all the code is up on git and APIs are well documented below
+        - **High Performance**: Built with Go for optimal speed and efficiency
+        - **Multiple Response Formats**: JSON, JSONP, and plain text support
+        - **Flexible Endpoints**: Access Quran by page, surah, juz, or individual ayah
+        - **Multiple Quran IDs**: Support for various Quran texts, translations, and formats
+        - **Language Support**: Multi-language metadata and content
+        - **Versioned API**: Both v1 and v2 endpoints available
+        - **Comprehensive Data**: Get Quran content, translations, recitors, and metadata in single requests
 
-        **Get My API Key**
+        ### API Versions
 
-        To get started with API requests, you will need an API key. Get your [API KEY](http://globalquran.com/contribute/signup.php) now.
+        - **v1 Endpoints**: `/v1/*` - Stable API with comprehensive Quran data access
+        - **v2 Endpoints**: `/v2/*` - Enhanced endpoints with improved data structures and filtering
 
+        ### Response Formats
 
-        **About GlobalQuran**
+        All endpoints support multiple response formats:
 
-        * [About us](https://blog.globalquran.com/about-us/)
-        * [Contributors](https://blog.globalquran.com/about-us/)
-        * [Download Code](https://github.com/GlobalQuran/site)
-        * [Blog](https://blog.globalquran.com/)
-        * [Features](https://blog.globalquran.com/feature-list/)
-        * [Donate](https://globalquran.com/donate)
+        - **JSON** (default): `GET /v1/quran` or `GET /v1/quran.json`
+        - **JSONP**: `GET /v1/quran.jsonp?callback=myFunction`
+        - **Text**: `GET /v1/quran.txt`
 
+        ### Quick Start Examples
 
-        **Plugins**
+        ```bash
+        # Get Quran metadata
+        curl "https://api.globalquran.com/v1/quran?key=YOUR_API_KEY"
 
-        * [wordpress plugin](http://blog.globalquran.com/help/wordpress-plugin/)
+        # Get Surah Al-Fatiha
+        curl "https://api.globalquran.com/v1/surah/1/quran-simple?key=YOUR_API_KEY"
 
+        # Get page 1 with multiple Quran IDs
+        curl "https://api.globalquran.com/v1/page/1/quran-simple,en.sahih?key=YOUR_API_KEY"
 
-        **Javascript Library**
+        # Get Ayat al-Kursi (2:255)
+        curl "https://api.globalquran.com/v1/ayah/2:255/quran-wordbyword?key=YOUR_API_KEY"
 
-        * [Quran](https://github.com/GlobalQuran/v3/blob/main/javascript/Quran.js)
-        * [GQ](https://github.com/GlobalQuran/v3/blob/main/javascript/GQ.js)
+        # Get all data for initial page load
+        curl "https://api.globalquran.com/v1/all/surah/1/quran-simple/en?key=YOUR_API_KEY"
 
+        # Using header authentication
+        curl -H "X-API-Key: YOUR_API_KEY" https://api.globalquran.com/v1/quran
+        ```
 
-        **PHP Library**
+        ### Authentication
 
-        * [Quran](https://github.com/GlobalQuran/lab/blob/master/plugins/quran-tool/quran.class.php)
+        **API Key Required**: All API requests require a valid API key for authentication and access control.
+
+        **API Key Methods:**
+        - **Query Parameter**: `?key=YOUR_API_KEY`
+        - **Header**: `X-API-Key: YOUR_API_KEY`
+        - **Legacy Parameter**: `?api+key=YOUR_API_KEY` or `?apikey=YOUR_API_KEY`
+
+        **Authentication Rules:**
+        - **v1 APIs** (`/v1/*`): API key is **required**
+        - **v2 APIs** (`/v2/*`): API key is **required**
+        - **Rate Limiting**: Applied based on your API key tier
+        - **Service Access**: Your API key must have access to the Quran service
+
+        **Getting Your API Key:**
+        Contact the GlobalQuran team to obtain an API key for your application.
+
+        ### Rate Limits
+
+        Rate limiting is applied based on your API key configuration. Please implement appropriate caching and avoid excessive requests.
+
+        ### Developer Resources
+
+        **Plugins and Libraries**
+
+        - [WordPress Plugin](http://blog.globalquran.com/help/wordpress-plugin/)
+        - [JavaScript Library](https://github.com/GlobalQuran/v3/blob/main/javascript/Quran.js)
+        - [PHP Library](https://github.com/GlobalQuran/lab/blob/master/plugins/quran-tool/quran.class.php)
+
+        **Development Philosophy**
+
+        GlobalQuran aims to enable different website, mobile, and desktop developers to reuse existing codebases and quickly embed Quran on their websites.
+
+        - Allow maximum reuse; avoid everyone reinventing the wheel
+        - Fully customizable with CSS styles and other customizations
+        - All code is open source and APIs are well documented
     contact:
         email: info@globalquran.com
         name: Global Quran
@@ -54,161 +101,430 @@ info:
 servers:
     - url: 'https://api.globalquran.com'
 paths:
-    /quran:
+    /v1/quran:
         get:
-            summary: Quran / Translation / Recitor List
-            tags: []
+            summary: Quran List (v1)
+            tags: [v1]
+            security:
+                - ApiKeyAuth: []
+                - ApiKeyHeader: []
             responses:
                 '200':
                     $ref: '#/components/responses/quranList'
-            operationId: get-quran-list
+                '401':
+                    $ref: '#/components/responses/unauthorized'
+                '403':
+                    $ref: '#/components/responses/forbidden'
+                '503':
+                    $ref: '#/components/responses/serviceUnavailable'
+            operationId: get-quran-list-v1
             description: |-
-                Get Quran, Translation and Recitor available list.
-
-                Basic information about the saved data and each key will be used to fetch further data of quran, translation or available audios using the available apis.
-
-                ***Demo***
-
-                [quran list](https://docs.globalquran.com/examples/quran-list.html) - ([source](https://github.com/GlobalQuran/docs/blob/main/examples/quran-list.html))
-
-                [translation list](https://docs.globalquran.com/examples/quran-list-translation.html) - ([source](https://github.com/GlobalQuran/docs/blob/main/examples/quran-list-translation.html))
-
-                [recitor list](https://docs.globalquran.com/examples/quran-list-recitors.html) - ([source](https://github.com/GlobalQuran/docs/blob/main/examples/quran-list-recitors.html))
+                Get Quran, Translation and Recitor available list (v1 endpoint).
+                
+                **Authentication Required**: API key must be provided via query parameter or header.
             parameters:
                 - $ref: '#/components/parameters/jsoncallback'
-    '/page/{pageNo}/{quranId}':
-        parameters:
-            - $ref: '#/components/parameters/pageNo'
-            - $ref: '#/components/parameters/quranId'
-            - $ref: '#/components/parameters/jsoncallback'
-        get:
-            summary: Get Quran Page
-            tags: []
-            responses:
-                '200':
-                    $ref: '#/components/responses/quranTextList'
-            operationId: get-quran-page
-            description: |-
-                Fetchs the quran data page by page.
-
-                There are total 604 pages of Quran.
-
-                Pages can be accessed by page number, verse number or surah:ayah number.
-
-
-                ***Get page number value examples:***
-
-                55 (page number will be pulled)
-                2:1 (page will be pulled for surah 2 and ayah number 1)
-
-                ***Demo***
-
-                [quran by page](https://docs.globalquran.com/examples/quran-by-page.html) - ([source](https://github.com/GlobalQuran/docs/blob/main/examples/quran-by-page.html))
-    '/surah/{surahNo}/{quranId}':
+    /v1/surah/{surahNo}/{quranId}:
         parameters:
             - $ref: '#/components/parameters/surahNo'
             - $ref: '#/components/parameters/quranId'
             - $ref: '#/components/parameters/jsoncallback'
         get:
-            summary: Get Quran Surah
-            tags: []
+            summary: Get Quran Surah (v1)
+            tags: [v1]
+            security:
+                - ApiKeyAuth: []
+                - ApiKeyHeader: []
             responses:
                 '200':
                     $ref: '#/components/responses/quranTextList'
-            operationId: get-quran-surah
+                '400':
+                    $ref: '#/components/responses/badRequest'
+                '401':
+                    $ref: '#/components/responses/unauthorized'
+                '403':
+                    $ref: '#/components/responses/forbidden'
+            operationId: get-quran-surah-v1
             description: |-
-                Quran data content surah by surah
-
-                There are total 114 surah
-
-                ***Demo***
-
-                [quran by surah](https://docs.globalquran.com/examples/quran-by-surah.html) - ([source](https://github.com/GlobalQuran/docs/blob/main/examples/quran-by-surah.html))
-    '/juz/{juzNo}/{quranId}':
+                Quran data content surah by surah (v1 endpoint).
+                
+                **Authentication Required**: API key must be provided via query parameter or header.
+    /v1/page/{pageNo}/{quranId}:
+        parameters:
+            - $ref: '#/components/parameters/pageNo'
+            - $ref: '#/components/parameters/quranId'
+            - $ref: '#/components/parameters/jsoncallback'
+        get:
+            summary: Get Quran Page (v1)
+            tags: [v1]
+            security:
+                - ApiKeyAuth: []
+                - ApiKeyHeader: []
+            responses:
+                '200':
+                    $ref: '#/components/responses/quranTextList'
+                '400':
+                    $ref: '#/components/responses/badRequest'
+                '401':
+                    $ref: '#/components/responses/unauthorized'
+                '403':
+                    $ref: '#/components/responses/forbidden'
+            operationId: get-quran-page-v1
+            description: |-
+                Fetch Quran data page by page (v1 endpoint).
+                
+                **Authentication Required**: API key must be provided via query parameter or header.
+    /v1/juz/{juzNo}/{quranId}:
         parameters:
             - $ref: '#/components/parameters/juzNo'
             - $ref: '#/components/parameters/quranId'
             - $ref: '#/components/parameters/jsoncallback'
         get:
-            summary: Get Quran Juz
-            tags: []
+            summary: Get Quran Juz (v1)
+            tags: [v1]
+            security:
+                - ApiKeyAuth: []
+                - ApiKeyHeader: []
             responses:
                 '200':
                     $ref: '#/components/responses/quranTextList'
-            operationId: get-quran-juz
+                '400':
+                    $ref: '#/components/responses/badRequest'
+                '401':
+                    $ref: '#/components/responses/unauthorized'
+                '403':
+                    $ref: '#/components/responses/forbidden'
+            operationId: get-quran-juz-v1
             description: |-
-                Quran data content juz by juz.
-
-                There are total 30 juz
-
-                ***Demo***
-
-                [quran by juz](https://docs.globalquran.com/examples/quran-by-juz.html) - ([source](https://github.com/GlobalQuran/docs/blob/main/examples/quran-by-juz.html))
-    '/ayah/{ayahNo}/{quranId}':
+                Quran data content juz by juz (v1 endpoint).
+                
+                **Authentication Required**: API key must be provided via query parameter or header.
+    /v1/ayah/{ayahNo}/{quranId}:
         parameters:
             - $ref: '#/components/parameters/ayahNo'
             - $ref: '#/components/parameters/quranId'
             - $ref: '#/components/parameters/jsoncallback'
         get:
-            summary: Get Quran Ayaz
-            tags: []
+            summary: Get Quran Ayah (v1)
+            tags: [v1]
+            security:
+                - ApiKeyAuth: []
+                - ApiKeyHeader: []
             responses:
                 '200':
                     $ref: '#/components/responses/quranTextAyah'
-            operationId: get-quran-ayah
+                '400':
+                    $ref: '#/components/responses/badRequest'
+                '401':
+                    $ref: '#/components/responses/unauthorized'
+                '403':
+                    $ref: '#/components/responses/forbidden'
+            operationId: get-quran-ayah-v1
             description: |-
-                This will pull the single ayah content only
-
-                There are total 6236 ayahs
-
-
-                ***Demo***
-
-                [quran by ayah](https://docs.globalquran.com/examples/quran-by-ayah.html) - ([source](https://github.com/GlobalQuran/docs/blob/main/examples/quran-by-ayah.html))
-    '/complete/{quranId}':
+                Get single ayah content (v1 endpoint).
+                
+                **Authentication Required**: API key must be provided via query parameter or header.
+    /v1/complete/{quranId}:
         parameters:
             - $ref: '#/components/parameters/quranId'
             - $ref: '#/components/parameters/format'
             - $ref: '#/components/parameters/jsoncallback'
         get:
-            summary: Get Complete Quran
-            tags: []
-            operationId: get-quran-complete
+            summary: Get Complete Quran (v1)
+            tags: [v1]
+            security:
+                - ApiKeyAuth: []
+                - ApiKeyHeader: []
+            operationId: get-quran-complete-v1
             responses:
                 '200':
                     $ref: '#/components/responses/quranCompleteData'
+                '400':
+                    $ref: '#/components/responses/badRequest'
+                '401':
+                    $ref: '#/components/responses/unauthorized'
+                '403':
+                    $ref: '#/components/responses/forbidden'
             description: |-
-                Get's the complete quran with one request. useful for offline mode.
-
-
-                ***Demo***
-
-                [complete quran](https://docs.globalquran.com/examples/quran-complete.html) - ([source](https://github.com/GlobalQuran/docs/blob/main/examples/quran-complete.html))
-    '/all/{dataIn}/{dataInNo}/{quranId}/{langCode}':
+                Get complete Quran with one request (v1 endpoint).
+                
+                **Authentication Required**: API key must be provided via query parameter or header.
+    /v1/all/{dataIn}/{dataInNo}/{quranId}/{langCode}:
         parameters:
-            - $ref: '#/components/parameters/dataIn'
-            - $ref: '#/components/parameters/dataInNo'
-            - $ref: '#/components/parameters/quranId'
-            - $ref: '#/components/parameters/langCode'
+            - name: dataIn
+              in: path
+              required: true
+              schema:
+                type: string
+                enum: [page, surah, juz, ayah]
+              description: Type of data to retrieve
+              example: page
+            - name: dataInNo
+              in: path
+              required: true
+              schema:
+                type: string
+              description: Number for the data type (page number, surah number, juz number, ayah number, or surah:ayah format)
+              example: "1"
+            - name: quranId
+              in: path
+              required: true
+              schema:
+                type: string
+              description: Quran ID(s) separated by comma or pipe. Supports multiple IDs.
+              example: quran-simple
+            - name: langCode
+              in: path
+              required: true
+              schema:
+                type: string
+              description: Language code for language-specific data
+              example: en
             - $ref: '#/components/parameters/jsoncallback'
         get:
-            summary: Getting All with One Request
-            tags: []
+            summary: Get All Data with One Request (v1)
+            tags: [v1]
+            security:
+                - ApiKeyAuth: []
+                - ApiKeyHeader: []
             responses:
                 '200':
                     $ref: '#/components/responses/requestAll'
-            operationId: get-all
+                '400':
+                    $ref: '#/components/responses/badRequest'
+                '401':
+                    $ref: '#/components/responses/unauthorized'
+                '403':
+                    $ref: '#/components/responses/forbidden'
+                '500':
+                    $ref: '#/components/responses/internalServerError'
+            operationId: get-all-v1
             description: |-
-                Fetchs the quran data, quran list, recitor list, language list, user country, user country language list and user country default language. This method we use on GlobalQuran.com 3.0.
+                Fetches Quran data combined with language information in a single request. This endpoint combines Quran content with language metadata for comprehensive data access.
 
-                Use this method only on first time call, on next call use quran data for pages, surah, juz or ayah only.
+                **Authentication Required**: API key must be provided via query parameter or header.
 
+                **Data Types (dataIn):**
+                - `page` - Get by page number (1-604)
+                - `surah` - Get by surah number (1-114)
+                - `juz` - Get by juz number (1-30)
+                - `ayah` - Get by ayah number (1-6236) or surah:ayah format (e.g., "2:255")
+
+                **Response Formats:**
+                - JSON (default)
+                - JSONP (add .jsonp extension or ?callback=functionName)
+                - Text (add .txt extension)
+
+                **Examples:**
+                - `/v1/all/page/1/quran-simple/en` - Get page 1 with simple Quran text
+                - `/v1/all/surah/2/quran-wordbyword/en` - Get Surah Al-Baqarah with word-by-word
+                - `/v1/all/ayah/2:255/quran-simple/en` - Get Ayat al-Kursi
+                - `/v1/all/juz/1/quran-simple,en.sahih/en` - Get Juz 1 with multiple Quran IDs
 
                 ***Demo***
 
                 [all request in one](https://docs.globalquran.com/examples/quran-all-in-one-request.html) - ([source](https://github.com/GlobalQuran/docs/blob/main/examples/quran-all-in-one-request.html))
+    /v2/list/translation:
+        get:
+            summary: List Translations (v2)
+            tags: [v2]
+            security:
+                - ApiKeyAuth: []
+                - ApiKeyHeader: []
+            responses:
+                '200':
+                    $ref: '#/components/responses/v2ListResponse'
+                '401':
+                    $ref: '#/components/responses/unauthorized'
+                '403':
+                    $ref: '#/components/responses/forbidden'
+                '503':
+                    $ref: '#/components/responses/serviceUnavailable'
+            operationId: get-translation-list-v2
+            description: |-
+                Get filtered list of translation entries with improved media format (v2 API).
+                
+                **Authentication Required**: API key must be provided via query parameter or header.
+                
+                **Response Formats:**
+                - JSON (default)
+                - JSONP (add .jsonp extension or ?callback=functionName)
+                - Text (add .txt extension)
+                
+                **Improvements over v1:**
+                - Media field is returned as JSON object instead of string
+                - Better structured response format
+                - Improved filtering capabilities
+            parameters:
+                - $ref: '#/components/parameters/jsoncallback'
+    /v2/list/recitor:
+        get:
+            summary: List Recitors (v2)
+            tags: [v2]
+            security:
+                - ApiKeyAuth: []
+                - ApiKeyHeader: []
+            responses:
+                '200':
+                    $ref: '#/components/responses/v2ListResponse'
+                '401':
+                    $ref: '#/components/responses/unauthorized'
+                '403':
+                    $ref: '#/components/responses/forbidden'
+                '503':
+                    $ref: '#/components/responses/serviceUnavailable'
+            operationId: get-recitor-list-v2
+            description: |-
+                Get filtered list of audio recitor entries with improved media format (v2 API).
+                
+                **Authentication Required**: API key must be provided via query parameter or header.
+                
+                **Response Formats:**
+                - JSON (default)
+                - JSONP (add .jsonp extension or ?callback=functionName)
+                - Text (add .txt extension)
+                
+                **Improvements over v1:**
+                - Media field is returned as JSON object instead of string
+                - Better structured response format
+                - Improved filtering capabilities
+            parameters:
+                - $ref: '#/components/parameters/jsoncallback'
+    /v2/list/quran:
+        get:
+            summary: List Quran Texts (v2)
+            tags: [v2]
+            security:
+                - ApiKeyAuth: []
+                - ApiKeyHeader: []
+            responses:
+                '200':
+                    $ref: '#/components/responses/v2ListResponse'
+                '401':
+                    $ref: '#/components/responses/unauthorized'
+                '403':
+                    $ref: '#/components/responses/forbidden'
+                '503':
+                    $ref: '#/components/responses/serviceUnavailable'
+            operationId: get-quran-list-v2
+            description: |-
+                Get filtered list of Quran text entries with improved media format (v2 API).
+                
+                **Authentication Required**: API key must be provided via query parameter or header.
+                
+                **Response Formats:**
+                - JSON (default)
+                - JSONP (add .jsonp extension or ?callback=functionName)
+                - Text (add .txt extension)
+                
+                **Improvements over v1:**
+                - Media field is returned as JSON object instead of string
+                - Better structured response format
+                - Improved filtering capabilities
+            parameters:
+                - $ref: '#/components/parameters/jsoncallback'
 components:
+    securitySchemes:
+        ApiKeyAuth:
+            type: apiKey
+            in: query
+            name: key
+            description: API key for authentication
+        ApiKeyHeader:
+            type: apiKey
+            in: header
+            name: X-API-Key
+            description: API key in header
     schemas:
+        v2QuranItem:
+            type: object
+            properties:
+                language_code:
+                    type: string
+                    example: en
+                name:
+                    type: string
+                    example: Sahih International
+                english_name:
+                    type: string
+                    example: Sahih International
+                native_name:
+                    type: string
+                    example: Sahih International
+                format:
+                    type: string
+                    example: text
+                type:
+                    type: string
+                    example: translation
+                source:
+                    type: string
+                    example: Sahih International
+                default:
+                    type: boolean
+                    example: true
+                media:
+                    type: object
+                    additionalProperties: true
+                    example:
+                        url: "https://cdn.globalquran.com/en.sahih.json"
+                        size: "2.5MB"
+                last_update:
+                    type: string
+                    example: "2024-01-15"
+                supported_version:
+                    type: number
+                    example: 1.0
+        quranItem:
+            type: object
+            properties:
+                language_code:
+                    type: string
+                    example: ar
+                name:
+                    type: string
+                    example: Quran Simple
+                english_name:
+                    type: string
+                    example: Quran Simple
+                native_name:
+                    type: string
+                    example: القرآن الكريم
+                format:
+                    type: string
+                    example: text
+                type:
+                    type: string
+                    example: quran
+                source:
+                    type: string
+                    example: qurancomplex.gov.sa
+                default:
+                    type: boolean
+                    example: false
+                media:
+                    type: array
+                    items:
+                        type: string
+                    example: []
+                last_update:
+                    type: string
+                    example: "2016-07-11"
+        verse:
+            type: object
+            properties:
+                id:
+                    type: integer
+                    example: 1
+                surah:
+                    type: integer
+                    example: 1
+                ayah:
+                    type: integer
+                    example: 1
+                verse:
+                    type: string
+                    example: "بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ"
         quranList:
             type: object
             examples:
@@ -2097,6 +2413,158 @@ components:
             allowEmptyValue: true
     examples: {}
     responses:
+        unauthorized:
+            description: Unauthorized - API key required or invalid
+            content:
+                application/json:
+                    schema:
+                        type: object
+                        properties:
+                            error:
+                                type: string
+                                example: "API key is required for versioned APIs"
+                            error_code:
+                                type: string
+                                example: "API_KEY_REQUIRED"
+                            timestamp:
+                                type: string
+                                format: date-time
+                                example: "2024-01-15T10:30:00Z"
+                application/javascript:
+                    schema:
+                        type: string
+                        example: "quranData({\"error\":\"API key is required for versioned APIs\",\"error_code\":\"API_KEY_REQUIRED\",\"timestamp\":\"2024-01-15T10:30:00Z\"});"
+                text/plain:
+                    schema:
+                        type: string
+                        example: "Error: API key is required for versioned APIs\nError Code: API_KEY_REQUIRED\nTimestamp: 2024-01-15T10:30:00Z"
+        forbidden:
+            description: Forbidden - API key valid but access denied
+            content:
+                application/json:
+                    schema:
+                        type: object
+                        properties:
+                            error:
+                                type: string
+                                example: "Application is disabled"
+                            error_code:
+                                type: string
+                                example: "APP_DISABLED"
+                            timestamp:
+                                type: string
+                                format: date-time
+                                example: "2024-01-15T10:30:00Z"
+                application/javascript:
+                    schema:
+                        type: string
+                        example: "quranData({\"error\":\"Application is disabled\",\"error_code\":\"APP_DISABLED\",\"timestamp\":\"2024-01-15T10:30:00Z\"});"
+                text/plain:
+                    schema:
+                        type: string
+                        example: "Error: Application is disabled\nError Code: APP_DISABLED\nTimestamp: 2024-01-15T10:30:00Z"
+        badRequest:
+            description: Bad request error
+            content:
+                application/json:
+                    schema:
+                        type: object
+                        properties:
+                            error:
+                                type: string
+                                example: "Invalid parameter value"
+                            timestamp:
+                                type: string
+                                format: date-time
+                                example: "2024-01-15T10:30:00Z"
+                application/javascript:
+                    schema:
+                        type: string
+                        example: "quranData({\"error\":\"Invalid parameter value\",\"timestamp\":\"2024-01-15T10:30:00Z\"});"
+                text/plain:
+                    schema:
+                        type: string
+                        example: "Error: Invalid parameter value\nTimestamp: 2024-01-15T10:30:00Z"
+        internalServerError:
+            description: Internal server error
+            content:
+                application/json:
+                    schema:
+                        type: object
+                        properties:
+                            error:
+                                type: string
+                                example: "Internal server error"
+                            timestamp:
+                                type: string
+                                format: date-time
+                                example: "2024-01-15T10:30:00Z"
+                application/javascript:
+                    schema:
+                        type: string
+                        example: "quranData({\"error\":\"Internal server error\",\"timestamp\":\"2024-01-15T10:30:00Z\"});"
+                text/plain:
+                    schema:
+                        type: string
+                        example: "Error: Internal server error\nTimestamp: 2024-01-15T10:30:00Z"
+        serviceUnavailable:
+            description: Service unavailable
+            content:
+                application/json:
+                    schema:
+                        type: object
+                        properties:
+                            error:
+                                type: string
+                                example: "Database service is currently unavailable"
+                            message:
+                                type: string
+                                example: "Please try again later"
+                application/javascript:
+                    schema:
+                        type: string
+                        example: "quranData({\"error\":\"Database service is currently unavailable\",\"message\":\"Please try again later\"});"
+                text/plain:
+                    schema:
+                        type: string
+                        example: "GlobalQuran.com - Error\n\nDatabase service is currently unavailable.\nPlease try again later."
+        v2ListResponse:
+            description: V2 list response with improved media format
+            content:
+                application/json:
+                    schema:
+                        type: object
+                        properties:
+                            list:
+                                type: object
+                                additionalProperties:
+                                    $ref: '#/components/schemas/v2QuranItem'
+                    examples:
+                        Example 1:
+                            value:
+                                list:
+                                    en.sahih:
+                                        language_code: en
+                                        name: Sahih International
+                                        english_name: Sahih International
+                                        native_name: Sahih International
+                                        format: text
+                                        type: translation
+                                        source: Sahih International
+                                        default: true
+                                        media:
+                                            url: "https://cdn.globalquran.com/en.sahih.json"
+                                            size: "2.5MB"
+                                        last_update: "2024-01-15"
+                                        supported_version: 1.0
+                application/javascript:
+                    schema:
+                        type: string
+                        example: "quranData({\"list\":{\"en.sahih\":{\"language_code\":\"en\",\"name\":\"Sahih International\",\"english_name\":\"Sahih International\",\"native_name\":\"Sahih International\",\"format\":\"text\",\"type\":\"translation\",\"source\":\"Sahih International\",\"default\":true,\"media\":{\"url\":\"https://cdn.globalquran.com/en.sahih.json\",\"size\":\"2.5MB\"},\"last_update\":\"2024-01-15\",\"supported_version\":1.0}}});"
+                text/plain:
+                    schema:
+                        type: string
+                        example: "GlobalQuran.com\n\nTranslation List:\n\nen.sahih - Sahih International\nLanguage: English\nType: Translation\nDefault: Yes\nLast Update: 2024-01-15"
         quranList:
             description: ''
             content:
@@ -3604,76 +4072,180 @@ components:
                                         media: []
                                         last_update: '2016-07-11'
         quranTextList:
-            description: null
+            description: Quran text data response
             content:
                 application/json:
                     schema:
-                        $ref: '#/components/schemas/quranText'
+                        type: object
+                        properties:
+                            quran:
+                                type: object
+                                additionalProperties:
+                                    type: object
+                                    additionalProperties:
+                                        $ref: '#/components/schemas/verse'
                     examples:
-                        quran-simple-id-example:
+                        quran-simple-example:
                             value:
                                 quran:
                                     quran-simple:
-                                        '6222':
-                                            surah: 112
+                                        "1":
+                                            id: 1
+                                            surah: 1
                                             ayah: 1
-                                            verse: بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ قُلْ هُوَ اللَّهُ أَحَدٌ
-                                        '6223':
-                                            surah: 112
+                                            verse: "بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ"
+                                        "2":
+                                            id: 2
+                                            surah: 1
                                             ayah: 2
-                                            verse: اللَّهُ الصَّمَدُ
-                                        '6224':
-                                            surah: 112
-                                            ayah: 3
-                                            verse: لَمْ يَلِدْ وَلَمْ يُولَدْ
-                                        '6225':
-                                            surah: 112
-                                            ayah: 4
-                                            verse: وَلَمْ يَكُنْ لَهُ كُفُوًا أَحَدٌ
-                                        '6226':
-                                            surah: 113
+                                            verse: "الْحَمْدُ لِلَّهِ رَبِّ الْعَالَمِينَ"
+                application/javascript:
+                    schema:
+                        type: string
+                        example: "quranData({\"quran\":{\"quran-simple\":{\"1\":{\"id\":1,\"surah\":1,\"ayah\":1,\"verse\":\"بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ\"},\"2\":{\"id\":2,\"surah\":1,\"ayah\":2,\"verse\":\"الْحَمْدُ لِلَّهِ رَبِّ الْعَالَمِينَ\"}}}});"
+                text/plain:
+                    schema:
+                        type: string
+                        example: "GlobalQuran.com\nSurah: 1\nQuran ID: quran-simple\nVerses:\n--------\nAyah 1: بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ\n\nAyah 2: الْحَمْدُ لِلَّهِ رَبِّ الْعَالَمِينَ"
+        quranTextAyah:
+            description: Single ayah response
+            content:
+                application/json:
+                    schema:
+                        type: object
+                        properties:
+                            quran:
+                                type: object
+                                additionalProperties:
+                                    type: object
+                                    additionalProperties:
+                                        $ref: '#/components/schemas/verse'
+                    examples:
+                        ayah-example:
+                            value:
+                                quran:
+                                    quran-simple:
+                                        "1":
+                                            id: 1
+                                            surah: 1
                                             ayah: 1
-                                            verse: بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ قُلْ أَعُوذُ بِرَبِّ الْفَلَقِ
-                                        '6227':
-                                            surah: 113
-                                            ayah: 2
-                                            verse: مِنْ شَرِّ مَا خَلَقَ
-                                        '6228':
-                                            surah: 113
-                                            ayah: 3
-                                            verse: وَمِنْ شَرِّ غَاسِقٍ إِذَا وَقَبَ
-                                        '6229':
-                                            surah: 113
-                                            ayah: 4
-                                            verse: وَمِنْ شَرِّ النَّفَّاثَاتِ فِي الْعُقَدِ
-                                        '6230':
-                                            surah: 113
-                                            ayah: 5
-                                            verse: وَمِنْ شَرِّ حَاسِدٍ إِذَا حَسَدَ
-                                        '6231':
-                                            surah: 114
+                                            verse: "بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ"
+                application/javascript:
+                    schema:
+                        type: string
+                        example: "quranData({\"quran\":{\"quran-simple\":{\"1\":{\"id\":1,\"surah\":1,\"ayah\":1,\"verse\":\"بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ\"}}}});"
+                text/plain:
+                    schema:
+                        type: string
+                        example: "GlobalQuran.com\nVerse: 1\nQuran ID: quran-simple\nContent:\n--------\nVerse 1 (Surah 1, Ayah 1):\nبِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ"
+        quranCompleteData:
+            description: Complete Quran data response
+            content:
+                application/json:
+                    schema:
+                        type: object
+                        properties:
+                            quran:
+                                type: object
+                                additionalProperties:
+                                    type: object
+                                    additionalProperties:
+                                        $ref: '#/components/schemas/verse'
+                    examples:
+                        complete-example:
+                            value:
+                                quran:
+                                    quran-simple:
+                                        "1":
+                                            id: 1
+                                            surah: 1
                                             ayah: 1
-                                            verse: بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ قُلْ أَعُوذُ بِرَبِّ النَّاسِ
-                                        '6232':
-                                            surah: 114
+                                            verse: "بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ"
+                                        "2":
+                                            id: 2
+                                            surah: 1
                                             ayah: 2
-                                            verse: مَلِكِ النَّاسِ
-                                        '6233':
-                                            surah: 114
-                                            ayah: 3
-                                            verse: إِلَٰهِ النَّاسِ
-                                        '6234':
-                                            surah: 114
-                                            ayah: 4
-                                            verse: مِنْ شَرِّ الْوَسْوَاسِ الْخَنَّاسِ
-                                        '6235':
-                                            surah: 114
-                                            ayah: 5
-                                            verse: الَّذِي يُوَسْوِسُ فِي صُدُورِ النَّاسِ
-                                        '6236':
+                                            verse: "الْحَمْدُ لِلَّهِ رَبِّ الْعَالَمِينَ"
+                                        "6236":
+                                            id: 6236
                                             surah: 114
                                             ayah: 6
-                                            verse: مِنَ الْجِنَّةِ وَالنَّاسِ
+                                            verse: "مِنَ الْجِنَّةِ وَالنَّاسِ"
+                application/javascript:
+                    schema:
+                        type: string
+                        example: "quranData({\"quran\":{\"quran-simple\":{\"1\":{\"id\":1,\"surah\":1,\"ayah\":1,\"verse\":\"بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ\"},\"6236\":{\"id\":6236,\"surah\":114,\"ayah\":6,\"verse\":\"مِنَ الْجِنَّةِ وَالنَّاسِ\"}}}});"
+                text/plain:
+                    schema:
+                        type: string
+                        example: "GlobalQuran.com\nComplete Quran\nQuran ID: quran-simple\nTotal Verses: 6236\n\n[Complete Quran text in plain format]"
+        requestAll:
+            description: Combined Quran data and language information response
+            content:
+                application/json:
+                    schema:
+                        type: object
+                        properties:
+                            quran:
+                                type: object
+                                additionalProperties:
+                                    type: object
+                                    additionalProperties:
+                                        $ref: '#/components/schemas/verse'
+                            quranList:
+                                type: object
+                                additionalProperties:
+                                    $ref: '#/components/schemas/quranItem'
+                            languageList:
+                                type: object
+                                additionalProperties: true
+                            languageCountryList:
+                                type: object
+                                additionalProperties: true
+                            languageSelected:
+                                type: string
+                                example: en
+                    examples:
+                        all-example:
+                            value:
+                                quran:
+                                    quran-simple:
+                                        "1":
+                                            id: 1
+                                            surah: 1
+                                            ayah: 1
+                                            verse: "بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ"
+                                quranList:
+                                    quran-simple:
+                                        language_code: ar
+                                        name: Quran Simple
+                                        english_name: Quran Simple
+                                        native_name: القرآن الكريم
+                                        format: text
+                                        type: quran
+                                        source: qurancomplex.gov.sa
+                                        default: false
+                                        media: []
+                                        last_update: "2016-07-11"
+                                languageList:
+                                    en:
+                                        name: English
+                                        native_name: English
+                                languageCountryList:
+                                    en:
+                                        country_name: United States
+                                        country_english_name: United States
+                                        country_native_name: ""
+                                languageSelected: en
+                                en: ""
+                application/javascript:
+                    schema:
+                        type: string
+                        example: "quranData({\"quran\":{\"quran-simple\":{\"1\":{\"id\":1,\"surah\":1,\"ayah\":1,\"verse\":\"بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ\"}}},\"quranList\":{\"quran-simple\":{\"language_code\":\"ar\",\"name\":\"Quran Simple\",\"english_name\":\"Quran Simple\",\"native_name\":\"القرآن الكريم\",\"format\":\"text\",\"type\":\"quran\",\"source\":\"qurancomplex.gov.sa\",\"default\":false,\"media\":[],\"last_update\":\"2016-07-11\"}},\"languageList\":{\"en\":{\"name\":\"English\",\"native_name\":\"English\"}},\"languageCountryList\":{\"en\":{\"country_name\":\"United States\",\"country_english_name\":\"United States\",\"country_native_name\":\"\"}},\"languageSelected\":\"en\",\"en\":\"\"});"
+                text/plain:
+                    schema:
+                        type: string
+                        example: "GlobalQuran.com\nSurah: 1\nQuran ID: quran-simple\nLanguage: en\nVerses:\n--------\nAyah 1: بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ"
                         arabic-english-example:
                             value:
                                 quran:
@@ -4248,5 +4820,3 @@ components:
                                             surah: 114
                                             ayah: 6
                                             verse: مِنَ الْجِنَّةِ وَالنَّاسِ
-security:
-    - key: []
