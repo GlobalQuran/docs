@@ -10,6 +10,7 @@ import AudioPage from './pages/AudioPage';
 import AssetsPage from './pages/AssetsPage';
 import DocsPage from './pages/DocsPage';
 import ExamplePage from './pages/ExamplePage';
+import ExamplesHomePage from './pages/ExamplesHomePage';
 import DonatePage from './pages/DonatePage';
 import AboutPage from './pages/AboutPage';
 import ContactPage from './pages/ContactPage';
@@ -30,6 +31,7 @@ function App() {
               <Route path="/donate" element={<DonatePage />} />
               <Route path="/about" element={<AboutPage />} />
               <Route path="/contact" element={<ContactPage />} />
+              <Route path="/examples" element={<ExamplesHomePage />} />
               <Route path="/examples/:exampleName" element={<ExamplePage />} />
             </Routes>
           </div>

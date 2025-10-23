@@ -1,76 +1,208 @@
 <!DOCTYPE html>
 <html>
 <head>
-     
-    <script src="https://code.jquery.com/jquery-latest.js"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>All-in-One Request - Modern JavaScript</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .loading { text-align: center; color: #666; }
+        .error { color: red; }
+        .success { color: green; }
+        select { padding: 8px; margin: 10px 0; width: 300px; }
+        label { font-weight: bold; color: #2c5aa0; }
+        .verse { margin: 10px 0; padding: 10px; background: #f5f5f5; border-radius: 5px; }
+        .section { margin: 20px 0; padding: 15px; border: 1px solid #ddd; border-radius: 5px; }
+        .section h3 { color: #2c5aa0; margin-top: 0; }
+    </style>
 </head>
 <body>
-<div id="demo-1">
-</div>
-<script>
-    $.ajaxSetup({ cache: true, jsonpCallback: 'quranData' }); // define ajax setup
-    $.getJSON("https://api.globalquran.com/all/page/604/quran-simple?key=api_key&jsoncallback=?", {
-        format: "jsonp"
-    }, function(data) {
+    <h1>All-in-One Request Example</h1>
+    <p>This example demonstrates fetching multiple data types in a single request using modern JavaScript.</p>
+    
+    <div id="demo-1" class="loading">Loading comprehensive Quran data...</div>
 
-        /* user country */
-        if (data.languageCountryList)
-        {
-            $.each(data.languageCountryList, function(langCode, lang)
-            {
-                $("<h4>").html('You are from: '+lang.country_english_name+' '+lang.country_native_name+' and your default language is '+data.languageList[data.languageSelected].english_name).appendTo("#demo-1");
-                return false;
-            });
+    <script>
+        // Modern JavaScript implementation
+        async function loadAllInOneData() {
+            try {
+                const response = await fetch('https://api.globalquran.com/v1/all/page/604/quran-simple?key=YOUR_API_KEY');
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                
+                const data = await response.json();
+                displayAllInOneData(data);
+            } catch (error) {
+                console.error('Error loading all-in-one data:', error);
+                document.getElementById('demo-1').innerHTML = `<div class="error">Error loading data: ${error.message}</div>`;
+            }
         }
 
-        /* language list */
-        $('#demo-1').append('Select Language: ');
-        $("<select>").attr('id', 'langList').appendTo("#demo-1");
-        $("<option>").attr('selected', 'selected').html('Select Language').appendTo('#langList');
-        $.each(data.languageList, function(langCode, lang)
-        {
-            $("<option>").val(langCode).html(lang.english_name+' '+lang.native_name).appendTo('#langList');
-        });
+        function displayAllInOneData(data) {
+            const container = document.getElementById('demo-1');
+            container.innerHTML = '';
+            
+            // User country information
+            if (data.languageCountryList) {
+                const countrySection = document.createElement('div');
+                countrySection.className = 'section';
+                countrySection.innerHTML = '<h3>Location Information</h3>';
+                
+                Object.entries(data.languageCountryList).forEach(([langCode, lang]) => {
+                    const countryInfo = document.createElement('p');
+                    countryInfo.innerHTML = `<strong>You are from:</strong> ${lang.country_english_name} ${lang.country_native_name}<br>
+                                           <strong>Default language:</strong> ${data.languageList[data.languageSelected].english_name}`;
+                    countrySection.appendChild(countryInfo);
+                });
+                
+                container.appendChild(countrySection);
+            }
 
-        /* Quran List */
-        $('#demo-1').append('<br />Select Quran: ');
-        $("<select>").attr('id', 'quranList').appendTo("#demo-1");
-        $("<option>").attr('selected', 'selected').html('Select Quran').appendTo('#quranList');
-        $.each(data.quranList, function(quranID, by)
-        {
-            if (by.format === 'text' && by.type === 'quran')
-                $("<option>").val(quranID).html(by.english_name+' '+by.native_name).appendTo('#quranList');
-        });
+            // Language selection
+            if (data.languageList) {
+                const langSection = document.createElement('div');
+                langSection.className = 'section';
+                langSection.innerHTML = '<h3>Language Selection</h3>';
+                
+                const langLabel = document.createElement('label');
+                langLabel.textContent = 'Select Language:';
+                langSection.appendChild(langLabel);
+                langSection.appendChild(document.createElement('br'));
+                
+                const langSelect = document.createElement('select');
+                langSelect.id = 'langList';
+                
+                const langDefaultOption = document.createElement('option');
+                langDefaultOption.selected = true;
+                langDefaultOption.textContent = 'Select Language';
+                langSelect.appendChild(langDefaultOption);
+                
+                Object.entries(data.languageList).forEach(([langCode, lang]) => {
+                    const option = document.createElement('option');
+                    option.value = langCode;
+                    option.textContent = `${lang.english_name} ${lang.native_name}`;
+                    langSelect.appendChild(option);
+                });
+                
+                langSection.appendChild(langSelect);
+                container.appendChild(langSection);
+            }
 
+            // Quran text selection
+            if (data.quranList) {
+                const quranSection = document.createElement('div');
+                quranSection.className = 'section';
+                quranSection.innerHTML = '<h3>Quran Text Selection</h3>';
+                
+                const quranLabel = document.createElement('label');
+                quranLabel.textContent = 'Select Quran:';
+                quranSection.appendChild(quranLabel);
+                quranSection.appendChild(document.createElement('br'));
+                
+                const quranSelect = document.createElement('select');
+                quranSelect.id = 'quranList';
+                
+                const quranDefaultOption = document.createElement('option');
+                quranDefaultOption.selected = true;
+                quranDefaultOption.textContent = 'Select Quran';
+                quranSelect.appendChild(quranDefaultOption);
+                
+                Object.entries(data.quranList).forEach(([quranID, quranData]) => {
+                    if (quranData.format === 'text' && quranData.type === 'quran') {
+                        const option = document.createElement('option');
+                        option.value = quranID;
+                        option.textContent = `${quranData.english_name} ${quranData.native_name}`;
+                        quranSelect.appendChild(option);
+                    }
+                });
+                
+                quranSection.appendChild(quranSelect);
+                container.appendChild(quranSection);
 
-        /* Translation List */
-        $('#demo-1').append('<br />Select Translation: ');
-        $("<select>").attr('id', 'transList').appendTo("#demo-1");
-        $("<option>").attr('selected', 'selected').html('Select Translation').appendTo('#transList');
-        $.each(data.quranList, function(quranID, by)
-        {
-            if (by.format === 'text' && by.type === 'translation')
-                $("<option>").val(quranID).html(by.english_name+' '+by.native_name).appendTo('#transList');
-        });
+                // Translation selection
+                const transSection = document.createElement('div');
+                transSection.className = 'section';
+                transSection.innerHTML = '<h3>Translation Selection</h3>';
+                
+                const transLabel = document.createElement('label');
+                transLabel.textContent = 'Select Translation:';
+                transSection.appendChild(transLabel);
+                transSection.appendChild(document.createElement('br'));
+                
+                const transSelect = document.createElement('select');
+                transSelect.id = 'transList';
+                
+                const transDefaultOption = document.createElement('option');
+                transDefaultOption.selected = true;
+                transDefaultOption.textContent = 'Select Translation';
+                transSelect.appendChild(transDefaultOption);
+                
+                Object.entries(data.quranList).forEach(([quranID, quranData]) => {
+                    if (quranData.format === 'text' && quranData.type === 'translation') {
+                        const option = document.createElement('option');
+                        option.value = quranID;
+                        option.textContent = `${quranData.english_name} ${quranData.native_name}`;
+                        transSelect.appendChild(option);
+                    }
+                });
+                
+                transSection.appendChild(transSelect);
+                container.appendChild(transSection);
 
-        /* Recitor List */
-        $('#demo-1').append('<br />Select Recitor: ');
-        $("<select>").attr('id', 'recitorList').appendTo("#demo-1");
-        $("<option>").attr('selected', 'selected').html('Select Translation').appendTo('#recitorList');
-        $.each(data.quranList, function(quranID, by)
-        {
-            if (by.format === 'audio')
-                $("<option>").val(quranID).html(by.english_name+' '+by.native_name).appendTo('#recitorList');
-        });
+                // Recitor selection
+                const recitorSection = document.createElement('div');
+                recitorSection.className = 'section';
+                recitorSection.innerHTML = '<h3>Recitor Selection</h3>';
+                
+                const recitorLabel = document.createElement('label');
+                recitorLabel.textContent = 'Select Recitor:';
+                recitorSection.appendChild(recitorLabel);
+                recitorSection.appendChild(document.createElement('br'));
+                
+                const recitorSelect = document.createElement('select');
+                recitorSelect.id = 'recitorList';
+                
+                const recitorDefaultOption = document.createElement('option');
+                recitorDefaultOption.selected = true;
+                recitorDefaultOption.textContent = 'Select Recitor';
+                recitorSelect.appendChild(recitorDefaultOption);
+                
+                Object.entries(data.quranList).forEach(([quranID, quranData]) => {
+                    if (quranData.format === 'audio') {
+                        const option = document.createElement('option');
+                        option.value = quranID;
+                        option.textContent = `${quranData.english_name} ${quranData.native_name}`;
+                        recitorSelect.appendChild(option);
+                    }
+                });
+                
+                recitorSection.appendChild(recitorSelect);
+                container.appendChild(recitorSection);
+            }
 
-        /* quran data */
-        $.each(data.quran, function(i, by)
-        {
-            $.each(by, function (verseNo, line) {
-                $("<p>").html(line.surah+':'+line.ayah+' '+line.verse).appendTo("#demo-1");
-            });
-        });
-    });
-</script>
+            // Quran verses
+            if (data.quran) {
+                const versesSection = document.createElement('div');
+                versesSection.className = 'section';
+                versesSection.innerHTML = '<h3>Quran Verses (Page 604)</h3>';
+                
+                Object.values(data.quran).forEach(surah => {
+                    Object.values(surah).forEach(verse => {
+                        const verseElement = document.createElement('p');
+                        verseElement.className = 'verse';
+                        verseElement.innerHTML = `${verse.surah}:${verse.ayah} ${verse.verse}`;
+                        versesSection.appendChild(verseElement);
+                    });
+                });
+                
+                container.appendChild(versesSection);
+            }
+        }
+
+        // Load data when page loads
+        document.addEventListener('DOMContentLoaded', loadAllInOneData);
+    </script>
 </body>
 </html>

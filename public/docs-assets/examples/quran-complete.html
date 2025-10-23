@@ -1,27 +1,59 @@
 <!DOCTYPE html>
 <html>
 <head>
-     
-    <script src="https://code.jquery.com/jquery-latest.js"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Complete Quran - Modern JavaScript</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .verse { margin: 10px 0; padding: 10px; background: #f5f5f5; border-radius: 5px; }
+        .loading { text-align: center; color: #666; }
+        .error { color: red; }
+    </style>
 </head>
 <body>
-<div id="demo-1">
-</div>
-<script>
-    $.ajaxSetup({ cache: true, jsonpCallback: 'quranData' }); // define ajax setup
-    $.getJSON("https://api.globalquran.com/complete/quran-simple?key=api_key&jsoncallback=?", {
-        format : "jsonp"
-    }, function(data)
-    {
-        $.each(data.quran, function(i, by)
-        {
-            $.each(by, function (verseNo, line) {
-                $("<p>").html(line.surah+':'+line.ayah+' '+line.verse).appendTo("#demo-1");
-                if (verseNo === 10)
-                    return false;
-            });
-        });
-    });
-</script>
+    <h1>Complete Quran Example</h1>
+    <div id="demo-1" class="loading">Loading Quran data...</div>
+
+    <script>
+        // Modern JavaScript implementation
+        async function loadCompleteQuran() {
+            try {
+                const response = await fetch('https://api.globalquran.com/v1/complete/quran-simple?key=YOUR_API_KEY');
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                
+                const data = await response.json();
+                displayQuran(data);
+            } catch (error) {
+                console.error('Error loading Quran:', error);
+                document.getElementById('demo-1').innerHTML = `<div class="error">Error loading Quran: ${error.message}</div>`;
+            }
+        }
+
+        function displayQuran(data) {
+            const container = document.getElementById('demo-1');
+            container.innerHTML = '';
+            
+            if (data.quran) {
+                Object.values(data.quran).forEach(surah => {
+                    Object.values(surah).forEach(verse => {
+                        const verseElement = document.createElement('p');
+                        verseElement.className = 'verse';
+                        verseElement.innerHTML = `${verse.surah}:${verse.ayah} ${verse.verse}`;
+                        container.appendChild(verseElement);
+                        
+                        // Limit display to first 10 verses for demo
+                        if (verse.ayah === 10) return false;
+                    });
+                });
+            }
+        }
+
+        // Load data when page loads
+        document.addEventListener('DOMContentLoaded', loadCompleteQuran);
+    </script>
 </body>
 </html>
