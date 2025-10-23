@@ -1,28 +1,92 @@
 <!DOCTYPE html>
 <html>
 <head>
-     
-    <script src="https://code.jquery.com/jquery-latest.js"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Translation List - Modern JavaScript</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .loading { text-align: center; color: #666; }
+        .error { color: red; }
+        select { padding: 8px; margin: 10px 0; width: 300px; }
+        label { font-weight: bold; color: #2c5aa0; }
+    </style>
 </head>
 <body>
-<div id="demo-1">
-</div>
-<script>
-    $.ajaxSetup({ cache: true, jsonpCallback: 'quranData' }); // define ajax setup
-    $.getJSON("https://api.globalquran.com/quran?key=api_key&jsoncallback=?", {
-        format: "jsonp"
-    }, function(data)
-    {
-        /* Translation List */
-        $('#demo-1').append('Select Translation: <br/>');
-        $("<select>").attr('id', 'transList').appendTo("#demo-1");
-        $("<option>").attr('selected', 'selected').html('Select Translation').appendTo('#transList');
-        $.each(data.quranList, function(quranID, by)
-        {
-            if (by.format === 'text' && by.type === 'translation')
-                $("<option>").val(quranID).html(by.native_name).appendTo('#transList');
-        });
-    });
-</script>
+    <h1>Translation List Example</h1>
+    <div id="demo-1" class="loading">Loading translation list...</div>
+
+    <script>
+        // Modern JavaScript implementation
+        async function loadTranslationList() {
+            try {
+                const response = await fetch('https://api.globalquran.com/v1/quran?key=YOUR_API_KEY');
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                
+                const data = await response.json();
+                displayTranslationList(data);
+            } catch (error) {
+                console.error('Error loading translation list:', error);
+                document.getElementById('demo-1').innerHTML = `<div class="error">Error loading translation list: ${error.message}</div>`;
+            }
+        }
+
+        function displayTranslationList(data) {
+            const container = document.getElementById('demo-1');
+            container.innerHTML = '';
+            
+            if (data.quranList && Object.keys(data.quranList).length > 0) {
+                // Create label
+                const label = document.createElement('label');
+                label.textContent = 'Select Translation:';
+                container.appendChild(label);
+                container.appendChild(document.createElement('br'));
+                
+                // Create select element
+                const select = document.createElement('select');
+                select.id = 'transList';
+                
+                // Add default option
+                const defaultOption = document.createElement('option');
+                defaultOption.selected = true;
+                defaultOption.textContent = 'Select Translation';
+                select.appendChild(defaultOption);
+                
+                // Add translation options
+                let translationCount = 0;
+                Object.entries(data.quranList).forEach(([quranID, quranData]) => {
+                    if (quranData.format === 'text' && quranData.type === 'translation') {
+                        const option = document.createElement('option');
+                        option.value = quranID;
+                        option.textContent = quranData.native_name;
+                        select.appendChild(option);
+                        translationCount++;
+                    }
+                });
+                
+                container.appendChild(select);
+                
+                // Add change event listener
+                select.addEventListener('change', function() {
+                    if (this.value !== 'Select Translation') {
+                        console.log('Selected Translation:', this.value, this.options[this.selectedIndex].textContent);
+                    }
+                });
+                
+                // Show count
+                if (translationCount === 0) {
+                    container.innerHTML = '<div class="error">No translations found. Please check your API key.</div>';
+                }
+            } else {
+                container.innerHTML = '<div class="error">No translation list data found. Please check your API key.</div>';
+            }
+        }
+
+        // Load data when page loads
+        document.addEventListener('DOMContentLoaded', loadTranslationList);
+    </script>
 </body>
 </html>

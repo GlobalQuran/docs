@@ -38,6 +38,7 @@ const Navigation = () => {
           <ul className="nav navbar-nav">
             <li><a href="https://globalquran.com/" target="_blank" rel="noopener noreferrer">Home</a></li>
             <li className={isActive('/') ? 'active' : ''}><Link to="/">Documentation</Link></li>
+            <li className={isActive('/examples') ? 'active' : ''}><Link to="/examples">Code Examples</Link></li>
             <li className={isActive('/data') ? 'active' : ''}><Link to="/data">Download Data</Link></li>
             <li className={isActive('/audio') ? 'active' : ''}><Link to="/audio">Audio</Link></li>
             <li className={isActive('/assets') ? 'active' : ''}><Link to="/assets">Assets</Link></li>

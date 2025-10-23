@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GlobalQuran v2 API Lists - Modern JavaScript</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; background: #f8f9fa; }
+        .container { max-width: 1200px; margin: 0 auto; }
+        .section { background: white; margin: 20px 0; padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        .section h2 { color: #2c5aa0; border-bottom: 2px solid #2c5aa0; padding-bottom: 10px; }
+        .loading { text-align: center; color: #666; padding: 20px; }
+        .error { color: red; background: #ffe6e6; padding: 10px; border-radius: 4px; }
+        .success { color: green; background: #e6ffe6; padding: 10px; border-radius: 4px; }
+        .list-item { padding: 8px 0; border-bottom: 1px solid #eee; }
+        .list-item:last-child { border-bottom: none; }
+        .item-name { font-weight: bold; color: #333; }
+        .item-details { color: #666; font-size: 0.9em; margin-top: 4px; }
+        .btn { background: #2c5aa0; color: white; border: none; padding: 10px 20px; border-radius: 4px; cursor: pointer; margin: 5px; }
+        .btn:hover { background: #1e3d6f; }
+        .btn:disabled { background: #ccc; cursor: not-allowed; }
+        .stats { background: #f0f8ff; padding: 15px; border-radius: 4px; margin: 10px 0; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>GlobalQuran v2 API Lists Demo</h1>
+        <p>This example demonstrates the new v2 API endpoints for listing translations, recitors, and Quran texts using modern JavaScript.</p>
+
+        <!-- Translations List -->
+        <div class="section">
+            <h2>Available Translations (v2)</h2>
+            <button class="btn" onclick="loadTranslations()">Load Translations</button>
+            <div id="translations-container" class="loading">Click the button to load translations...</div>
+        </div>
+
+        <!-- Recitors List -->
+        <div class="section">
+            <h2>Available Recitors (v2)</h2>
+            <button class="btn" onclick="loadRecitors()">Load Recitors</button>
+            <div id="recitors-container" class="loading">Click the button to load recitors...</div>
+        </div>
+
+        <!-- Quran Texts List -->
+        <div class="section">
+            <h2>Available Quran Texts (v2)</h2>
+            <button class="btn" onclick="loadQuranTexts()">Load Quran Texts</button>
+            <div id="quran-texts-container" class="loading">Click the button to load Quran texts...</div>
+        </div>
+    </div>
+
+    <script>
+        // Modern JavaScript implementation for v2 API
+        const API_BASE = 'https://api.globalquran.com/v2';
+        const API_KEY = 'YOUR_API_KEY'; // Replace with your actual API key
+
+        async function loadTranslations() {
+            const container = document.getElementById('translations-container');
+            container.innerHTML = '<div class="loading">Loading translations...</div>';
+            
+            try {
+                const response = await fetch(`${API_BASE}/list/translation?key=${API_KEY}`);
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                
+                const data = await response.json();
+                displayTranslations(data, container);
+            } catch (error) {
+                console.error('Error loading translations:', error);
+                container.innerHTML = `<div class="error">Error loading translations: ${error.message}</div>`;
+            }
+        }
+
+        async function loadRecitors() {
+            const container = document.getElementById('recitors-container');
+            container.innerHTML = '<div class="loading">Loading recitors...</div>';
+            
+            try {
+                const response = await fetch(`${API_BASE}/list/recitor?key=${API_KEY}`);
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                
+                const data = await response.json();
+                displayRecitors(data, container);
+            } catch (error) {
+                console.error('Error loading recitors:', error);
+                container.innerHTML = `<div class="error">Error loading recitors: ${error.message}</div>`;
+            }
+        }
+
+        async function loadQuranTexts() {
+            const container = document.getElementById('quran-texts-container');
+            container.innerHTML = '<div class="loading">Loading Quran texts...</div>';
+            
+            try {
+                const response = await fetch(`${API_BASE}/list/quran?key=${API_KEY}`);
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                
+                const data = await response.json();
+                displayQuranTexts(data, container);
+            } catch (error) {
+                console.error('Error loading Quran texts:', error);
+                container.innerHTML = `<div class="error">Error loading Quran texts: ${error.message}</div>`;
+            }
+        }
+
+        function displayTranslations(data, container) {
+            if (data.list && typeof data.list === 'object') {
+                const items = Object.values(data.list);
+                const stats = `<div class="stats">Found ${items.length} translations</div>`;
+                const list = items.map(item => `
+                    <div class="list-item">
+                        <div class="item-name">${item.name || 'Unknown'}</div>
+                        <div class="item-details">
+                            ID: ${item.language_code || 'N/A'} | 
+                            Language: ${item.language_code || 'N/A'} | 
+                            Author: ${item.english_name || 'N/A'}
+                        </div>
+                    </div>
+                `).join('');
+                
+                container.innerHTML = stats + list;
+            } else {
+                container.innerHTML = '<div class="error">No translation data found</div>';
+            }
+        }
+
+        function displayRecitors(data, container) {
+            if (data.list && typeof data.list === 'object') {
+                const items = Object.values(data.list);
+                const stats = `<div class="stats">Found ${items.length} recitors</div>`;
+                const list = items.map(item => `
+                    <div class="list-item">
+                        <div class="item-name">${item.name || 'Unknown'}</div>
+                        <div class="item-details">
+                            ID: ${item.language_code || 'N/A'} | 
+                            Language: ${item.language_code || 'N/A'} | 
+                            Style: ${item.type || 'N/A'}
+                        </div>
+                    </div>
+                `).join('');
+                
+                container.innerHTML = stats + list;
+            } else {
+                container.innerHTML = '<div class="error">No recitor data found</div>';
+            }
+        }
+
+        function displayQuranTexts(data, container) {
+            if (data.list && typeof data.list === 'object') {
+                const items = Object.values(data.list);
+                const stats = `<div class="stats">Found ${items.length} Quran texts</div>`;
+                const list = items.map(item => `
+                    <div class="list-item">
+                        <div class="item-name">${item.name || 'Unknown'}</div>
+                        <div class="item-details">
+                            ID: ${item.language_code || 'N/A'} | 
+                            Language: ${item.language_code || 'N/A'} | 
+                            Type: ${item.type || 'N/A'}
+                        </div>
+                    </div>
+                `).join('');
+                
+                container.innerHTML = stats + list;
+            } else {
+                container.innerHTML = '<div class="error">No Quran text data found</div>';
+            }
+        }
+
+        // Load all data on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('GlobalQuran v2 API Lists Demo loaded');
+            console.log('Click the buttons above to load data from the v2 API endpoints');
+        });
+    </script>
+</body>
+</html>

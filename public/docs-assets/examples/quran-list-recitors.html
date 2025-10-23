@@ -1,28 +1,92 @@
 <!DOCTYPE html>
 <html>
 <head>
-     
-    <script src="https://code.jquery.com/jquery-latest.js"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Recitor List - Modern JavaScript</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .loading { text-align: center; color: #666; }
+        .error { color: red; }
+        select { padding: 8px; margin: 10px 0; width: 300px; }
+        label { font-weight: bold; color: #2c5aa0; }
+    </style>
 </head>
 <body>
-<div id="demo-1">
-</div>
-<script>
-    $.ajaxSetup({ cache: true, jsonpCallback: 'quranData' }); // define ajax setup
-    $.getJSON("https://api.globalquran.com/quran?key=api_key&jsoncallback=?", {
-        format: "jsonp"
-    }, function(data)
-    {
-        /* Recitor List */
-        $('#demo-1').append('Select Recitor: <br/>');
-        $("<select>").attr('id', 'recitorList').appendTo("#demo-1");
-        $("<option>").attr('selected', 'selected').html('Select Translation').appendTo('#recitorList');
-        $.each(data.quranList, function(quranID, by)
-        {
-            if (by.format === 'audio')
-                $("<option>").val(quranID).html(by.english_name+' '+by.native_name).appendTo('#recitorList');
-        });
-    });
-</script>
+    <h1>Recitor List Example</h1>
+    <div id="demo-1" class="loading">Loading recitor list...</div>
+
+    <script>
+        // Modern JavaScript implementation
+        async function loadRecitorList() {
+            try {
+                const response = await fetch('https://api.globalquran.com/v1/quran?key=YOUR_API_KEY');
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                
+                const data = await response.json();
+                displayRecitorList(data);
+            } catch (error) {
+                console.error('Error loading recitor list:', error);
+                document.getElementById('demo-1').innerHTML = `<div class="error">Error loading recitor list: ${error.message}</div>`;
+            }
+        }
+
+        function displayRecitorList(data) {
+            const container = document.getElementById('demo-1');
+            container.innerHTML = '';
+            
+            if (data.quranList && Object.keys(data.quranList).length > 0) {
+                // Create label
+                const label = document.createElement('label');
+                label.textContent = 'Select Recitor:';
+                container.appendChild(label);
+                container.appendChild(document.createElement('br'));
+                
+                // Create select element
+                const select = document.createElement('select');
+                select.id = 'recitorList';
+                
+                // Add default option
+                const defaultOption = document.createElement('option');
+                defaultOption.selected = true;
+                defaultOption.textContent = 'Select Recitor';
+                select.appendChild(defaultOption);
+                
+                // Add recitor options
+                let recitorCount = 0;
+                Object.entries(data.quranList).forEach(([quranID, quranData]) => {
+                    if (quranData.format === 'audio') {
+                        const option = document.createElement('option');
+                        option.value = quranID;
+                        option.textContent = `${quranData.english_name} ${quranData.native_name}`;
+                        select.appendChild(option);
+                        recitorCount++;
+                    }
+                });
+                
+                container.appendChild(select);
+                
+                // Add change event listener
+                select.addEventListener('change', function() {
+                    if (this.value !== 'Select Recitor') {
+                        console.log('Selected Recitor:', this.value, this.options[this.selectedIndex].textContent);
+                    }
+                });
+                
+                // Show count
+                if (recitorCount === 0) {
+                    container.innerHTML = '<div class="error">No recitors found. Please check your API key.</div>';
+                }
+            } else {
+                container.innerHTML = '<div class="error">No recitor list data found. Please check your API key.</div>';
+            }
+        }
+
+        // Load data when page loads
+        document.addEventListener('DOMContentLoaded', loadRecitorList);
+    </script>
 </body>
 </html>

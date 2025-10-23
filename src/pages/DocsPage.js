@@ -133,6 +133,9 @@ const DocsPage = () => {
             </div>
           </div>
           <div style={{ marginTop: '15px' }}>
+            <Link to="/examples" className="btn btn-lg btn-success" style={{ marginRight: '15px' }}>
+              <i className="fas fa-code"></i> Browse Code Examples
+            </Link>
             <Link to="/examples/quran-complete" className="btn btn-primary">
               <i className="fas fa-play"></i> Start with Basic Example
             </Link>
