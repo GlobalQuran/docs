@@ -106,7 +106,7 @@ const ExamplePage = () => {
     },
     {
       id: 'quran-list-recitors',
-      title: 'List Recitors',
+      title: 'List Recitors (Legacy)',
       description: 'Retrieve all available audio recitors with their formats and quality options. Perfect for building audio player interfaces.',
       category: 'Advanced',
       endpoint: '/v1/quran',
@@ -135,6 +135,17 @@ const ExamplePage = () => {
       languages: ['html', 'javascript', 'php', 'python'],
       sampleEndpoint: 'https://api.globalquran.com/v2/list/translation?key=YOUR_API_KEY',
       icon: 'fas fa-rocket',
+      version: 'v2'
+    },
+    {
+      id: 'quran-v2-recitors',
+      title: 'v2 Recitors List',
+      description: 'Modern v2 API endpoint for retrieving recitors with full JSON data structure. Shows raw API response with audio preview functionality.',
+      category: 'v2 API',
+      endpoint: '/v2/list/recitor',
+      languages: ['html', 'javascript', 'php', 'python'],
+      sampleEndpoint: 'https://api.globalquran.com/v2/list/recitor?key=YOUR_API_KEY',
+      icon: 'fas fa-microphone-alt',
       version: 'v2'
     }
   ];
