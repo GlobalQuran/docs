@@ -214,7 +214,7 @@ class QuranJuzFetcher {
 // Usage example
 function main() {
     // Initialize Juz fetcher
-    $fetcher = new QuranJuzFetcher('YOUR_API_KEY');
+    $fetcher = new QuranJuzFetcher('REPLACE_WITH_YOUR_KEY');
     
     // Fetch Juz 1 (Al-Fatiha to Al-Baqarah)
     echo "Fetching Juz 1...\n";

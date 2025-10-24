@@ -2,12 +2,12 @@
 // This example shows how to fetch multiple data types in a single request using the GlobalQuran API
 
 // API Endpoint
-const endpoint = 'https://api.globalquran.com/v1/all/surah/1/quran-simple/en?key=YOUR_API_KEY';
+const endpoint = 'https://api.globalquran.com/v1/all/surah/1/quran-simple/en?key=REPLACE_WITH_YOUR_KEY';
 
 // Function to fetch all-in-one data
 async function fetchAllInOneData(dataIn = 'surah', dataInNo = 1, quranId = 'quran-simple', langCode = 'en') {
     try {
-        const url = `https://api.globalquran.com/v1/all/${dataIn}/${dataInNo}/${quranId}/${langCode}?key=YOUR_API_KEY`;
+        const url = `https://api.globalquran.com/v1/all/${dataIn}/${dataInNo}/${quranId}/${langCode}?key=REPLACE_WITH_YOUR_KEY`;
         const response = await fetch(url);
         
         if (!response.ok) {

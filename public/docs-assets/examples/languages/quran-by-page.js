@@ -2,12 +2,12 @@
 // This example shows how to fetch Quran content by page using the GlobalQuran API
 
 // API Endpoint
-const endpoint = 'https://api.globalquran.com/v1/page/1/quran-simple?key=YOUR_API_KEY';
+const endpoint = 'https://api.globalquran.com/v1/page/1/quran-simple?key=REPLACE_WITH_YOUR_KEY';
 
 // Function to fetch Quran by page
 async function fetchQuranByPage(pageNumber, quranId = 'quran-simple') {
     try {
-        const url = `https://api.globalquran.com/v1/page/${pageNumber}/${quranId}?key=YOUR_API_KEY`;
+        const url = `https://api.globalquran.com/v1/page/${pageNumber}/${quranId}?key=REPLACE_WITH_YOUR_KEY`;
         const response = await fetch(url);
         
         if (!response.ok) {

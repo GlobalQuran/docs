@@ -2,7 +2,7 @@
 // This example shows how to fetch available translations using the GlobalQuran API
 
 // API Endpoint
-const endpoint = 'https://api.globalquran.com/v1/list/translation?key=YOUR_API_KEY';
+const endpoint = 'https://api.globalquran.com/v1/list/translation?key=REPLACE_WITH_YOUR_KEY';
 
 // Function to fetch translations
 async function fetchTranslations() {

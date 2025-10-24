@@ -174,7 +174,7 @@ class QuranPageFetcher {
 // Usage example
 function main() {
     // Initialize page fetcher
-    $fetcher = new QuranPageFetcher('YOUR_API_KEY');
+    $fetcher = new QuranPageFetcher('REPLACE_WITH_YOUR_KEY');
     
     // Fetch page 1 (Al-Fatiha)
     echo "Fetching page 1...\n";

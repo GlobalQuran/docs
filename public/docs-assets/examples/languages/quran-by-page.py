@@ -68,7 +68,7 @@ class QuranPageFetcher:
 # Usage example
 def main():
     # Initialize page fetcher
-    fetcher = QuranPageFetcher("YOUR_API_KEY")
+    fetcher = QuranPageFetcher("REPLACE_WITH_YOUR_KEY")
     
     # Fetch page 1 (Al-Fatiha)
     page_data = fetcher.fetch_page(1)

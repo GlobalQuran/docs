@@ -245,7 +245,7 @@ class CompleteQuranFetcher {
 // Usage example
 function main() {
     // Initialize Quran fetcher
-    $fetcher = new CompleteQuranFetcher('YOUR_API_KEY');
+    $fetcher = new CompleteQuranFetcher('REPLACE_WITH_YOUR_KEY');
     
     // Fetch complete Quran
     $quranData = $fetcher->fetchCompleteQuran();

@@ -3,14 +3,14 @@
 // This example shows how to fetch the list of available Quran resources
 
 // API Endpoint
-$endpoint = 'https://api.globalquran.com/v1/quran?key=YOUR_API_KEY';
+$endpoint = 'https://api.globalquran.com/v1/quran?key=REPLACE_WITH_YOUR_KEY';
 
 /**
  * Function to fetch Quran list
  * @return array|false Returns array on success, false on failure
  */
 function fetchQuranList() {
-    $url = 'https://api.globalquran.com/v1/quran?key=YOUR_API_KEY';
+    $url = 'https://api.globalquran.com/v1/quran?key=REPLACE_WITH_YOUR_KEY';
     
     // Using cURL for HTTP request
     $ch = curl_init();

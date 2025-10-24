@@ -5,7 +5,7 @@ import requests
 import json
 
 # API Endpoint
-endpoint = 'https://api.globalquran.com/v1/all/surah/1/quran-simple/en?key=YOUR_API_KEY'
+endpoint = 'https://api.globalquran.com/v1/all/surah/1/quran-simple/en?key=REPLACE_WITH_YOUR_KEY'
 
 def fetch_all_data(data_in='surah', data_in_no=1, quran_id='quran-simple', lang_code='en'):
     """
@@ -21,7 +21,7 @@ def fetch_all_data(data_in='surah', data_in_no=1, quran_id='quran-simple', lang_
         dict: API response data or None if error
     """
     try:
-        url = f"https://api.globalquran.com/v1/all/{data_in}/{data_in_no}/{quran_id}/{lang_code}?key=YOUR_API_KEY"
+        url = f"https://api.globalquran.com/v1/all/{data_in}/{data_in_no}/{quran_id}/{lang_code}?key=REPLACE_WITH_YOUR_KEY"
         response = requests.get(url)
         response.raise_for_status()  # Raises an HTTPError for bad responses
         
@@ -88,10 +88,10 @@ if __name__ == "__main__":
         display_all_data(data)
         
         print("Example usage for different data types:")
-        print("Surah: https://api.globalquran.com/v1/all/surah/1/quran-simple/en?key=YOUR_API_KEY")
-        print("Ayah: https://api.globalquran.com/v1/all/ayah/2:255/quran-simple/en?key=YOUR_API_KEY")
-        print("Page: https://api.globalquran.com/v1/all/page/1/quran-simple/en?key=YOUR_API_KEY")
-        print("Juz: https://api.globalquran.com/v1/all/juz/1/quran-simple/en?key=YOUR_API_KEY")
+        print("Surah: https://api.globalquran.com/v1/all/surah/1/quran-simple/en?key=REPLACE_WITH_YOUR_KEY")
+        print("Ayah: https://api.globalquran.com/v1/all/ayah/2:255/quran-simple/en?key=REPLACE_WITH_YOUR_KEY")
+        print("Page: https://api.globalquran.com/v1/all/page/1/quran-simple/en?key=REPLACE_WITH_YOUR_KEY")
+        print("Juz: https://api.globalquran.com/v1/all/juz/1/quran-simple/en?key=REPLACE_WITH_YOUR_KEY")
     else:
         print("Failed to fetch all-in-one data")
 

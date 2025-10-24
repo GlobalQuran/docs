@@ -52,7 +52,7 @@ class GlobalQuranAPI:
 # Usage example
 def main():
     # Initialize API client
-    api = GlobalQuranAPI("YOUR_API_KEY")
+    api = GlobalQuranAPI("REPLACE_WITH_YOUR_KEY")
     
     # Fetch Ayat al-Kursi (2:255)
     ayah_data = api.fetch_ayah("2:255")

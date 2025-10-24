@@ -2,12 +2,12 @@
 // This example shows how to fetch the complete Quran using the GlobalQuran API
 
 // API Endpoint
-const endpoint = 'https://api.globalquran.com/v1/quran/quran-simple?key=YOUR_API_KEY';
+const endpoint = 'https://api.globalquran.com/v1/quran/quran-simple?key=REPLACE_WITH_YOUR_KEY';
 
 // Function to fetch complete Quran
 async function fetchCompleteQuran(quranId = 'quran-simple') {
     try {
-        const url = `https://api.globalquran.com/v1/quran/${quranId}?key=YOUR_API_KEY`;
+        const url = `https://api.globalquran.com/v1/quran/${quranId}?key=REPLACE_WITH_YOUR_KEY`;
         const response = await fetch(url);
         
         if (!response.ok) {

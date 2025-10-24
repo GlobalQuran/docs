@@ -5,7 +5,7 @@ import requests
 import json
 
 # API Endpoint
-endpoint = 'https://api.globalquran.com/v1/quran?key=YOUR_API_KEY'
+endpoint = 'https://api.globalquran.com/v1/quran?key=REPLACE_WITH_YOUR_KEY'
 
 def fetch_quran_list():
     """
@@ -14,7 +14,7 @@ def fetch_quran_list():
     Returns:
         dict: API response data or None if error
     """
-    url = 'https://api.globalquran.com/v1/quran?key=YOUR_API_KEY'
+    url = 'https://api.globalquran.com/v1/quran?key=REPLACE_WITH_YOUR_KEY'
     
     try:
         response = requests.get(url, timeout=30)

@@ -2,14 +2,14 @@
 // This example shows how to use the new v2 API endpoints for fetching lists
 
 // API Endpoints
-const translationEndpoint = 'https://api.globalquran.com/v2/list/translation?key=YOUR_API_KEY';
-const recitorEndpoint = 'https://api.globalquran.com/v2/list/recitor?key=YOUR_API_KEY';
-const quranEndpoint = 'https://api.globalquran.com/v2/list/quran?key=YOUR_API_KEY';
+const translationEndpoint = 'https://api.globalquran.com/v2/list/translation?key=REPLACE_WITH_YOUR_KEY';
+const recitorEndpoint = 'https://api.globalquran.com/v2/list/recitor?key=REPLACE_WITH_YOUR_KEY';
+const quranEndpoint = 'https://api.globalquran.com/v2/list/quran?key=REPLACE_WITH_YOUR_KEY';
 
 // Function to fetch v2 API lists
 async function fetchV2List(listType = 'translation') {
     try {
-        const url = `https://api.globalquran.com/v2/list/${listType}?key=YOUR_API_KEY`;
+        const url = `https://api.globalquran.com/v2/list/${listType}?key=REPLACE_WITH_YOUR_KEY`;
         const response = await fetch(url);
         
         if (!response.ok) {
@@ -63,9 +63,9 @@ function compareV1V2() {
     console.log('- Enhanced metadata');
     
     console.log('\nExample v2 usage:');
-    console.log('https://api.globalquran.com/v2/list/translation?key=YOUR_API_KEY');
-    console.log('https://api.globalquran.com/v2/list/recitor?key=YOUR_API_KEY');
-    console.log('https://api.globalquran.com/v2/list/quran?key=YOUR_API_KEY');
+    console.log('https://api.globalquran.com/v2/list/translation?key=REPLACE_WITH_YOUR_KEY');
+    console.log('https://api.globalquran.com/v2/list/recitor?key=REPLACE_WITH_YOUR_KEY');
+    console.log('https://api.globalquran.com/v2/list/quran?key=REPLACE_WITH_YOUR_KEY');
 }
 
 // Function to get item by ID from v2 list

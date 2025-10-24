@@ -5,7 +5,7 @@ import requests
 import json
 
 # API Endpoint
-endpoint = 'https://api.globalquran.com/v1/list/recitor?key=YOUR_API_KEY'
+endpoint = 'https://api.globalquran.com/v1/list/recitor?key=REPLACE_WITH_YOUR_KEY'
 
 def fetch_recitors():
     """
@@ -62,7 +62,7 @@ if __name__ == "__main__":
         if 'recitor' in data:
             first_recitor = list(data['recitor'].keys())[0]
             print(f"\nExample usage with recitor ID '{first_recitor}':")
-            print(f"https://api.globalquran.com/v1/surah/1/{first_recitor}?key=YOUR_API_KEY")
+            print(f"https://api.globalquran.com/v1/surah/1/{first_recitor}?key=REPLACE_WITH_YOUR_KEY")
     else:
         print("Failed to fetch recitors")
 

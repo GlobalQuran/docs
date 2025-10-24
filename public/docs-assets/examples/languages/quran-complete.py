@@ -109,7 +109,7 @@ class CompleteQuranFetcher:
 # Usage example
 def main():
     # Initialize Quran fetcher
-    fetcher = CompleteQuranFetcher("YOUR_API_KEY")
+    fetcher = CompleteQuranFetcher("REPLACE_WITH_YOUR_KEY")
     
     # Fetch complete Quran
     quran_data = fetcher.fetch_complete_quran()

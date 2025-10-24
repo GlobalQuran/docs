@@ -24,7 +24,7 @@ const ExamplePage = () => {
   
   // Real API key for preview functionality
   const REAL_API_KEY = '7YuepfqaL3bdYYxAglTc7JwxZmwJd6g1jLvYXOLDo2vyW';
-  const API_KEY_PLACEHOLDER = 'YOUR_API_KEY';
+  const API_KEY_PLACEHOLDER = 'REPLACE_WITH_YOUR_KEY';
 
   const examples = [
     {

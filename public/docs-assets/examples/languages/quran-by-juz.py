@@ -85,7 +85,7 @@ class QuranJuzFetcher:
 # Usage example
 def main():
     # Initialize Juz fetcher
-    fetcher = QuranJuzFetcher("YOUR_API_KEY")
+    fetcher = QuranJuzFetcher("REPLACE_WITH_YOUR_KEY")
     
     # Fetch Juz 1 (Al-Fatiha to Al-Baqarah)
     juz_data = fetcher.fetch_juz(1)
