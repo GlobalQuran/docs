@@ -11,7 +11,8 @@ const ExamplesHomePage = () => {
       category: 'Basic',
       endpoint: '/v1/complete/{quranId}',
       languages: ['html', 'javascript', 'php', 'python'],
-      icon: 'fas fa-book-open'
+      icon: 'fas fa-book-open',
+      version: 'v1'
     },
     {
       id: 'quran-by-surah',
@@ -20,7 +21,8 @@ const ExamplesHomePage = () => {
       category: 'Basic',
       endpoint: '/v1/surah/{surahNo}/{quranId}',
       languages: ['html', 'javascript', 'php', 'python'],
-      icon: 'fas fa-list-ol'
+      icon: 'fas fa-list-ol',
+      version: 'v1'
     },
     {
       id: 'quran-by-ayah',
@@ -29,7 +31,8 @@ const ExamplesHomePage = () => {
       category: 'Basic',
       endpoint: '/v1/ayah/{ayahNo}/{quranId}',
       languages: ['html', 'javascript', 'php', 'python'],
-      icon: 'fas fa-quote-left'
+      icon: 'fas fa-quote-left',
+      version: 'v1'
     },
     {
       id: 'quran-by-page',
@@ -38,43 +41,38 @@ const ExamplesHomePage = () => {
       category: 'Basic',
       endpoint: '/v1/page/{pageNo}/{quranId}',
       languages: ['html', 'javascript', 'php', 'python'],
-      icon: 'fas fa-file-alt'
+      icon: 'fas fa-file-alt',
+      version: 'v1'
     },
     {
       id: 'quran-by-juz',
       title: 'Quran by Juz',
       description: 'Access Quran content organized by Juz (Para). Useful for apps that follow traditional Islamic study divisions.',
-      category: 'Advanced',
+      category: 'Basic',
       endpoint: '/v1/juz/{juzNo}/{quranId}',
       languages: ['html', 'javascript', 'php', 'python'],
-      icon: 'fas fa-layer-group'
+      icon: 'fas fa-layer-group',
+      version: 'v1'
     },
     {
-      id: 'quran-list',
-      title: 'Quran List',
-      description: 'Get a complete list of all available Quran resources including text formats, translations, and audio recitations.',
+      id: 'quran-v2-translations',
+      title: 'v2 Translations List',
+      description: 'Modern v2 API endpoint for retrieving translations with improved data structure. Translation IDs are crucial for API calls.',
       category: 'Basic',
-      endpoint: '/v1/quran',
+      endpoint: '/v2/list/translation',
       languages: ['html', 'javascript', 'php', 'python'],
-      icon: 'fas fa-list'
+      icon: 'fas fa-language',
+      version: 'v2'
     },
     {
-      id: 'quran-list-translation',
-      title: 'List Translations',
-      description: 'Get a list of all available Quran translations in different languages. Essential for building language selection interfaces.',
+      id: 'quran-v2-quran-list',
+      title: 'v2 Quran List',
+      description: 'Modern v2 API endpoint for retrieving Quran text formats with enhanced data structure. Quran IDs are essential for API calls.',
       category: 'Basic',
-      endpoint: '/v1/quran',
+      endpoint: '/v2/list/quran',
       languages: ['html', 'javascript', 'php', 'python'],
-      icon: 'fas fa-language'
-    },
-    {
-      id: 'quran-list-recitors',
-      title: 'List Recitors',
-      description: 'Retrieve all available audio recitors with their formats and quality options. Perfect for building audio player interfaces.',
-      category: 'Advanced',
-      endpoint: '/v1/quran',
-      languages: ['html', 'javascript', 'php', 'python'],
-      icon: 'fas fa-microphone'
+      icon: 'fas fa-list',
+      version: 'v2'
     },
     {
       id: 'quran-all-in-one-request',
@@ -83,23 +81,65 @@ const ExamplesHomePage = () => {
       category: 'Advanced',
       endpoint: '/v1/all/{dataIn}/{dataInNo}/{quranId}/{langCode}',
       languages: ['html', 'javascript', 'php', 'python'],
-      icon: 'fas fa-database'
+      icon: 'fas fa-database',
+      version: 'v1'
+    },
+    {
+      id: 'quran-v2-recitors',
+      title: 'v2 Recitors List',
+      description: 'Modern v2 API endpoint for retrieving audio recitors with enhanced data structure and direct audio playback capabilities.',
+      category: 'Advanced',
+      endpoint: '/v2/list/recitor',
+      languages: ['html', 'javascript', 'php', 'python'],
+      icon: 'fas fa-microphone',
+      version: 'v2'
     },
     {
       id: 'quran-v2-lists',
       title: 'v2 API Lists Demo',
       description: 'Demonstrates the new v2 API endpoints for listing translations, recitors, and Quran texts with improved data structures.',
-      category: 'v2 API',
+      category: 'Advanced',
       endpoint: '/v2/list/{type}',
       languages: ['html', 'javascript', 'php', 'python'],
-      icon: 'fas fa-rocket'
+      icon: 'fas fa-rocket',
+      version: 'v2'
+    },
+    {
+      id: 'quran-list',
+      title: 'Quran List (Legacy)',
+      description: 'Get a complete list of all available Quran resources including text formats, translations, and audio recitations.',
+      category: 'Legacy',
+      endpoint: '/v1/quran',
+      languages: ['html', 'javascript', 'php', 'python'],
+      icon: 'fas fa-list',
+      version: 'v1'
+    },
+    {
+      id: 'quran-list-translation',
+      title: 'List Translations (Legacy)',
+      description: 'Get a list of all available Quran translations in different languages. Essential for building language selection interfaces.',
+      category: 'Legacy',
+      endpoint: '/v1/quran',
+      languages: ['html', 'javascript', 'php', 'python'],
+      icon: 'fas fa-language',
+      version: 'v1'
+    },
+    {
+      id: 'quran-list-recitors',
+      title: 'List Recitors (Legacy)',
+      description: 'Retrieve all available audio recitors with their formats and quality options. Perfect for building audio player interfaces.',
+      category: 'Legacy',
+      endpoint: '/v1/quran',
+      languages: ['html', 'javascript', 'php', 'python'],
+      icon: 'fas fa-microphone',
+      version: 'v1'
     }
   ];
 
   const categories = {
     'Basic': examples.filter(ex => ex.category === 'Basic'),
     'Advanced': examples.filter(ex => ex.category === 'Advanced'),
-    'v2 API': examples.filter(ex => ex.category === 'v2 API')
+    'Legacy': examples.filter(ex => ex.category === 'Legacy')
   };
 
   const getLanguageBadges = (languages) => {
@@ -163,7 +203,7 @@ const ExamplesHomePage = () => {
             <div className="col-md-3">
               <div className="card text-center">
                 <div className="card-body">
-                  <h3 className="text-info">3</h3>
+                  <h3 className="text-info">2</h3>
                   <p className="card-text">API Versions</p>
                 </div>
               </div>
@@ -171,8 +211,8 @@ const ExamplesHomePage = () => {
             <div className="col-md-3">
               <div className="card text-center">
                 <div className="card-body">
-                  <h3 className="text-warning">10+</h3>
-                  <p className="card-text">Endpoints</p>
+                  <h3 className="text-warning">3</h3>
+                  <p className="card-text">Categories</p>
                 </div>
               </div>
             </div>
@@ -198,6 +238,20 @@ const ExamplesHomePage = () => {
                         <div className="card-title">
                           <i className={example.icon} style={{ fontSize: '24px', color: 'var(--primary-color)', marginRight: '10px' }}></i>
                           {example.title}
+                          {example.version && (
+                            <span className={`version-badge ${example.version}`} style={{
+                              display: 'inline-block',
+                              fontSize: '9px',
+                              fontWeight: 'bold',
+                              padding: '2px 6px',
+                              borderRadius: '10px',
+                              marginLeft: '8px',
+                              textTransform: 'uppercase',
+                              letterSpacing: '0.5px'
+                            }}>
+                              {example.version}
+                            </span>
+                          )}
                         </div>
                         
                         <p className="card-text">
