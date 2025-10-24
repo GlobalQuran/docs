@@ -5,18 +5,46 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Recitor List - Modern JavaScript</title>
     <style>
-        body { font-family: Arial, sans-serif; margin: 20px; }
-        .loading { text-align: center; color: #666; }
-        .error { color: red; }
-        select { padding: 8px; margin: 10px 0; width: 300px; }
+        body { font-family: Arial, sans-serif; margin: 20px; background: #f8f9fa; }
+        .container { max-width: 1200px; margin: 0 auto; }
+        .section { background: white; margin: 20px 0; padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        .loading { text-align: center; color: #666; padding: 20px; }
+        .error { color: red; background: #ffe6e6; padding: 10px; border-radius: 4px; }
+        .success { color: green; background: #e6ffe6; padding: 10px; border-radius: 4px; }
+        select { padding: 8px; margin: 10px 0; width: 300px; border: 1px solid #ddd; border-radius: 4px; }
         label { font-weight: bold; color: #2c5aa0; }
+        .audio-preview-section { margin-top: 20px; padding: 20px; background: #f0f8ff; border-radius: 8px; border-left: 4px solid #2c5aa0; }
+        .audio-player { width: 100%; margin: 15px 0; }
+        .ayah-info { font-size: 16px; margin: 10px 0; color: #333; }
+        .ayah-arabic { font-size: 20px; text-align: right; direction: rtl; margin: 10px 0; color: #2c5aa0; }
+        .recitor-info { font-size: 14px; color: #666; margin-top: 10px; }
+        .loading-preview { text-align: center; color: #666; font-style: italic; }
+        .play-button { background: #2c5aa0; color: white; border: none; padding: 10px 20px; border-radius: 25px; cursor: pointer; font-weight: bold; margin: 10px 5px; }
+        .play-button:hover { background: #1e3d6f; }
+        .play-button:disabled { background: #ccc; cursor: not-allowed; }
+        .audio-controls { text-align: center; margin: 15px 0; }
+        .audio-url { font-size: 12px; color: #666; background: #f8f9fa; padding: 8px; border-radius: 4px; margin: 10px 0; word-break: break-all; font-family: monospace; }
     </style>
 </head>
 <body>
-    <h1>Recitor List Example</h1>
-    <div id="demo-1" class="loading">Loading recitor list...</div>
+    <div class="container">
+        <h1>Recitor List with Audio Preview</h1>
+        <p>Select a recitor to hear a sample audio recitation of Quran Ayah 1 (Al-Fatiha).</p>
+        
+        <div class="section">
+            <h2>Available Recitors</h2>
+            <div id="demo-1" class="loading">Loading recitor list...</div>
+        </div>
+        
+        <div class="section">
+            <h2>Audio Preview</h2>
+            <div id="audio-preview" class="audio-preview-section">
+                <div class="loading-preview">Select a recitor above to hear a sample recitation</div>
+            </div>
+        </div>
+</div>
 
-    <script>
+<script>
         // Modern JavaScript implementation
         async function loadRecitorList() {
             try {
@@ -73,6 +101,10 @@
                 select.addEventListener('change', function() {
                     if (this.value !== 'Select Recitor') {
                         console.log('Selected Recitor:', this.value, this.options[this.selectedIndex].textContent);
+                        loadAudioPreview(this.value, this.options[this.selectedIndex].textContent, data.quranList[this.value]);
+                    } else {
+                        // Reset preview when no recitor is selected
+                        document.getElementById('audio-preview').innerHTML = '<div class="loading-preview">Select a recitor above to hear a sample recitation</div>';
                     }
                 });
                 
@@ -85,8 +117,196 @@
             }
         }
 
+        // Load audio preview with selected recitor
+        async function loadAudioPreview(recitorId, recitorName, recitorData) {
+            const previewContainer = document.getElementById('audio-preview');
+            
+            // First, pause any currently playing audio to prevent interruption errors
+            const existingAudio = document.getElementById('audio-player');
+            if (existingAudio) {
+                try {
+                    existingAudio.pause();
+                    existingAudio.currentTime = 0;
+                } catch (error) {
+                    console.log('Error pausing existing audio:', error);
+                }
+            }
+            
+            previewContainer.innerHTML = '<div class="loading-preview">Loading audio preview...</div>';
+            
+            try {
+                // First, get the ayah text for display
+                const ayahResponse = await fetch(`https://api.globalquran.com/v1/ayah/1/quran-simple?key=YOUR_API_KEY`);
+                let ayahText = 'بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ'; // Default Arabic text
+                
+                if (ayahResponse.ok) {
+                    const ayahData = await ayahResponse.json();
+                    if (ayahData.quran && ayahData.quran['quran-simple'] && ayahData.quran['quran-simple']['1']) {
+                        ayahText = ayahData.quran['quran-simple']['1'].verse;
+                    }
+                }
+                
+                // Parse media information
+                let mediaInfo = {};
+                try {
+                    mediaInfo = JSON.parse(recitorData.media || '{}');
+                } catch (e) {
+                    console.warn('Could not parse media info:', e);
+                }
+                
+                displayAudioPreview(recitorId, recitorName, ayahText, mediaInfo);
+            } catch (error) {
+                console.error('Error loading audio preview:', error);
+                previewContainer.innerHTML = `<div class="error">Error loading audio preview: ${error.message}</div>`;
+            }
+        }
+
+        // Helper function to determine the best audio format based on browser support
+        function getBestAudioFormat(mediaInfo) {
+            if (!mediaInfo || Object.keys(mediaInfo).length === 0) {
+                return null;
+            }
+
+            // Check if browser supports ogg format
+            const supportsOgg = typeof Audio !== "undefined" && new Audio().canPlayType("audio/ogg") !== "";
+
+            // Available formats in order of preference
+            const formats = [];
+
+            // If we have ogg support and the format is available, prefer it for better quality/size ratio
+            if (supportsOgg) {
+                if (mediaInfo["ogg-192"]) formats.push(mediaInfo["ogg-192"]);
+                if (mediaInfo["ogg-128"]) formats.push(mediaInfo["ogg-128"]);
+                if (mediaInfo["ogg-64"]) formats.push(mediaInfo["ogg-64"]);
+                if (mediaInfo["ogg-32"]) formats.push(mediaInfo["ogg-32"]);
+            }
+
+            // For MP3 formats, prefer higher quality first
+            if (mediaInfo["mp3-192"]) formats.push(mediaInfo["mp3-192"]);
+            if (mediaInfo["mp3-128"]) formats.push(mediaInfo["mp3-128"]);
+            if (mediaInfo["mp3-64"]) formats.push(mediaInfo["mp3-64"]);
+            if (mediaInfo["mp3-32"]) formats.push(mediaInfo["mp3-32"]);
+
+            // Return the first available format or null if none found
+            return formats.length > 0 ? formats[0] : null;
+        }
+
+        // Display audio preview
+        function displayAudioPreview(recitorId, recitorName, ayahText, mediaInfo) {
+            const previewContainer = document.getElementById('audio-preview');
+            
+            // Determine the best format based on browser support
+            const bestFormat = getBestAudioFormat(mediaInfo);
+            
+            let audioUrl;
+            let audioFormat;
+            let mediaInfoDetails = '';
+            
+            if (bestFormat) {
+                // Use audio.globalquran.com with the best format from media info
+                const fileExtension = bestFormat.type === 'ogg' ? 'ogg' : 'mp3';
+                audioUrl = `https://audio.globalquran.com/${recitorId}/${bestFormat.type}/${bestFormat.kbs}kbs/1.${fileExtension}`;
+                audioFormat = `${bestFormat.type.toUpperCase()} ${bestFormat.kbs}kbps`;
+                
+                // Show media info details for educational purposes
+                mediaInfoDetails = `
+                    <div style="font-size: 10px; color: #666; margin-top: 8px; padding: 8px; background: #f8f9fa; border-radius: 4px;">
+                        <strong>Media Info Object:</strong><br>
+                        <code>${JSON.stringify(mediaInfo, null, 2)}</code><br><br>
+                        <strong>URL Construction:</strong><br>
+                        <code>https://audio.globalquran.com/{recitorId}/{format}/{bitrate}kbs/{ayah}.{extension}</code><br>
+                        <code>https://audio.globalquran.com/${recitorId}/${bestFormat.type}/${bestFormat.kbs}kbs/1.${fileExtension}</code>
+                    </div>
+                `;
+            } else {
+                // Fallback to default format
+                audioUrl = `https://audio.globalquran.com/${recitorId}/mp3/128kbs/1.mp3`;
+                audioFormat = 'MP3 128kbps (fallback)';
+                mediaInfoDetails = '<div style="font-size: 10px; color: #666;">No media info available - using fallback format</div>';
+            }
+            
+            previewContainer.innerHTML = `
+                <div class="ayah-info">
+                    <div class="ayah-arabic">${ayahText}</div>
+                    <div class="recitor-info">
+                        <strong>Recitor:</strong> ${recitorName} | 
+                        <strong>Format:</strong> ${audioFormat} | 
+                        <strong>Ayah:</strong> Al-Fatiha, Ayah 1
+                    </div>
+                    <div class="audio-url">
+                        <strong>Audio URL:</strong><br>
+                        <a href="${audioUrl}" target="_blank" style="color: #2c5aa0;">${audioUrl}</a>
+                        ${mediaInfoDetails}
+                    </div>
+                </div>
+                <div class="audio-controls">
+                    <audio id="audio-player" class="audio-player" controls preload="metadata" crossorigin="anonymous">
+                        <source src="${audioUrl}" type="audio/mpeg">
+                        Your browser does not support the audio element.
+                    </audio>
+                    <br>
+                    <button class="play-button" onclick="playAudio()">
+                        <i class="fas fa-play"></i> Play Sample
+                    </button>
+                    <button class="play-button" onclick="pauseAudio()">
+                        <i class="fas fa-pause"></i> Pause
+                    </button>
+                </div>
+            `;
+        }
+
+        // Audio control functions
+        function playAudio() {
+            const audio = document.getElementById('audio-player');
+            if (audio) {
+                console.log('Play button clicked, audio src:', audio.src);
+                console.log('Audio readyState:', audio.readyState);
+                console.log('Audio networkState:', audio.networkState);
+                
+                // Check if audio is ready to play
+                if (audio.readyState >= 2) { // HAVE_CURRENT_DATA or higher
+                    // Handle play promise to avoid interruption errors
+                    const playPromise = audio.play();
+                    if (playPromise !== undefined) {
+                        playPromise.then(() => {
+                            // Audio started playing successfully
+                            console.log('Audio started playing');
+                        }).catch(error => {
+                            // Handle play errors gracefully
+                            console.log('Audio play was interrupted or failed:', error);
+                            // Try to load the audio first
+                            audio.load();
+                            setTimeout(() => {
+                                audio.play().catch(e => console.log('Retry play failed:', e));
+                            }, 500);
+                        });
+                    }
+                } else {
+                    console.log('Audio not ready, loading first...');
+                    audio.load();
+                    setTimeout(() => {
+                        audio.play().catch(e => console.log('Delayed play failed:', e));
+                    }, 1000);
+                }
+            } else {
+                console.log('Audio element not found');
+            }
+        }
+
+        function pauseAudio() {
+            const audio = document.getElementById('audio-player');
+            if (audio) {
+                try {
+                    audio.pause();
+                    console.log('Audio paused');
+                } catch (error) {
+                    console.log('Audio pause error:', error);
+                }
+            }
+        }
+
         // Load data when page loads
         document.addEventListener('DOMContentLoaded', loadRecitorList);
-    </script>
+</script>
 </body>
 </html>
