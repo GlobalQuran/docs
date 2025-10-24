@@ -1056,7 +1056,17 @@ const currentConfig = config[process.env.NODE_ENV || 'development'];
     { id: 'implementation', title: 'Complete Implementation', content: instructions.implementation },
     { id: 'bestPractices', title: 'Best Practices', content: instructions.bestPractices },
     { id: 'deployment', title: 'Deployment Guide', content: instructions.deployment }
-  ], []);
+  ], [
+    instructions.overview,
+    instructions.apiEndpoints,
+    instructions.dataFlow,
+    instructions.audioIntegration,
+    instructions.userInterface,
+    instructions.settingsManagement,
+    instructions.implementation,
+    instructions.bestPractices,
+    instructions.deployment
+  ]);
 
   // Initialize all sections as expanded by default
   useEffect(() => {
