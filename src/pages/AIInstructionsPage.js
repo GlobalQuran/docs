@@ -1065,7 +1065,7 @@ const currentConfig = config[process.env.NODE_ENV || 'development'];
       initial[section.id] = true;
     });
     setExpandedSections(initial);
-  }, []);
+  }, [sections]);
 
   return (
     <div className="container-fluid ai-instructions-page" style={{ padding: '0', background: 'white', minHeight: '100vh' }}>
