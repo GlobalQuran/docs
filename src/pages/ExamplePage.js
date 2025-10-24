@@ -125,7 +125,8 @@ const ExamplePage = () => {
       endpoint: '/v2/list/{type}',
       languages: ['html', 'javascript', 'php', 'python'],
       sampleEndpoint: 'https://api.globalquran.com/v2/list/translation?key=YOUR_API_KEY',
-      icon: 'fas fa-rocket'
+      icon: 'fas fa-rocket',
+      version: 'v2'
     }
   ];
 
@@ -251,6 +252,41 @@ const ExamplePage = () => {
     }
   }, [loading, sourceCode, activeTab]);
 
+  // Effect to resize iframe based on content
+  useEffect(() => {
+    if (activeTab === 'preview') {
+      const iframe = document.querySelector('.preview-iframe');
+      if (iframe) {
+        const resizeIframe = () => {
+          try {
+            const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
+            if (iframeDoc) {
+              const height = Math.max(
+                iframeDoc.body.scrollHeight,
+                iframeDoc.body.offsetHeight,
+                iframeDoc.documentElement.clientHeight,
+                iframeDoc.documentElement.scrollHeight,
+                iframeDoc.documentElement.offsetHeight
+              );
+              iframe.style.height = Math.max(height + 20, 600) + 'px';
+            }
+          } catch (e) {
+            // Cross-origin error, fallback to fixed height
+            iframe.style.height = '1200px';
+          }
+        };
+
+        // Resize after iframe loads
+        iframe.onload = () => {
+          setTimeout(resizeIframe, 500);
+        };
+
+        // Also resize after a delay to catch dynamic content
+        setTimeout(resizeIframe, 1000);
+      }
+    }
+  }, [activeTab, sourceCode]);
+
   // Function to copy code to clipboard
   const copyToClipboard = async () => {
     try {
@@ -335,6 +371,11 @@ const ExamplePage = () => {
                   >
                     <span className="example-title">
                       <i className={example.icon}></i> {example.title}
+                      {example.version && (
+                        <span className={`version-badge ${example.version}`}>
+                          {example.version}
+                        </span>
+                      )}
                     </span>
                     <span className="example-endpoint">{example.endpoint}</span>
                   </a>
