@@ -234,13 +234,6 @@ const ExamplePage = () => {
     return 'markup';
   };
 
-  // Function to check if code contains jQuery
-  const hasJQuery = (code) => {
-    if (!code) return false;
-    return code.includes('$(') || code.includes('jQuery(') || code.includes('.ready(') || 
-           code.includes('.click(') || code.includes('.ajax(') || code.includes('.get(') ||
-           code.includes('.post(') || code.includes('.load(');
-  };
 
   // Load source code based on active tab
   useEffect(() => {
@@ -402,14 +395,10 @@ const ExamplePage = () => {
               <div key={categoryName} className="category-section">
                 <h4 className="category-title">{categoryName}</h4>
                 {categoryExamples.map(example => (
-                  <a
+                  <button
                     key={example.id}
-                    href="#"
                     className={`example-item ${example.id === currentExample.id ? 'active' : ''}`}
-                    onClick={(e) => {
-                      e.preventDefault();
-                      navigateToExample(example.id);
-                    }}
+                    onClick={() => navigateToExample(example.id)}
                   >
                     <span className="example-title">
                       <i className={example.icon}></i> {example.title}
@@ -420,7 +409,7 @@ const ExamplePage = () => {
                       )}
                     </span>
                     <span className="example-endpoint">{example.endpoint}</span>
-                  </a>
+                  </button>
                 ))}
               </div>
             ))}
