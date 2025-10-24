@@ -39,6 +39,22 @@ const Navigation = () => {
             <li><a href="https://globalquran.com/" target="_blank" rel="noopener noreferrer">Home</a></li>
             <li className={isActive('/') ? 'active' : ''}><Link to="/">Documentation</Link></li>
             <li className={isActive('/examples') ? 'active' : ''}><Link to="/examples">Code Examples</Link></li>
+            <li className={isActive('/ai-instructions') ? 'active' : ''}>
+              <Link to="/ai-instructions">
+                AI Instructions
+                <span className="badge badge-warning" style={{ 
+                  marginLeft: '8px', 
+                  fontSize: '9px', 
+                  padding: '2px 6px',
+                  background: '#ffc107',
+                  color: '#000',
+                  borderRadius: '10px',
+                  fontWeight: 'bold'
+                }}>
+                  NEW
+                </span>
+              </Link>
+            </li>
             <li className={isActive('/data') ? 'active' : ''}><Link to="/data">Download Data</Link></li>
             <li className={isActive('/audio') ? 'active' : ''}><Link to="/audio">Audio</Link></li>
             <li className={isActive('/assets') ? 'active' : ''}><Link to="/assets">Assets</Link></li>
