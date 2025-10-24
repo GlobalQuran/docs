@@ -8,7 +8,7 @@
 
 // Configuration
 $apiBase = 'https://api.globalquran.com/v2';
-$apiKey = 'YOUR_API_KEY'; // Replace with your actual API key
+$apiKey = 'REPLACE_WITH_YOUR_KEY'; // Replace with your actual API key
 
 /**
  * Fetch data from GlobalQuran v2 API

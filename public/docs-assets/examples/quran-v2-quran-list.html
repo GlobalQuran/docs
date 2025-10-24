@@ -45,7 +45,7 @@
         // Modern JavaScript implementation for v2 API
         async function loadQuranList() {
             try {
-                const response = await fetch('https://api.globalquran.com/v2/list/quran?key=YOUR_API_KEY');
+                const response = await fetch('https://api.globalquran.com/v2/list/quran?key=REPLACE_WITH_YOUR_KEY');
                 
                 if (!response.ok) {
                     throw new Error(`HTTP error! status: ${response.status}`);
@@ -144,6 +144,9 @@
                     // Update the Quran info display
                     const infoElement = document.getElementById(`quran-info-${quranId}`);
                     if (infoElement) {
+                        // Always use placeholder for info sections
+                        const apiKeyPlaceholder = 'YOUR_API_KEY_HERE';
+                        
                         infoElement.innerHTML = `
                             <strong>Quran Format Details:</strong><br>
                             <strong>ID:</strong> ${quranId}<br>
@@ -160,13 +163,13 @@
                             <strong>API Usage Examples:</strong><br>
                             <div style="background: #e8f5e8; padding: 8px; border-radius: 4px; margin: 5px 0; font-family: monospace; font-size: 10px;">
                                 <strong>Get Surah 1:</strong><br>
-                                GET https://api.globalquran.com/v1/surah/1/${quranId}?key=YOUR_API_KEY<br><br>
+                                GET https://api.globalquran.com/v1/surah/1/${quranId}?key=${apiKeyPlaceholder}<br><br>
                                 <strong>Get Ayah 1:</strong><br>
-                                GET https://api.globalquran.com/v1/ayah/1/${quranId}?key=YOUR_API_KEY<br><br>
+                                GET https://api.globalquran.com/v1/ayah/1/${quranId}?key=${apiKeyPlaceholder}<br><br>
                                 <strong>Get Page 1:</strong><br>
-                                GET https://api.globalquran.com/v1/page/1/${quranId}?key=YOUR_API_KEY<br><br>
+                                GET https://api.globalquran.com/v1/page/1/${quranId}?key=${apiKeyPlaceholder}<br><br>
                                 <strong>Get Juz 1:</strong><br>
-                                GET https://api.globalquran.com/v1/juz/1/${quranId}?key=YOUR_API_KEY
+                                GET https://api.globalquran.com/v1/juz/1/${quranId}?key=${apiKeyPlaceholder}
                             </div>
                             
                             <strong>Raw JSON Data:</strong><br>

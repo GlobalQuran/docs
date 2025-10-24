@@ -5,9 +5,9 @@ import requests
 import json
 
 # API Endpoints
-translation_endpoint = 'https://api.globalquran.com/v2/list/translation?key=YOUR_API_KEY'
-recitor_endpoint = 'https://api.globalquran.com/v2/list/recitor?key=YOUR_API_KEY'
-quran_endpoint = 'https://api.globalquran.com/v2/list/quran?key=YOUR_API_KEY'
+translation_endpoint = 'https://api.globalquran.com/v2/list/translation?key=REPLACE_WITH_YOUR_KEY'
+recitor_endpoint = 'https://api.globalquran.com/v2/list/recitor?key=REPLACE_WITH_YOUR_KEY'
+quran_endpoint = 'https://api.globalquran.com/v2/list/quran?key=REPLACE_WITH_YOUR_KEY'
 
 def fetch_v2_list(list_type='translation'):
     """
@@ -20,7 +20,7 @@ def fetch_v2_list(list_type='translation'):
         dict: API response data or None if error
     """
     try:
-        url = f"https://api.globalquran.com/v2/list/{list_type}?key=YOUR_API_KEY"
+        url = f"https://api.globalquran.com/v2/list/{list_type}?key=REPLACE_WITH_YOUR_KEY"
         response = requests.get(url)
         response.raise_for_status()  # Raises an HTTPError for bad responses
         
@@ -80,9 +80,9 @@ def compare_v1_v2():
         print("- Enhanced metadata")
         
         print("\nExample v2 usage:")
-        print("https://api.globalquran.com/v2/list/translation?key=YOUR_API_KEY")
-        print("https://api.globalquran.com/v2/list/recitor?key=YOUR_API_KEY")
-        print("https://api.globalquran.com/v2/list/quran?key=YOUR_API_KEY")
+        print("https://api.globalquran.com/v2/list/translation?key=REPLACE_WITH_YOUR_KEY")
+        print("https://api.globalquran.com/v2/list/recitor?key=REPLACE_WITH_YOUR_KEY")
+        print("https://api.globalquran.com/v2/list/quran?key=REPLACE_WITH_YOUR_KEY")
 
 # Main execution
 if __name__ == "__main__":

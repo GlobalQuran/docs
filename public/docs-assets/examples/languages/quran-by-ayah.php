@@ -124,7 +124,7 @@ class GlobalQuranAPI {
 // Usage example
 function main() {
     // Initialize API client
-    $api = new GlobalQuranAPI('YOUR_API_KEY');
+    $api = new GlobalQuranAPI('REPLACE_WITH_YOUR_KEY');
     
     // Validate API key
     if (!$api->validateApiKey()) {

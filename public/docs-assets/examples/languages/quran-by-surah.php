@@ -3,7 +3,7 @@
 // This example shows how to fetch a specific Surah using the GlobalQuran API
 
 // API Endpoint
-$endpoint = 'https://api.globalquran.com/v1/surah/1/quran-simple?key=YOUR_API_KEY';
+$endpoint = 'https://api.globalquran.com/v1/surah/1/quran-simple?key=REPLACE_WITH_YOUR_KEY';
 
 /**
  * Function to fetch Surah data
@@ -12,7 +12,7 @@ $endpoint = 'https://api.globalquran.com/v1/surah/1/quran-simple?key=YOUR_API_KE
  * @return array|false Returns array on success, false on failure
  */
 function fetchSurah($surahNumber = 1, $quranId = 'quran-simple') {
-    $url = "https://api.globalquran.com/v1/surah/{$surahNumber}/{$quranId}?key=YOUR_API_KEY";
+    $url = "https://api.globalquran.com/v1/surah/{$surahNumber}/{$quranId}?key=REPLACE_WITH_YOUR_KEY";
     
     // Using cURL for HTTP request
     $ch = curl_init();

@@ -2,12 +2,12 @@
 // This example shows how to fetch a specific Ayah using the GlobalQuran API
 
 // API Endpoint
-const endpoint = 'https://api.globalquran.com/v1/ayah/2:255/quran-simple?key=YOUR_API_KEY';
+const endpoint = 'https://api.globalquran.com/v1/ayah/2:255/quran-simple?key=REPLACE_WITH_YOUR_KEY';
 
 // Function to fetch specific Ayah
 async function fetchAyah(ayahNumber, quranId = 'quran-simple') {
     try {
-        const url = `https://api.globalquran.com/v1/ayah/${ayahNumber}/${quranId}?key=YOUR_API_KEY`;
+        const url = `https://api.globalquran.com/v1/ayah/${ayahNumber}/${quranId}?key=REPLACE_WITH_YOUR_KEY`;
         const response = await fetch(url);
         
         if (!response.ok) {

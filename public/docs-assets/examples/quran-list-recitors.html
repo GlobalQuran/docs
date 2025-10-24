@@ -48,7 +48,7 @@
         // Modern JavaScript implementation
         async function loadRecitorList() {
             try {
-                const response = await fetch('https://api.globalquran.com/v1/quran?key=YOUR_API_KEY');
+                const response = await fetch('https://api.globalquran.com/v1/quran?key=REPLACE_WITH_YOUR_KEY');
                 
                 if (!response.ok) {
                     throw new Error(`HTTP error! status: ${response.status}`);
@@ -136,7 +136,7 @@
             
             try {
                 // First, get the ayah text for display
-                const ayahResponse = await fetch(`https://api.globalquran.com/v1/ayah/1/quran-simple?key=YOUR_API_KEY`);
+                const ayahResponse = await fetch(`https://api.globalquran.com/v1/ayah/1/quran-simple?key=REPLACE_WITH_YOUR_KEY`);
                 let ayahText = 'بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ'; // Default Arabic text
                 
                 if (ayahResponse.ok) {

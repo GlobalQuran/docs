@@ -5,7 +5,7 @@ import requests
 import json
 
 # API Endpoint
-endpoint = 'https://api.globalquran.com/v1/list/translation?key=YOUR_API_KEY'
+endpoint = 'https://api.globalquran.com/v1/list/translation?key=REPLACE_WITH_YOUR_KEY'
 
 def fetch_translations():
     """
@@ -62,7 +62,7 @@ if __name__ == "__main__":
         if 'translation' in data:
             first_translation = list(data['translation'].keys())[0]
             print(f"\nExample usage with translation ID '{first_translation}':")
-            print(f"https://api.globalquran.com/v1/surah/1/{first_translation}?key=YOUR_API_KEY")
+            print(f"https://api.globalquran.com/v1/surah/1/{first_translation}?key=REPLACE_WITH_YOUR_KEY")
     else:
         print("Failed to fetch translations")
 

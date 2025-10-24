@@ -3,7 +3,7 @@
 
 // Configuration
 const API_BASE = 'https://api.globalquran.com/v2';
-const API_KEY = 'YOUR_API_KEY'; // Replace with your actual API key
+const API_KEY = 'REPLACE_WITH_YOUR_KEY'; // Replace with your actual API key
 
 // Fetch Quran formats from v2 API
 async function fetchQuranFormats() {

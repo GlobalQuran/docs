@@ -2,7 +2,7 @@
 // This example shows how to fetch available recitors using the GlobalQuran API
 
 // API Endpoint
-const endpoint = 'https://api.globalquran.com/v1/list/recitor?key=YOUR_API_KEY';
+const endpoint = 'https://api.globalquran.com/v1/list/recitor?key=REPLACE_WITH_YOUR_KEY';
 
 // Function to fetch recitors
 async function fetchRecitors() {

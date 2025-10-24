@@ -2,12 +2,12 @@
 // This example shows how to fetch Quran content by Juz using the GlobalQuran API
 
 // API Endpoint
-const endpoint = 'https://api.globalquran.com/v1/juz/1/quran-simple?key=YOUR_API_KEY';
+const endpoint = 'https://api.globalquran.com/v1/juz/1/quran-simple?key=REPLACE_WITH_YOUR_KEY';
 
 // Function to fetch Quran by Juz
 async function fetchQuranByJuz(juzNumber, quranId = 'quran-simple') {
     try {
-        const url = `https://api.globalquran.com/v1/juz/${juzNumber}/${quranId}?key=YOUR_API_KEY`;
+        const url = `https://api.globalquran.com/v1/juz/${juzNumber}/${quranId}?key=REPLACE_WITH_YOUR_KEY`;
         const response = await fetch(url);
         
         if (!response.ok) {

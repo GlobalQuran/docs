@@ -2,7 +2,7 @@
 // This example shows how to fetch the list of available Quran resources
 
 // API Endpoint
-const endpoint = 'https://api.globalquran.com/v1/quran?key=YOUR_API_KEY';
+const endpoint = 'https://api.globalquran.com/v1/quran?key=REPLACE_WITH_YOUR_KEY';
 
 // Function to fetch Quran list
 async function fetchQuranList() {

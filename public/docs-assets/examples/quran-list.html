@@ -20,7 +20,7 @@
         // Modern JavaScript implementation
         async function loadQuranList() {
             try {
-                const response = await fetch('https://api.globalquran.com/v1/quran?key=YOUR_API_KEY');
+                const response = await fetch('https://api.globalquran.com/v1/quran?key=REPLACE_WITH_YOUR_KEY');
                 
                 if (!response.ok) {
                     throw new Error(`HTTP error! status: ${response.status}`);

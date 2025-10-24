@@ -2,12 +2,12 @@
 // This example shows how to fetch a specific Surah using the GlobalQuran API
 
 // API Endpoint
-const endpoint = 'https://api.globalquran.com/v1/surah/1/quran-simple?key=YOUR_API_KEY';
+const endpoint = 'https://api.globalquran.com/v1/surah/1/quran-simple?key=REPLACE_WITH_YOUR_KEY';
 
 // Function to fetch Surah data
 async function fetchSurah(surahNumber = 1, quranId = 'quran-simple') {
     try {
-        const url = `https://api.globalquran.com/v1/surah/${surahNumber}/${quranId}?key=YOUR_API_KEY`;
+        const url = `https://api.globalquran.com/v1/surah/${surahNumber}/${quranId}?key=REPLACE_WITH_YOUR_KEY`;
         const response = await fetch(url);
         
         if (!response.ok) {

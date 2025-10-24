@@ -7,7 +7,7 @@ from typing import Dict, List, Optional, Any
 
 # Configuration
 API_BASE = 'https://api.globalquran.com/v2'
-API_KEY = 'YOUR_API_KEY'  # Replace with your actual API key
+API_KEY = 'REPLACE_WITH_YOUR_KEY'  # Replace with your actual API key
 
 def fetch_quran_formats(api_key: str) -> Dict[str, Any]:
     """
