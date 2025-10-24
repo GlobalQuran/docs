@@ -35,7 +35,8 @@ const ExamplePage = () => {
       endpoint: '/v1/complete/{quranId}',
       languages: ['html', 'javascript', 'php', 'python'],
       sampleEndpoint: 'https://api.globalquran.com/v1/complete/quran-simple?key=YOUR_API_KEY',
-      icon: 'fas fa-book-open'
+      icon: 'fas fa-book-open',
+      version: 'v1'
     },
     {
       id: 'quran-by-surah',
@@ -45,7 +46,8 @@ const ExamplePage = () => {
       endpoint: '/v1/surah/{surahNo}/{quranId}',
       languages: ['html', 'javascript', 'php', 'python'],
       sampleEndpoint: 'https://api.globalquran.com/v1/surah/1/quran-simple?key=YOUR_API_KEY',
-      icon: 'fas fa-list-ol'
+      icon: 'fas fa-list-ol',
+      version: 'v1'
     },
     {
       id: 'quran-by-ayah',
@@ -55,7 +57,8 @@ const ExamplePage = () => {
       endpoint: '/v1/ayah/{ayahNo}/{quranId}',
       languages: ['html', 'javascript', 'php', 'python'],
       sampleEndpoint: 'https://api.globalquran.com/v1/ayah/2:255/quran-simple?key=YOUR_API_KEY',
-      icon: 'fas fa-quote-left'
+      icon: 'fas fa-quote-left',
+      version: 'v1'
     },
     {
       id: 'quran-by-page',
@@ -65,7 +68,8 @@ const ExamplePage = () => {
       endpoint: '/v1/page/{pageNo}/{quranId}',
       languages: ['html', 'javascript', 'php', 'python'],
       sampleEndpoint: 'https://api.globalquran.com/v1/page/1/quran-simple?key=YOUR_API_KEY',
-      icon: 'fas fa-file-alt'
+      icon: 'fas fa-file-alt',
+      version: 'v1'
     },
     {
       id: 'quran-by-juz',
@@ -75,7 +79,8 @@ const ExamplePage = () => {
       endpoint: '/v1/juz/{juzNo}/{quranId}',
       languages: ['html', 'javascript', 'php', 'python'],
       sampleEndpoint: 'https://api.globalquran.com/v1/juz/1/quran-simple?key=YOUR_API_KEY',
-      icon: 'fas fa-layer-group'
+      icon: 'fas fa-layer-group',
+      version: 'v1'
     },
     {
       id: 'quran-list',
@@ -85,7 +90,8 @@ const ExamplePage = () => {
       endpoint: '/v1/quran',
       languages: ['html', 'javascript', 'php', 'python'],
       sampleEndpoint: 'https://api.globalquran.com/v1/quran?key=YOUR_API_KEY',
-      icon: 'fas fa-list'
+      icon: 'fas fa-list',
+      version: 'v1'
     },
     {
       id: 'quran-list-translation',
@@ -95,7 +101,8 @@ const ExamplePage = () => {
       endpoint: '/v1/quran',
       languages: ['html', 'javascript', 'php', 'python'],
       sampleEndpoint: 'https://api.globalquran.com/v1/quran?key=YOUR_API_KEY',
-      icon: 'fas fa-language'
+      icon: 'fas fa-language',
+      version: 'v1'
     },
     {
       id: 'quran-list-recitors',
@@ -105,7 +112,8 @@ const ExamplePage = () => {
       endpoint: '/v1/quran',
       languages: ['html', 'javascript', 'php', 'python'],
       sampleEndpoint: 'https://api.globalquran.com/v1/quran?key=YOUR_API_KEY',
-      icon: 'fas fa-microphone'
+      icon: 'fas fa-microphone',
+      version: 'v1'
     },
     {
       id: 'quran-all-in-one-request',
@@ -115,7 +123,8 @@ const ExamplePage = () => {
       endpoint: '/v1/all/{dataIn}/{dataInNo}/{quranId}/{langCode}',
       languages: ['html', 'javascript', 'php', 'python'],
       sampleEndpoint: 'https://api.globalquran.com/v1/all/surah/1/quran-simple/en?key=YOUR_API_KEY',
-      icon: 'fas fa-database'
+      icon: 'fas fa-database',
+      version: 'v1'
     },
     {
       id: 'quran-v2-lists',
@@ -382,7 +391,7 @@ const ExamplePage = () => {
                 ))}
               </div>
             ))}
-          </div>
+        </div>
 
           {/* Main Content */}
           <div className="examples-main-content">
@@ -408,15 +417,15 @@ const ExamplePage = () => {
                   disabled={loading}
                 >
                   <i className="fas fa-chevron-left"></i> Previous
-                </button>
-                <button 
+              </button>
+              <button 
                   className="btn btn-sm btn-outline-primary"
-                  onClick={goToNext}
+                onClick={goToNext}
                   disabled={loading}
                   style={{ marginLeft: '10px' }}
-                >
-                  Next <i className="fas fa-chevron-right"></i>
-                </button>
+              >
+                Next <i className="fas fa-chevron-right"></i>
+              </button>
                 <Link 
                   to="/examples" 
                   className="btn btn-sm btn-outline-secondary"
@@ -424,8 +433,8 @@ const ExamplePage = () => {
                 >
                   <i className="fas fa-th"></i> All Examples
                 </Link>
-              </div>
-            </div>
+          </div>
+        </div>
 
             {/* Content */}
             <div className="examples-content">
@@ -441,7 +450,7 @@ const ExamplePage = () => {
               <div className="examples-tabs">
                 <ul className="nav nav-tabs examples-tab-nav">
                   <li className="nav-item">
-                    <button
+                    <button 
                       className={`nav-link ${activeTab === 'preview' ? 'active' : ''}`}
                       onClick={() => handleTabChange('preview')}
                     >
@@ -490,7 +499,7 @@ const ExamplePage = () => {
                           <span className="language-badge">
                             <i className={languageTabs.find(tab => tab.value === activeTab)?.icon}></i>
                             {activeTab.toUpperCase()}
-                          </span>
+                      </span>
                           <button 
                             className="copy-btn"
                             onClick={copyToClipboard}
@@ -498,23 +507,23 @@ const ExamplePage = () => {
                           >
                             <i className="fas fa-copy"></i> Copy Code
                           </button>
-                        </div>
+                  </div>
                         
-                        {loading ? (
+                {loading ? (
                           <div className="loading-spinner">
                             <i className="fas fa-spinner fa-spin"></i> Loading {activeTab} code...
-                          </div>
-                        ) : (
+                  </div>
+                ) : (
                           <pre>
-                            <code 
-                              ref={codeRef}
-                              className={`language-${detectLanguage(sourceCode)}`}
-                            >
-                              {sourceCode}
-                            </code>
-                          </pre>
-                        )}
-                      </div>
+                    <code 
+                      ref={codeRef}
+                      className={`language-${detectLanguage(sourceCode)}`}
+                    >
+                      {sourceCode}
+                    </code>
+                  </pre>
+                )}
+          </div>
 
                       {/* Response Structure */}
                       {currentExample.sampleEndpoint !== 'N/A' && (
@@ -530,9 +539,9 @@ const ExamplePage = () => {
   }
 }`}
                           </pre>
-                        </div>
+              </div>
                       )}
-                    </div>
+              </div>
                   )}
                 </div>
               </div>
@@ -546,4 +555,4 @@ const ExamplePage = () => {
   );
 };
 
-export default ExamplePage;
+export default ExamplePage; 
