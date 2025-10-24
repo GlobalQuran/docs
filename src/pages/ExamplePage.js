@@ -84,9 +84,9 @@ const ExamplePage = () => {
     },
     {
       id: 'quran-list',
-      title: 'Quran List',
+      title: 'Quran List (Legacy)',
       description: 'Get a complete list of all available Quran resources including text formats, translations, and audio recitations.',
-      category: 'Basic',
+      category: 'Legacy',
       endpoint: '/v1/quran',
       languages: ['html', 'javascript', 'php', 'python'],
       sampleEndpoint: 'https://api.globalquran.com/v1/quran?key=YOUR_API_KEY',
@@ -95,9 +95,9 @@ const ExamplePage = () => {
     },
     {
       id: 'quran-list-translation',
-      title: 'List Translations',
+      title: 'List Translations (Legacy)',
       description: 'Get a list of all available Quran translations in different languages. Essential for building language selection interfaces.',
-      category: 'Basic',
+      category: 'Legacy',
       endpoint: '/v1/quran',
       languages: ['html', 'javascript', 'php', 'python'],
       sampleEndpoint: 'https://api.globalquran.com/v1/quran?key=YOUR_API_KEY',
@@ -108,7 +108,7 @@ const ExamplePage = () => {
       id: 'quran-list-recitors',
       title: 'List Recitors (Legacy)',
       description: 'Retrieve all available audio recitors with their formats and quality options. Perfect for building audio player interfaces.',
-      category: 'Advanced',
+      category: 'Legacy',
       endpoint: '/v1/quran',
       languages: ['html', 'javascript', 'php', 'python'],
       sampleEndpoint: 'https://api.globalquran.com/v1/quran?key=YOUR_API_KEY',
@@ -127,25 +127,47 @@ const ExamplePage = () => {
       version: 'v1'
     },
     {
-      id: 'quran-v2-lists',
-      title: 'v2 API Lists Demo',
-      description: 'Demonstrates the new v2 API endpoints for listing translations, recitors, and Quran texts with improved data structures.',
-      category: 'v2 API',
-      endpoint: '/v2/list/{type}',
+      id: 'quran-v2-translations',
+      title: 'v2 Translations List',
+      description: 'Modern v2 API endpoint for retrieving translations with improved data structure and better organization.',
+      category: 'Basic',
+      endpoint: '/v2/list/translation',
       languages: ['html', 'javascript', 'php', 'python'],
       sampleEndpoint: 'https://api.globalquran.com/v2/list/translation?key=YOUR_API_KEY',
-      icon: 'fas fa-rocket',
+      icon: 'fas fa-language',
+      version: 'v2'
+    },
+    {
+      id: 'quran-v2-quran-list',
+      title: 'v2 Quran List',
+      description: 'Modern v2 API endpoint for retrieving Quran text formats with enhanced data structure.',
+      category: 'Basic',
+      endpoint: '/v2/list/quran',
+      languages: ['html', 'javascript', 'php', 'python'],
+      sampleEndpoint: 'https://api.globalquran.com/v2/list/quran?key=YOUR_API_KEY',
+      icon: 'fas fa-list',
       version: 'v2'
     },
     {
       id: 'quran-v2-recitors',
       title: 'v2 Recitors List',
       description: 'Modern v2 API endpoint for retrieving recitors with full JSON data structure. Shows raw API response with audio preview functionality.',
-      category: 'v2 API',
+      category: 'Advanced',
       endpoint: '/v2/list/recitor',
       languages: ['html', 'javascript', 'php', 'python'],
       sampleEndpoint: 'https://api.globalquran.com/v2/list/recitor?key=YOUR_API_KEY',
       icon: 'fas fa-microphone-alt',
+      version: 'v2'
+    },
+    {
+      id: 'quran-v2-lists',
+      title: 'v2 API Lists Demo',
+      description: 'Demonstrates the new v2 API endpoints for listing translations, recitors, and Quran texts with improved data structures.',
+      category: 'Advanced',
+      endpoint: '/v2/list/{type}',
+      languages: ['html', 'javascript', 'php', 'python'],
+      sampleEndpoint: 'https://api.globalquran.com/v2/list/translation?key=YOUR_API_KEY',
+      icon: 'fas fa-rocket',
       version: 'v2'
     }
   ];
@@ -350,7 +372,7 @@ const ExamplePage = () => {
   const categories = {
     'Basic': examples.filter(ex => ex.category === 'Basic'),
     'Advanced': examples.filter(ex => ex.category === 'Advanced'),
-    'v2 API': examples.filter(ex => ex.category === 'v2 API')
+    'Legacy': examples.filter(ex => ex.category === 'Legacy')
   };
 
   const languageTabs = currentExample.languages.map(lang => ({
