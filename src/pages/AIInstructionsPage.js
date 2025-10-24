@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import Footer from '../components/Footer';
 
 const AIInstructionsPage = () => {
@@ -1046,7 +1046,7 @@ const currentConfig = config[process.env.NODE_ENV || 'development'];
 - Implement rate limiting on API calls`
   };
 
-  const sections = [
+  const sections = useMemo(() => [
     { id: 'overview', title: 'Overview & Architecture', content: instructions.overview },
     { id: 'apiEndpoints', title: 'API Endpoints Reference', content: instructions.apiEndpoints },
     { id: 'dataFlow', title: 'Data Flow Architecture', content: instructions.dataFlow },
@@ -1056,7 +1056,7 @@ const currentConfig = config[process.env.NODE_ENV || 'development'];
     { id: 'implementation', title: 'Complete Implementation', content: instructions.implementation },
     { id: 'bestPractices', title: 'Best Practices', content: instructions.bestPractices },
     { id: 'deployment', title: 'Deployment Guide', content: instructions.deployment }
-  ];
+  ], []);
 
   // Initialize all sections as expanded by default
   useEffect(() => {
