@@ -182,6 +182,49 @@ const ExamplesHomePage = () => {
             </div>
           </div>
 
+          {/* AI Instructions Highlight */}
+          <div className="row" style={{ marginBottom: '40px' }}>
+            <div className="col-md-12">
+              <div className="card" style={{ 
+                background: 'linear-gradient(135deg, #fff3cd 0%, #ffeaa7 100%)',
+                border: '2px solid #ffc107',
+                borderRadius: '15px',
+                boxShadow: '0 4px 8px rgba(255, 193, 7, 0.3)'
+              }}>
+                <div className="card-body text-center" style={{ padding: '30px' }}>
+                  <h3 style={{ color: '#856404', marginBottom: '15px' }}>
+                    <i className="fas fa-robot" style={{ marginRight: '10px' }}></i>
+                    AI Instructions Available!
+                  </h3>
+                  <p style={{ fontSize: '16px', color: '#856404', marginBottom: '20px' }}>
+                    Comprehensive guide for building Quran applications using AI assistants. 
+                    Perfect for developers, AI tools, and anyone creating Islamic applications.
+                  </p>
+                  <Link 
+                    to="/ai-instructions" 
+                    className="btn btn-warning btn-lg"
+                    style={{ 
+                      borderRadius: '25px',
+                      padding: '12px 30px',
+                      fontWeight: 'bold',
+                      boxShadow: '0 2px 4px rgba(0,0,0,0.2)'
+                    }}
+                  >
+                    <i className="fas fa-rocket" style={{ marginRight: '8px' }}></i>
+                    View AI Instructions
+                    <span className="badge badge-danger" style={{ 
+                      marginLeft: '10px', 
+                      fontSize: '10px',
+                      padding: '4px 8px'
+                    }}>
+                      NEW
+                    </span>
+                  </Link>
+                </div>
+              </div>
+            </div>
+          </div>
+
           {/* Quick Stats */}
           <div className="row" style={{ marginBottom: '40px' }}>
             <div className="col-md-3">
