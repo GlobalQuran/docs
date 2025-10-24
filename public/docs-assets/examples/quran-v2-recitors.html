@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>v2 Recitors List - Modern JavaScript</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; background: #f8f9fa; }
+        .container { max-width: 1200px; margin: 0 auto; }
+        .section { background: white; margin: 20px 0; padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        .loading { text-align: center; color: #666; padding: 20px; }
+        .error { color: red; background: #ffe6e6; padding: 10px; border-radius: 4px; }
+        .success { color: green; background: #e6ffe6; padding: 10px; border-radius: 4px; }
+        select { padding: 8px; margin: 10px 0; width: 300px; border: 1px solid #ddd; border-radius: 4px; }
+        label { font-weight: bold; color: #2c5aa0; }
+        .audio-preview-section { margin-top: 20px; padding: 20px; background: #f0f8ff; border-radius: 8px; border-left: 4px solid #2c5aa0; }
+        .audio-player { width: 100%; margin: 15px 0; }
+        .ayah-info { font-size: 16px; margin: 10px 0; color: #333; }
+        .ayah-arabic { font-size: 20px; text-align: right; direction: rtl; margin: 10px 0; color: #2c5aa0; }
+        .recitor-info { font-size: 14px; color: #666; margin-top: 10px; }
+        .loading-preview { text-align: center; color: #666; font-style: italic; }
+        .play-button { background: #2c5aa0; color: white; border: none; padding: 10px 20px; border-radius: 25px; cursor: pointer; font-weight: bold; margin: 10px 5px; }
+        .play-button:hover { background: #1e3d6f; }
+        .play-button:disabled { background: #ccc; cursor: not-allowed; }
+        .audio-controls { text-align: center; margin: 15px 0; }
+        .audio-url { font-size: 12px; color: #666; background: #f8f9fa; padding: 8px; border-radius: 4px; margin: 10px 0; word-break: break-all; font-family: monospace; }
+        .json-display { background: #f8f9fa; border: 1px solid #ddd; border-radius: 4px; padding: 15px; margin: 10px 0; font-family: monospace; font-size: 12px; max-height: 300px; overflow-y: auto; }
+        .recitor-item { border: 1px solid #ddd; border-radius: 8px; padding: 15px; margin: 10px 0; background: #fafafa; transition: all 0.3s ease; }
+        .recitor-item:hover { box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+        .recitor-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+        .recitor-name { font-weight: bold; color: #2c5aa0; font-size: 16px; }
+        .recitor-details { font-size: 12px; color: #666; margin-top: 5px; }
+        .media-formats { margin-top: 8px; }
+        .format-tag { display: inline-block; background: #e3f2fd; color: #1976d2; padding: 2px 6px; border-radius: 3px; font-size: 10px; margin: 2px; }
+        .play-button-small { background: #2c5aa0; color: white; border: none; padding: 8px 16px; border-radius: 20px; cursor: pointer; font-weight: bold; font-size: 12px; transition: all 0.3s ease; }
+        .play-button-small:hover { background: #1e3d6f; }
+        .play-button-small:disabled { background: #ccc; cursor: not-allowed; }
+        .play-button-small.playing { background: #dc3545; }
+        .play-button-small.playing:hover { background: #c82333; }
+        .expand-button { background: #6c757d; color: white; border: none; padding: 6px 12px; border-radius: 15px; cursor: pointer; font-size: 11px; margin-left: 10px; }
+        .expand-button:hover { background: #5a6268; }
+        .expanded-content { margin-top: 15px; padding-top: 15px; border-top: 1px solid #ddd; display: none; }
+        .expanded-content.show { display: block; }
+        .audio-url-expanded { font-size: 11px; color: #333; background: #f8f9fa; padding: 12px; border-radius: 4px; margin: 10px 0; word-break: break-all; line-height: 1.4; }
+        .audio-player-small { width: 100%; margin: 10px 0; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>v2 Recitors List with Audio Preview</h1>
+        <p>Select a recitor to hear a sample audio recitation of Quran Ayah 1 (Al-Fatiha). This example shows the full JSON response from the v2 API.</p>
+        
+        <div class="section">
+            <h2>Available Recitors (v2 API)</h2>
+            <div id="demo-1" class="loading">Loading recitor list...</div>
+        </div>
+        
+        <div class="section">
+            <h2>Raw JSON Response</h2>
+            <div id="json-response" class="json-display">JSON response will appear here...</div>
+        </div>
+        
+        <div class="section">
+            <h2>Audio Preview</h2>
+            <p>Click the "Play" button on any recitor card above to hear a sample recitation. Use the "Info" button to expand and see the audio URL details.</p>
+        </div>
+</div>
+
+<script>
+        // Modern JavaScript implementation for v2 API
+        async function loadRecitorList() {
+            try {
+                const response = await fetch('https://api.globalquran.com/v2/list/recitor?key=YOUR_API_KEY');
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                
+                const data = await response.json();
+                displayRecitorList(data);
+                displayJsonResponse(data);
+            } catch (error) {
+                console.error('Error loading recitor list:', error);
+                document.getElementById('demo-1').innerHTML = `<div class="error">Error loading recitor list: ${error.message}</div>`;
+            }
+        }
+
+        // Display recitor list
+        function displayRecitorList(data) {
+            const container = document.getElementById('demo-1');
+            
+            if (data.list && typeof data.list === 'object') {
+                const recitors = Object.values(data.list);
+                const stats = `<div class="success">Found ${recitors.length} recitors</div>`;
+                
+                container.innerHTML = stats;
+                
+                // Display recitor cards with play buttons
+                const cardsContainer = document.createElement('div');
+                cardsContainer.style.marginTop = '20px';
+                
+                recitors.forEach((recitor, index) => {
+                    const recitorId = Object.keys(data.list)[index];
+                    const card = document.createElement('div');
+                    card.className = 'recitor-item';
+                    card.dataset.recitorId = recitorId;
+                    card.dataset.recitorData = JSON.stringify(recitor);
+                    
+                    const mediaFormats = Object.keys(recitor.media || {}).map(format => 
+                        `<span class="format-tag">${format}</span>`
+                    ).join('');
+                    
+                    card.innerHTML = `
+                        <div class="recitor-header">
+                            <div>
+                                <div class="recitor-name">${recitor.name}</div>
+                                <div class="recitor-details">
+                                    Language: ${recitor.language_code} | 
+                                    Type: ${recitor.type} | 
+                                    Format: ${recitor.format}
+                                </div>
+                                <div class="media-formats">${mediaFormats}</div>
+                            </div>
+                            <div>
+                                <button class="play-button-small" onclick="playRecitorAudio('${recitorId}', '${recitor.name}', ${JSON.stringify(recitor.media).replace(/"/g, '&quot;')})">
+                                    <i class="fas fa-play"></i> Play
+                                </button>
+                                <button class="expand-button" onclick="toggleExpand('${recitorId}')">
+                                    <i class="fas fa-info-circle"></i> Info
+                                </button>
+                            </div>
+                        </div>
+                        <div class="expanded-content" id="expanded-${recitorId}">
+                            <div class="audio-url-expanded">
+                                <span id="audio-url-${recitorId}">Click Info to see URLs</span>
+                            </div>
+                            <audio id="audio-player-${recitorId}" class="audio-player-small" controls preload="none" crossorigin="anonymous" style="display: none;">
+                                Your browser does not support the audio element.
+                            </audio>
+                        </div>
+                    `;
+                    
+                    cardsContainer.appendChild(card);
+                });
+                
+                container.appendChild(cardsContainer);
+            } else {
+                container.innerHTML = '<div class="error">No recitor data found</div>';
+            }
+        }
+
+        // Display raw JSON response
+        function displayJsonResponse(data) {
+            const container = document.getElementById('json-response');
+            container.textContent = JSON.stringify(data, null, 2);
+        }
+
+        // Helper function to determine the best audio format based on browser support
+        function getBestAudioFormat(mediaInfo) {
+            if (!mediaInfo || Object.keys(mediaInfo).length === 0) {
+                return null;
+            }
+
+            // Check if browser supports ogg format
+            const supportsOgg = typeof Audio !== "undefined" && new Audio().canPlayType("audio/ogg") !== "";
+
+            // Available formats in order of preference
+            const formats = [];
+
+            // If we have ogg support and the format is available, prefer it for better quality/size ratio
+            if (supportsOgg) {
+                if (mediaInfo["ogg-192"]) formats.push(mediaInfo["ogg-192"]);
+                if (mediaInfo["ogg-128"]) formats.push(mediaInfo["ogg-128"]);
+                if (mediaInfo["ogg-64"]) formats.push(mediaInfo["ogg-64"]);
+                if (mediaInfo["ogg-32"]) formats.push(mediaInfo["ogg-32"]);
+            }
+
+            // For MP3 formats, prefer higher quality first
+            if (mediaInfo["mp3-192"]) formats.push(mediaInfo["mp3-192"]);
+            if (mediaInfo["mp3-128"]) formats.push(mediaInfo["mp3-128"]);
+            if (mediaInfo["mp3-64"]) formats.push(mediaInfo["mp3-64"]);
+            if (mediaInfo["mp3-32"]) formats.push(mediaInfo["mp3-32"]);
+
+            // Return the first available format or null if none found
+            return formats.length > 0 ? formats[0] : null;
+        }
+
+        // Global variable to track currently playing audio
+        let currentlyPlayingAudio = null;
+
+        // Play/pause recitor audio with toggle functionality
+        async function playRecitorAudio(recitorId, recitorName, mediaInfo) {
+            try {
+                const audioPlayer = document.getElementById(`audio-player-${recitorId}`);
+                const playButton = event.target.closest('.play-button-small');
+                
+                // Stop any currently playing audio
+                if (currentlyPlayingAudio && currentlyPlayingAudio !== audioPlayer) {
+                    currentlyPlayingAudio.pause();
+                    currentlyPlayingAudio.currentTime = 0;
+                    // Reset the previous play button
+                    const prevButton = document.querySelector('.play-button-small.playing');
+                    if (prevButton) {
+                        prevButton.innerHTML = '<i class="fas fa-play"></i> Play';
+                        prevButton.classList.remove('playing');
+                    }
+                }
+                
+                // If this audio is already playing, pause it
+                if (currentlyPlayingAudio === audioPlayer && !audioPlayer.paused) {
+                    audioPlayer.pause();
+                    playButton.innerHTML = '<i class="fas fa-play"></i> Play';
+                    playButton.classList.remove('playing');
+                    currentlyPlayingAudio = null;
+                    return;
+                }
+                
+                // Determine the best format based on browser support
+                const bestFormat = getBestAudioFormat(mediaInfo);
+                
+                let audioUrl;
+                let audioFormat;
+                let rawUrl;
+                
+                if (bestFormat) {
+                    // Use audio.globalquran.com with the best format from media info
+                    const fileExtension = bestFormat.type === 'ogg' ? 'ogg' : 'mp3';
+                    audioUrl = `https://audio.globalquran.com/${recitorId}/${bestFormat.type}/${bestFormat.kbs}kbs/1.${fileExtension}`;
+                    audioFormat = `${bestFormat.type.toUpperCase()} ${bestFormat.kbs}kbps`;
+                    rawUrl = bestFormat.sourcePath || 'N/A';
+                } else {
+                    // Fallback to default format
+                    audioUrl = `https://audio.globalquran.com/${recitorId}/mp3/128kbs/1.mp3`;
+                    audioFormat = 'MP3 128kbps (fallback)';
+                    rawUrl = 'N/A';
+                }
+                
+                // Update the audio URL display
+                const urlElement = document.getElementById(`audio-url-${recitorId}`);
+                if (urlElement) {
+                    urlElement.innerHTML = `
+                        <strong>Final Audio URL:</strong><br>
+                        <a href="${audioUrl}" target="_blank" style="color: #2c5aa0;">${audioUrl}</a><br><br>
+                        
+                        <strong>URL Construction Process:</strong><br>
+                        <div style="background: #f8f9fa; padding: 8px; border-radius: 4px; margin: 5px 0; font-family: monospace; font-size: 10px;">
+                            <strong>Template:</strong> https://audio.globalquran.com/{recitorId}/{format}/{bitrate}kbs/{ayah}.{extension}<br>
+                            <strong>Values:</strong><br>
+                            • recitorId: "${recitorId}"<br>
+                            • format: "${bestFormat.type}"<br>
+                            • bitrate: "${bestFormat.kbs}"<br>
+                            • ayah: "1"<br>
+                            • extension: "${bestFormat.type === 'ogg' ? 'ogg' : 'mp3'}"<br>
+                        </div>
+                        
+                        <strong>JSON Data Used:</strong><br>
+                        <div style="background: #f8f9fa; padding: 8px; border-radius: 4px; margin: 5px 0; font-family: monospace; font-size: 10px; max-height: 150px; overflow-y: auto;">
+                            ${JSON.stringify(bestFormat, null, 2)}
+                        </div>
+                        
+                        <small>Format: ${audioFormat}</small>
+                    `;
+                }
+                
+                // Set up the audio player
+                if (audioPlayer) {
+                    audioPlayer.src = audioUrl;
+                    audioPlayer.style.display = 'block';
+                    
+                    // Handle play promise to avoid interruption errors
+                    const playPromise = audioPlayer.play();
+                    if (playPromise !== undefined) {
+                        playPromise.then(() => {
+                            console.log(`Audio started playing for ${recitorName}`);
+                            playButton.innerHTML = '<i class="fas fa-pause"></i> Pause';
+                            playButton.classList.add('playing');
+                            currentlyPlayingAudio = audioPlayer;
+                        }).catch(error => {
+                            console.log(`Audio play was interrupted or failed for ${recitorName}:`, error);
+                            // Try to load the audio first
+                            audioPlayer.load();
+                            setTimeout(() => {
+                                audioPlayer.play().catch(e => console.log('Retry play failed:', e));
+                            }, 500);
+                        });
+                    }
+                }
+                
+            } catch (error) {
+                console.error('Error playing recitor audio:', error);
+                const urlElement = document.getElementById(`audio-url-${recitorId}`);
+                if (urlElement) {
+                    urlElement.innerHTML = `<span style="color: red;">Error: ${error.message}</span>`;
+                }
+            }
+        }
+
+        // Toggle expand/collapse for recitor info
+        function toggleExpand(recitorId) {
+            const expandedContent = document.getElementById(`expanded-${recitorId}`);
+            const expandButton = event.target.closest('.expand-button');
+            
+            if (expandedContent.classList.contains('show')) {
+                expandedContent.classList.remove('show');
+                expandButton.innerHTML = '<i class="fas fa-info-circle"></i> Info';
+            } else {
+                expandedContent.classList.add('show');
+                expandButton.innerHTML = '<i class="fas fa-chevron-up"></i> Hide';
+                
+                // Generate and show URLs immediately when expanding
+                const card = document.querySelector(`[data-recitor-id="${recitorId}"]`);
+                if (card) {
+                    const recitorData = JSON.parse(card.dataset.recitorData);
+                    const mediaInfo = recitorData.media || {};
+                    
+                    // Determine the best format based on browser support
+                    const bestFormat = getBestAudioFormat(mediaInfo);
+                    
+                    let audioUrl;
+                    let audioFormat;
+                    let rawUrl;
+                    
+                    if (bestFormat) {
+                        // Use audio.globalquran.com with the best format from media info
+                        const fileExtension = bestFormat.type === 'ogg' ? 'ogg' : 'mp3';
+                        audioUrl = `https://audio.globalquran.com/${recitorId}/${bestFormat.type}/${bestFormat.kbs}kbs/1.${fileExtension}`;
+                        audioFormat = `${bestFormat.type.toUpperCase()} ${bestFormat.kbs}kbps`;
+                        rawUrl = bestFormat.sourcePath || 'N/A';
+                    } else {
+                        // Fallback to default format
+                        audioUrl = `https://audio.globalquran.com/${recitorId}/mp3/128kbs/1.mp3`;
+                        audioFormat = 'MP3 128kbps (fallback)';
+                        rawUrl = 'N/A';
+                    }
+                    
+                    // Update the audio URL display
+                    const urlElement = document.getElementById(`audio-url-${recitorId}`);
+                    if (urlElement) {
+                        urlElement.innerHTML = `
+                            <strong>Final Audio URL:</strong><br>
+                            <a href="${audioUrl}" target="_blank" style="color: #2c5aa0;">${audioUrl}</a><br><br>
+                            
+                            <strong>URL Construction Process:</strong><br>
+                            <div style="background: #f8f9fa; padding: 8px; border-radius: 4px; margin: 5px 0; font-family: monospace; font-size: 10px;">
+                                <strong>Template:</strong> https://audio.globalquran.com/{recitorId}/{format}/{bitrate}kbs/{ayah}.{extension}<br>
+                                <strong>Values:</strong><br>
+                                • recitorId: "${recitorId}"<br>
+                                • format: "${bestFormat.type}"<br>
+                                • bitrate: "${bestFormat.kbs}"<br>
+                                • ayah: "1"<br>
+                                • extension: "${bestFormat.type === 'ogg' ? 'ogg' : 'mp3'}"<br>
+                            </div>
+                            
+                            <strong>JSON Data Used:</strong><br>
+                            <div style="background: #f8f9fa; padding: 8px; border-radius: 4px; margin: 5px 0; font-family: monospace; font-size: 10px; max-height: 150px; overflow-y: auto;">
+                                ${JSON.stringify(bestFormat, null, 2)}
+                            </div>
+                            
+                            <small>Format: ${audioFormat}</small>
+                        `;
+                    }
+                }
+            }
+        }
+
+
+        // Load recitor list on page load
+        document.addEventListener('DOMContentLoaded', loadRecitorList);
+    </script>
+</body>
+</html>
