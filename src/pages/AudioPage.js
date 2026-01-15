@@ -28,37 +28,24 @@ const AudioPage = () => {
     }
   }, [dispatch, recitorData.length, lastFetched]);
 
-  const formatAudioUrl = (basePath, verseNumber) => {
-    // Check if basePath is valid
-    if (!basePath || typeof basePath !== 'string') {
-      console.warn('Invalid basePath provided to formatAudioUrl:', basePath);
-      return null;
-    }
-    // Ensure the path starts with http:// or https://
-    const fullPath = basePath.startsWith('//') ? `https:${basePath}` : basePath;
-    // Audio files use simple numbering (1.mp3, 2.mp3, etc.) without leading zeros
-    const audioUrl = `${fullPath}${verseNumber}.mp3`;
+  const formatAudioUrl = (recitorId, format, kbs, verseNumber) => {
+    // Determine file extension based on format type
+    const extension = format === 'ogg' ? 'ogg' : 'mp3';
+    // Build audio URL: https://audio.globalquran.com/{recitorId}/{format}/{bitrate}kbs/{verseNumber}.{extension}
+    const audioUrl = `https://audio.globalquran.com/${recitorId}/${format}/${kbs}kbs/${verseNumber}.${extension}`;
     return audioUrl;
   };
 
   const getHighestQualityFormat = (media) => {
-    // Check if media object is valid
-    if (!media || typeof media !== 'object' || Object.keys(media).length === 0) {
-      console.warn('Invalid or empty media object provided to getHighestQualityFormat:', media);
-      return null;
-    }
-    
     // Find the format with highest kbs (bandwidth)
     let highestFormat = null;
     let highestKbs = 0;
     
     Object.entries(media).forEach(([format, info]) => {
-      if (info && info.kbs && info.path) {
-        const kbs = parseInt(info.kbs) || 0;
-        if (kbs > highestKbs) {
-          highestKbs = kbs;
-          highestFormat = format;
-        }
+      const kbs = parseInt(info.kbs) || 0;
+      if (kbs > highestKbs) {
+        highestKbs = kbs;
+        highestFormat = format;
       }
     });
     
@@ -66,26 +53,14 @@ const AudioPage = () => {
   };
 
   const getDemoAudioUrl = useCallback((recitor) => {
-    // Check if recitor and media exist
-    if (!recitor || !recitor.media) {
-      console.warn('Invalid recitor object provided to getDemoAudioUrl:', recitor);
-      return null;
-    }
-    
     const highestFormat = getHighestQualityFormat(recitor.media);
-    if (!highestFormat) {
-      console.warn('No valid format found for recitor:', recitor.name);
-      return null;
-    }
+    if (!highestFormat || !recitor.media[highestFormat]) return null;
     
     const formatInfo = recitor.media[highestFormat];
-    if (!formatInfo || !formatInfo.path) {
-      console.warn('No path found for format:', highestFormat, 'in recitor:', recitor.name);
-      return null;
-    }
+    const formatType = formatInfo.type || 'mp3';
+    const kbs = formatInfo.kbs || '128';
     
-    const basePath = formatInfo.path;
-    return formatAudioUrl(basePath, 1); // Use verse 1 for demo
+    return formatAudioUrl(recitor.id, formatType, kbs, 1); // Use verse 1 for demo
   }, []);
 
   const toggleAudio = useCallback((recitorId) => {
@@ -122,7 +97,8 @@ const AudioPage = () => {
 
     const zip = new JSZip();
     const formatInfo = recitor.media[format];
-    const basePath = formatInfo.path;
+    const formatType = formatInfo.type || 'mp3';
+    const kbs = formatInfo.kbs || '128';
     
     try {
       setDownloadProgress({ current: 0, total: TOTAL_VERSES, recitor: recitor.name, format });
@@ -135,7 +111,7 @@ const AudioPage = () => {
       
       for (let verse = 1; verse <= TOTAL_VERSES; verse++) {
         try {
-          const audioUrl = formatAudioUrl(basePath, verse);
+          const audioUrl = formatAudioUrl(recitor.id, formatType, kbs, verse);
           const response = await fetch(audioUrl);
           
           if (response.ok) {
@@ -176,7 +152,7 @@ Recitor Information:
 - Type: ${recitor.type}
 
 For more information, visit: https://globalquran.com/
-Audio source: ${basePath}
+Audio source: https://audio.globalquran.com/${recitor.id}/${formatType}/${kbs}kbs/
 `;
       
       folder.file('README.txt', readme);
@@ -198,13 +174,15 @@ Audio source: ${basePath}
   const generateVerseLinks = (recitor, format) => {
     if (!recitor.media[format]) return [];
     
-    const basePath = recitor.media[format].path;
+    const formatInfo = recitor.media[format];
+    const formatType = formatInfo.type || 'mp3';
+    const kbs = formatInfo.kbs || '128';
     const links = [];
     
     for (let verse = 1; verse <= TOTAL_VERSES; verse++) {
       links.push({
         verse,
-        url: formatAudioUrl(basePath, verse)
+        url: formatAudioUrl(recitor.id, formatType, kbs, verse)
       });
     }
     
