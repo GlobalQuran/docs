@@ -124,6 +124,74 @@ paths:
                 **Authentication Required**: API key must be provided via query parameter or header.
             parameters:
                 - $ref: '#/components/parameters/jsoncallback'
+    /v1/surah:
+        get:
+            summary: Surah Metadata List (v1)
+            tags: [v1]
+            security:
+                - ApiKeyAuth: []
+                - ApiKeyHeader: []
+            responses:
+                '200':
+                    description: Successful response with surah metadata
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                properties:
+                                    surahList:
+                                        type: object
+                                        additionalProperties:
+                                            $ref: '#/components/schemas/surahMetadata'
+                            examples:
+                                surahListExample:
+                                    summary: Example surah list response
+                                    value:
+                                        surahList:
+                                            "1":
+                                                surah_number: 1
+                                                name_arabic: "الفاتحة"
+                                                name_english: "Al-Fatihah"
+                                                name_translation: "The Opening"
+                                                ayahs: 7
+                                                start_ayah: 1
+                                                end_ayah: 7
+                                                juz: [1]
+                                                revelation_type: "Meccan"
+                                                revelation_order: 5
+                                                skip_bismillah: false
+                                            "2":
+                                                surah_number: 2
+                                                name_arabic: "البقرة"
+                                                name_english: "Al-Baqarah"
+                                                name_translation: "The Cow"
+                                                ayahs: 286
+                                                start_ayah: 8
+                                                end_ayah: 293
+                                                juz: [1, 2, 3]
+                                                revelation_type: "Medinan"
+                                                revelation_order: 87
+                                                skip_bismillah: false
+                '401':
+                    $ref: '#/components/responses/unauthorized'
+                '403':
+                    $ref: '#/components/responses/forbidden'
+                '500':
+                    $ref: '#/components/responses/internalError'
+            operationId: get-surah-metadata-v1
+            description: |-
+                Get metadata for all 114 surahs including Arabic names, English names, 
+                ayah counts, juz information, revelation type, and bismillah indicators.
+                
+                This endpoint returns comprehensive metadata for all surahs in the Quran, 
+                including their names in Arabic and English, number of verses, which juz 
+                they appear in, revelation type (Meccan/Medinan), and other relevant information.
+                
+                **Authentication Required**: API key must be provided via query parameter or header.
+                
+                **Response Formats**: Supports JSON, JSONP, and plain text formats.
+            parameters:
+                - $ref: '#/components/parameters/jsoncallback'
     /v1/surah/{surahNo}/{quranId}:
         parameters:
             - $ref: '#/components/parameters/surahNo'
@@ -436,6 +504,56 @@ components:
             name: X-API-Key
             description: API key in header
     schemas:
+        surahMetadata:
+            type: object
+            properties:
+                surah_number:
+                    type: integer
+                    example: 1
+                    description: Surah position number (1-114)
+                name_arabic:
+                    type: string
+                    example: "الفاتحة"
+                    description: Quranic Arabic name
+                name_english:
+                    type: string
+                    example: "Al-Fatihah"
+                    description: Transliterated English name
+                name_translation:
+                    type: string
+                    example: "The Opening"
+                    description: English meaning of the surah name
+                ayahs:
+                    type: integer
+                    example: 7
+                    description: Total number of ayahs in the surah
+                start_ayah:
+                    type: integer
+                    example: 1
+                    description: Global ayah number where surah starts
+                end_ayah:
+                    type: integer
+                    example: 7
+                    description: Global ayah number where surah ends
+                juz:
+                    type: array
+                    items:
+                        type: integer
+                    example: [1]
+                    description: Array of juz numbers this surah appears in
+                revelation_type:
+                    type: string
+                    enum: [Meccan, Medinan]
+                    example: "Meccan"
+                    description: Where the surah was revealed
+                revelation_order:
+                    type: integer
+                    example: 5
+                    description: Order in which the surah was revealed (1-114)
+                skip_bismillah:
+                    type: boolean
+                    example: false
+                    description: Whether to skip Bismillah before this surah (true only for Surah 9)
         v2QuranItem:
             type: object
             properties:
