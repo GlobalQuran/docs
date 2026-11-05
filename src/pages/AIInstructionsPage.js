@@ -152,7 +152,14 @@ async function initializeApp() {
     quranFormats: quranData.list,
     translations: translationData.list,
     recitors: recitorData.list,
-    surahs: surahData.data,
+    // /v1/surah returns { surahList: { "1": {...}, "2": {...} } }; turn it into an array the rest of the code can search
+    surahs: Object.values(surahData.surahList).map(s => ({
+      number: s.surah_number,
+      name: s.name_english,
+      numberOfAyahs: s.ayahs,
+      startAyah: s.start_ayah,          // global number of the surah's first ayah (1 to 6236): needed to find audio files
+      skipBismillah: s.skip_bismillah   // true only for At-Tawbah (surah 9)
+    })),
     defaults: {
       quran: defaultQuran,
       translation: defaultTranslation,
@@ -196,53 +203,59 @@ async function loadSurah(surahNumber, quranFormat, translationIds = []) {
     audioIntegration: `# Audio Integration Architecture
 
 ## 1. Audio URL Construction
+Audio is one file per ayah. **Files are named by the global ayah number (1 to 6236, counted through the whole Quran), not by the surah number**: \`114.mp3\` is the 114th ayah of the Quran (inside Al-Baqarah), not Surah An-Nas. Surah 114 starts at global ayah 6231.
+
+\`\`\`
+https://audio.globalquran.com/{recitorId}/{mp3|ogg}/{kbs}kbs/{globalAyah}.{mp3|ogg}
+https://audio.globalquran.com/ar.alafasy/mp3/128kbs/262.mp3      (Ayat al-Kursi, 2:255)
+\`\`\`
+
+Global ayah number = \`start_ayah\` of the surah (from \`/v1/surah\`) + ayah number - 1.
+
 \`\`\`javascript
-// Step 3: Build audio URLs dynamically
-function buildAudioUrl(recitorId, surahNumber, verseNumber, mediaInfo) {
-  // Determine best audio format based on browser support
-  const bestFormat = getBestAudioFormat(mediaInfo);
-  
-  if (bestFormat) {
-    const fileExtension = bestFormat.type === 'ogg' ? 'ogg' : 'mp3';
-    return \`https://audio.globalquran.com/\${recitorId}/\${bestFormat.type}/\${bestFormat.kbs}kbs/\${surahNumber}.\${fileExtension}\`;
-  } else {
-    // Fallback to default format
-    return \`https://audio.globalquran.com/\${recitorId}/mp3/128kbs/\${surahNumber}.mp3\`;
-  }
+// Step 3: Build audio URLs
+function globalAyah(surah, ayahNumber) {
+  return surah.startAyah + ayahNumber - 1;   // startAyah comes from /v1/surah (start_ayah)
 }
 
-function getBestAudioFormat(mediaInfo) {
-  // Check browser support and return best available format
-  const audio = document.createElement('audio');
-  
-  if (audio.canPlayType('audio/ogg')) {
-    return mediaInfo.find(format => format.type === 'ogg');
-  } else if (audio.canPlayType('audio/mpeg')) {
-    return mediaInfo.find(format => format.type === 'mp3');
-  }
-  
-  return null; // Use fallback
+// A recitor's "media" (from /v2/list/recitor) is an object like { "mp3-128": {kbs, type, status, auz}, "ogg-64": {...} }.
+// Return the usable variants, best first. Try the next one if a file fails to load: a listed variant is not
+// guaranteed to exist for every ayah.
+function audioVariants(media) {
+  const probe = document.createElement('audio');
+  const canOgg = probe.canPlayType('audio/ogg; codecs="vorbis"') !== '';
+  return Object.values(media)
+    .filter(m => m.status === 'active' && (m.type === 'mp3' || (m.type === 'ogg' && canOgg)))
+    .sort((a, b) => (a.type === 'mp3' ? 0 : 1) - (b.type === 'mp3' ? 0 : 1) || Number(b.kbs) - Number(a.kbs)); // mp3 first (plays everywhere), highest bitrate first
 }
+
+function buildAudioUrl(recitorId, globalAyahNumber, variant) {
+  return \`https://audio.globalquran.com/\${recitorId}/\${variant.type}/\${variant.kbs}kbs/\${globalAyahNumber}.\${variant.type}\`;
+}
+
+// Optional: the "A'udhu billah" (seeking refuge) recording. Only recitors whose media entries have an "auz" field have it:
+//   https://audio.globalquran.com/{recitorId}/{type}/{kbs}kbs/0.{type}
 \`\`\`
 
 ## 3. Bismillah Logic Explanation
-The audio player implements intelligent Bismillah handling:
+The Bismillah is not a separate recording: it is the audio of the very first ayah of the Quran (Al-Fatiha 1:1), global ayah number 1, so its file is always named \`1\`.
 
 ### Bismillah Rules:
-- **Al-Fatiha (Surah 1)**: Does NOT start with Bismillah
-- **At-Tawbah (Surah 9)**: Does NOT start with Bismillah  
-- **All other surahs**: Start with Bismillah
+- **Al-Fatiha (Surah 1)**: the Bismillah IS its first ayah (1:1). Play the surah normally and do not add another Bismillah in front of it.
+- **At-Tawbah (Surah 9)**: has no Bismillah (the API marks it with \`skip_bismillah: true\`).
+- **All other surahs**: the Bismillah is recited before the first ayah, so play file \`1\` first, then the surah's real first ayah.
+- If a listener chooses to start from a specific ayah ("play from here"), do not add the Bismillah.
 
 ### Playback Flow:
-1. **Check if surah needs Bismillah**: \`this.surahsWithBismillah.has(surahNumber)\`
-2. **If yes and first ayah**: Play Bismillah from Al-Fatiha (Surah 1, Ayah 1)
-3. **After Bismillah**: Play actual first ayah of the surah
-4. **Continue**: Normal ayah-by-ayah progression
-5. **Next surah**: Reset Bismillah flag and repeat process
+1. **Check if the surah needs a Bismillah**: \`surahNumber !== 1 && !surah.skipBismillah\`
+2. **If yes and starting from the top**: play global ayah 1 first
+3. **After the Bismillah**: play the actual first ayah of the surah
+4. **Continue**: normal ayah-by-ayah progression
+5. **Next surah**: work out again whether it needs a Bismillah and repeat
 
 ### Audio URL Construction:
-- **Bismillah**: \`https://audio.globalquran.com/{recitorId}/{format}/{bitrate}kbs/1.{extension}\`
-- **Actual Ayah**: \`https://audio.globalquran.com/{recitorId}/{format}/{bitrate}kbs/{surahNumber}.{extension}\`
+- **Bismillah**: \`https://audio.globalquran.com/{recitorId}/{type}/{kbs}kbs/1.{type}\`
+- **Actual Ayah**: \`https://audio.globalquran.com/{recitorId}/{type}/{kbs}kbs/{globalAyah}.{type}\` where \`globalAyah = start_ayah + ayah - 1\`
 
 ## 2. Advanced Audio Player Implementation
 \`\`\`javascript
@@ -253,40 +266,39 @@ class QuranAudioPlayer {
     this.currentSurah = null;
     this.currentAyah = null;
     this.currentRecitor = null;
-    this.mediaInfo = null;
+    this.variants = [];        // usable audio variants of the current recitor, best first
+    this.variantIndex = 0;
+    this.surahs = [];          // normalised surah list (see initializeApp)
     this.surahData = null;
     this.isPlaying = false;
     this.shouldPlayBismillah = false;
     this.bismillahPlayed = false;
     
-    // Surahs that start with Bismillah (all except Al-Fatiha and At-Tawbah)
-    this.surahsWithBismillah = new Set([
-      1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20,
-      21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40,
-      41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60,
-      61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80,
-      81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100,
-      101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114
-    ]);
-    
-    // Remove Al-Fatiha (1) and At-Tawbah (9) as they don't start with Bismillah
-    this.surahsWithBismillah.delete(1); // Al-Fatiha
-    this.surahsWithBismillah.delete(9);  // At-Tawbah
   }
-  
-  async playSurah(recitorId, surahNumber, mediaInfo, surahData) {
+
+  setSurahs(surahs) {
+    this.surahs = surahs;
+  }
+
+  // The Bismillah goes in front of every surah except Al-Fatiha (its ayah 1 IS the Bismillah) and At-Tawbah (none)
+  needsBismillah(surah) {
+    return surah.number !== 1 && !surah.skipBismillah;
+  }
+
+  async playSurah(recitorId, surahNumber, media, surahData) {
     // Stop current audio if playing
     this.stop();
     
     this.currentRecitor = recitorId;
     this.currentSurah = surahNumber;
     this.currentAyah = 1;
-    this.mediaInfo = mediaInfo;
+    this.variants = audioVariants(media);
+    this.variantIndex = 0;
     this.surahData = surahData;
     this.bismillahPlayed = false;
     
     // Determine if we should play Bismillah
-    this.shouldPlayBismillah = this.surahsWithBismillah.has(surahNumber);
+    this.shouldPlayBismillah = this.needsBismillah(surahData);
     
     // Start playing
     await this.playCurrentAyah();
@@ -303,46 +315,62 @@ class QuranAudioPlayer {
       this.currentAudio = null;
     }
     
-    let audioUrl;
-    let ayahToPlay = this.currentAyah;
-    
+    let globalNumber;
+
     // Check if we need to play Bismillah first
     if (this.shouldPlayBismillah && !this.bismillahPlayed && this.currentAyah === 1) {
-      // Play Bismillah from Al-Fatiha (Surah 1, Ayah 1)
-      audioUrl = buildAudioUrl(this.currentRecitor, 1, 1, this.mediaInfo);
+      // The Bismillah is the audio of global ayah 1 (Al-Fatiha 1:1)
+      globalNumber = 1;
       this.bismillahPlayed = true;
     } else {
-      // Play the actual ayah
-      audioUrl = buildAudioUrl(this.currentRecitor, this.currentSurah, ayahToPlay, this.mediaInfo);
+      // Play the actual ayah: files are numbered through the whole Quran
+      globalNumber = globalAyah(this.surahData, this.currentAyah);
     }
-    
+
+    await this.playFile(globalNumber);
+  }
+
+  async playFile(globalNumber) {
+    const variant = this.variants[this.variantIndex];
+    if (!variant) {
+      console.error('No playable audio variant for this recitor');
+      return;
+    }
+
     // Create and play new audio
-    this.currentAudio = new Audio(audioUrl);
+    this.currentAudio = new Audio(buildAudioUrl(this.currentRecitor, globalNumber, variant));
     this.currentAudio.crossOrigin = 'anonymous';
-    
+
     // Set up event listeners
     this.currentAudio.addEventListener('ended', () => {
       this.onAyahEnded();
     });
-    
+
     this.currentAudio.addEventListener('error', (error) => {
       console.error('Audio playback error:', error);
-      this.onAyahEnded(); // Try to continue to next ayah
+      // The file may not exist in this variant: try the next one before giving up on the ayah
+      if (this.variantIndex + 1 < this.variants.length) {
+        this.variantIndex++;
+        this.playFile(globalNumber);
+      } else {
+        this.variantIndex = 0;
+        this.onAyahEnded(); // Try to continue to next ayah
+      }
     });
-    
+
     try {
       await this.currentAudio.play();
       this.isPlaying = true;
-      
+
       // Update UI to show current ayah
       this.updateCurrentAyahDisplay();
-      
+
     } catch (error) {
       console.error('Audio playback failed:', error);
       this.onAyahEnded(); // Try to continue to next ayah
     }
   }
-  
+
   onAyahEnded() {
     this.isPlaying = false;
     
@@ -370,31 +398,23 @@ class QuranAudioPlayer {
         return;
       }
       
-      // Update surah data for new surah
+      // Update surah data for the new surah (and whether it needs a Bismillah)
       this.loadSurahData(this.currentSurah);
+      this.shouldPlayBismillah = this.needsBismillah(this.surahData);
     }
     
     // Continue playing
     this.playCurrentAyah();
   }
   
-  async loadSurahData(surahNumber) {
-    try {
-      // Load surah metadata to get number of ayahs
-      const response = await fetch(\`https://api.globalquran.com/v1/surah?key=YOUR_API_KEY\`);
-      const data = await response.json();
-      this.surahData = data.data.find(surah => surah.number === surahNumber);
-      
-      // Update UI with new surah info
-      this.updateSurahDisplay();
-      
-    } catch (error) {
-      console.error('Failed to load surah data:', error);
-      // Use default ayah count if API fails
-      this.surahData = { numberOfAyahs: 10 }; // Fallback
-    }
+  loadSurahData(surahNumber) {
+    // The list was loaded once at start-up (see initializeApp): no new request is needed
+    this.surahData = this.surahs.find(surah => surah.number === surahNumber);
+
+    // Update UI with new surah info
+    this.updateSurahDisplay();
   }
-  
+
   pause() {
     if (this.currentAudio && this.isPlaying) {
       this.currentAudio.pause();
@@ -424,7 +444,7 @@ class QuranAudioPlayer {
   skipToAyah(ayahNumber) {
     if (ayahNumber >= 1 && ayahNumber <= this.surahData.numberOfAyahs) {
       this.currentAyah = ayahNumber;
-      this.bismillahPlayed = false; // Reset Bismillah flag
+      this.bismillahPlayed = true; // The listener chose this ayah: no Bismillah in front of it
       this.playCurrentAyah();
     }
   }
@@ -857,6 +877,7 @@ class QuranApp {
       
       // Initialize app data
       this.appData = await initializeApp();
+      this.audioPlayer.setSurahs(this.appData.surahs);   // the player moves from surah to surah without asking the API again
       
       // Set up UI components
       this.setupUI();
@@ -887,8 +908,8 @@ class QuranApp {
     const recitorData = this.appData.recitors[recitorId];
     const surahData = this.appData.surahs.find(surah => surah.number === surahNumber);
     
-    if (recitorData && recitorData.mediaInfo && surahData) {
-      await this.audioPlayer.playSurah(recitorId, surahNumber, recitorData.mediaInfo, surahData);
+    if (recitorData && recitorData.media && surahData) {
+      await this.audioPlayer.playSurah(recitorId, surahNumber, recitorData.media, surahData);
     }
   }
   
@@ -896,8 +917,8 @@ class QuranApp {
     const recitorData = this.appData.recitors[recitorId];
     const surahData = this.appData.surahs.find(surah => surah.number === surahNumber);
     
-    if (recitorData && recitorData.mediaInfo && surahData) {
-      await this.audioPlayer.playSurah(recitorId, surahNumber, recitorData.mediaInfo, surahData);
+    if (recitorData && recitorData.media && surahData) {
+      await this.audioPlayer.playSurah(recitorId, surahNumber, recitorData.media, surahData);
       // Skip to specific ayah
       this.audioPlayer.skipToAyah(ayahNumber);
     }
@@ -1025,7 +1046,7 @@ const currentConfig = config[process.env.NODE_ENV || 'development'];
 \`\`\`
 
 ## 2. Build Configuration
-- Use environment variables for API keys
+- Keep the API key in configuration (an environment variable at build time, or on your server) rather than hard-coded in source files
 - Implement proper error logging
 - Set up monitoring and analytics
 - Configure CDN for static assets
@@ -1039,11 +1060,12 @@ const currentConfig = config[process.env.NODE_ENV || 'development'];
 - Cross-browser compatibility testing
 
 ## 4. Security Considerations
-- Never expose API keys in client-side code
+- Treat an API key as an identifier, not a secret: a key used in browser code (as the \`?key=\` examples in this guide do) is visible to anyone who opens the page, so give it no rights you would not give the public
+- If a key must stay private, call the API from your own server and let the browser talk to your server instead
 - Implement proper CORS policies
 - Use HTTPS for all API communications
 - Validate and sanitize user inputs
-- Implement rate limiting on API calls`
+- Cache list responses (they rarely change), fetch a whole surah at once instead of ayah by ayah, and rate-limit your own calls to the API`
   };
 
   const sections = useMemo(() => [

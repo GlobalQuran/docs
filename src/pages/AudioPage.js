@@ -31,7 +31,8 @@ const AudioPage = () => {
   const formatAudioUrl = (recitorId, format, kbs, verseNumber) => {
     // Determine file extension based on format type
     const extension = format === 'ogg' ? 'ogg' : 'mp3';
-    // Build audio URL: https://audio.globalquran.com/{recitorId}/{format}/{bitrate}kbs/{verseNumber}.{extension}
+    // Build audio URL: https://audio.globalquran.com/{recitorId}/{format}/{bitrate}kbs/{globalAyahNumber}.{extension}
+    // (files are named by the global ayah number, 1 to 6236, not by surah number)
     const audioUrl = `https://audio.globalquran.com/${recitorId}/${format}/${kbs}kbs/${verseNumber}.${extension}`;
     return audioUrl;
   };
