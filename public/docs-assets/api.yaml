@@ -585,7 +585,7 @@ components:
                     type: object
                     additionalProperties: true
                     example:
-                        url: "https://cdn.globalquran.com/en.sahih.json"
+                        url: "https://cdn.globalquran.com/quran_data/complete/json/en.sahih.json"
                         size: "2.5MB"
                 last_update:
                     type: string
@@ -2671,14 +2671,14 @@ components:
                                         source: Sahih International
                                         default: true
                                         media:
-                                            url: "https://cdn.globalquran.com/en.sahih.json"
+                                            url: "https://cdn.globalquran.com/quran_data/complete/json/en.sahih.json"
                                             size: "2.5MB"
                                         last_update: "2024-01-15"
                                         supported_version: 1.0
                 application/javascript:
                     schema:
                         type: string
-                        example: "quranData({\"list\":{\"en.sahih\":{\"language_code\":\"en\",\"name\":\"Sahih International\",\"english_name\":\"Sahih International\",\"native_name\":\"Sahih International\",\"format\":\"text\",\"type\":\"translation\",\"source\":\"Sahih International\",\"default\":true,\"media\":{\"url\":\"https://cdn.globalquran.com/en.sahih.json\",\"size\":\"2.5MB\"},\"last_update\":\"2024-01-15\",\"supported_version\":1.0}}});"
+                        example: "quranData({\"list\":{\"en.sahih\":{\"language_code\":\"en\",\"name\":\"Sahih International\",\"english_name\":\"Sahih International\",\"native_name\":\"Sahih International\",\"format\":\"text\",\"type\":\"translation\",\"source\":\"Sahih International\",\"default\":true,\"media\":{\"url\":\"https://cdn.globalquran.com/quran_data/complete/json/en.sahih.json\",\"size\":\"2.5MB\"},\"last_update\":\"2024-01-15\",\"supported_version\":1.0}}});"
                 text/plain:
                     schema:
                         type: string
