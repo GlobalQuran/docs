@@ -39,7 +39,7 @@ const AssetsPage = () => {
                 </ul>
                 <button 
                   className="btn btn-primary btn-lg btn-block"
-                  onClick={() => handleDownload('https://audio.globalquran.com/resources/quran-fonts.zip', 'quran-fonts.zip')}
+                  onClick={() => handleDownload('https://cdn.globalquran.com/resources/quran-fonts.zip', 'quran-fonts.zip')}
                 >
                   <i className="fas fa-download"></i> Download Quran Fonts
                 </button>
@@ -67,7 +67,7 @@ const AssetsPage = () => {
                 </ul>
                 <button 
                   className="btn btn-primary btn-lg btn-block"
-                  onClick={() => handleDownload('https://audio.globalquran.com/resources/quran-ayah-images.zip', 'quran-ayah-images.zip')}
+                  onClick={() => handleDownload('https://cdn.globalquran.com/resources/quran-ayah-images.zip', 'quran-ayah-images.zip')}
                 >
                   <i className="fas fa-download"></i> Download Ayah Images
                 </button>
