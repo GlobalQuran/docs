@@ -44,11 +44,11 @@ const Home = () => {
               <i className="fas fa-volume-up"></i>
             </li>
             <li>
-              <a href="https://audio.globalquran.com/resources/quran-fonts.zip">Quran Fonts</a> 
+              <a href="https://cdn.globalquran.com/resources/quran-fonts.zip">Quran Fonts</a> 
               <i className="fas fa-font"></i>
             </li>
             <li>
-              <a href="https://audio.globalquran.com/resources/quran-ayah-images.zip">6236 Ayah Images</a>
+              <a href="https://cdn.globalquran.com/resources/quran-ayah-images.zip">6236 Ayah Images</a>
             </li>
           </ul>
         </div>
