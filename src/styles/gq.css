@@ -191,3 +191,16 @@ html.night .gq-legacy{background:#fff}
 .gq-new .rowlink{cursor:pointer}
 .gq-new .rowlink:hover td,.gq-new .rowlink:focus td{background:var(--sel)}
 .gq-new .rowlink:focus{outline:2px solid var(--gold);outline-offset:-2px}
+
+/* forms and quotes (about, contact, donate) */
+.gq-new .inp{width:100%;min-height:42px;border:1px solid var(--line);border-radius:8px;background:var(--field);color:var(--ink);padding:9px 12px;font:inherit;font-size:14.5px}
+.gq-new textarea.inp{min-height:140px;resize:vertical;line-height:1.5}
+.gq-new .inp:focus{outline:2px solid var(--gold);outline-offset:1px}
+.gq-new .quote{border:1px solid var(--gold);border-radius:6px;background:var(--card);padding:26px 28px;position:relative;text-align:center}
+.gq-new .quote::after{content:"";position:absolute;inset:5px;border:3px double rgba(165,138,58,.38);border-radius:3px;pointer-events:none}
+.gq-new .quote .ar{font:400 28px/2 "Amiri","GQ Amiri Quran",serif;direction:rtl;color:var(--ink)}
+.gq-new .quote .en{font:italic 16px/1.6 Georgia,serif;color:var(--mute);margin-top:6px}
+.gq-new .quote .ref{font:700 11px/1 Georgia,serif;letter-spacing:.14em;text-transform:uppercase;color:var(--goldink);margin-top:14px}
+.gq-new .paper{background:#fbfaf6;border:1px solid var(--gold);border-radius:6px;padding:14px;position:relative}
+.gq-new .paper::after{content:"";position:absolute;inset:5px;border:3px double rgba(165,138,58,.38);border-radius:3px;pointer-events:none}
+.gq-new .team{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:12px}

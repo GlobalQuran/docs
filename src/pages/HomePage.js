@@ -44,8 +44,8 @@ const HomePage = () => {
             <div className="h2" style={{ margin: '8px 0 6px' }}>{user ? 'Your API key is ready' : 'Get your free API key'}</div>
             <div className="mute small">{user ? 'Open your key page for your key, a ready sample and your other keys.' : 'Sign in, say what you are building, copy your key and a ready sample. About a minute.'}</div>
           </div>
-          <a className="btn g" href={KEYS_URL}>{user ? 'Open my key' : 'Get a key'}</a>
-          {!user && <a className="btn" href={KEYS_URL}>I already have one</a>}
+          <Link className="btn g" to={KEYS_URL}>{user ? 'Open my key' : 'Get a key'}</Link>
+          {!user && <Link className="btn" to={KEYS_URL}>I already have one</Link>}
         </div>
       </div>
 

@@ -20,7 +20,7 @@ const Overview = () => {
           <div className="small mute">Send it as a header: <span className="chip">X-API-Key: your key</span>. Paste it here and the samples and Run buttons use it. It stays in your browser.</div>
         </div>
         <input className="sel" style={{ width: 240 }} placeholder="paste your key" value={key} onChange={(e) => { setKey(e.target.value); saveKey(e.target.value); }} />
-        <a className="btn s" href={KEYS_URL}>Get a key</a>
+        <Link className="btn s" to={KEYS_URL}>Get a key</Link>
       </div>
 
       {GROUPS.map((g) => (

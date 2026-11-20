@@ -21,6 +21,10 @@ import ExamplesHomePage from './pages/ExamplesHomePage';
 import AIInstructionsPage from './pages/AIInstructionsPage';
 import AboutPage from './pages/AboutPage';
 import ContactPage from './pages/ContactPage';
+import Protected from './keys/Protected';
+import KeysHome from './keys/KeysHome';
+import GetKey from './keys/GetKey';
+import AllKeys from './keys/AllKeys';
 
 const ScrollTop = () => {
   const { pathname } = useLocation();
@@ -51,8 +55,11 @@ function App() {
               <Route path="/assets" element={<AssetsPage />} />
               <Route path="/pdf" element={<PdfPage />} />
               <Route path="/donate" element={<DonatePage />} />
-              <Route path="/about" element={<Legacy><AboutPage /></Legacy>} />
-              <Route path="/contact" element={<Legacy><ContactPage /></Legacy>} />
+              <Route path="/keys" element={<Protected><KeysHome /></Protected>} />
+              <Route path="/keys/start" element={<Protected><GetKey /></Protected>} />
+              <Route path="/keys/all" element={<Protected><AllKeys /></Protected>} />
+              <Route path="/about" element={<AboutPage />} />
+              <Route path="/contact" element={<ContactPage />} />
               <Route path="/examples" element={<Legacy><ExamplesHomePage /></Legacy>} />
               <Route path="/examples/:exampleName" element={<Legacy><ExamplePage /></Legacy>} />
               <Route path="/ai-instructions" element={<Legacy><AIInstructionsPage /></Legacy>} />

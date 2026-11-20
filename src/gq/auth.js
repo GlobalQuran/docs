@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 // If the login service does not allow this site yet (CORS), the check fails quietly and the visitor simply looks signed out.
 export const LOGIN_API = 'https://api-login.globalquran.com/api/v1';
 export const LOGIN_URL = 'https://login.globalquran.com';
-export const KEYS_URL = 'https://app.globalquran.com';
+export const KEYS_URL = '/keys';
 
 let cache = null; // null = not asked yet, false = signed out, object = signed in
 let pending = null;

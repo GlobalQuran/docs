@@ -19,7 +19,7 @@ const ApiLandingPage = () => {
             <h1 className="h1" style={{ margin: '14px 0 12px' }}>The Quran API,<br />free for everyone.</h1>
             <p className="lead" style={{ marginBottom: 22 }}>Every ayah, {translations} translations and {reciters} reciters as simple JSON. Sign in, copy your key, make your first call in a minute.</p>
             <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap' }}>
-              <a className="btn g" href={KEYS_URL}>{user ? 'Open my key' : 'Sign in to get your key'}</a>
+              <Link className="btn g" to={KEYS_URL}>{user ? 'Open my key' : 'Sign in to get your key'}</Link>
               <Link className="btn ghost" to="/api/reference">Read the reference</Link>
             </div>
             <div className="small" style={{ color: '#b9c1bf', marginTop: 14 }}>No card · no ads · no tracking · open source</div>
@@ -96,7 +96,7 @@ curl "https://api.globalquran.com/v1/ayah/262/en.sahih" \\
       <div className="band" style={{ marginTop: 36 }}>
         <div className="in" style={{ padding: '24px 20px', display: 'flex', alignItems: 'center', gap: 18, flexWrap: 'wrap' }}>
           <div className="h3" style={{ color: '#fff', flex: 1 }}>Ready? It takes a minute.</div>
-          <a className="btn g" href={KEYS_URL}>{user ? 'Open my key' : 'Sign in to get your key'}</a>
+          <Link className="btn g" to={KEYS_URL}>{user ? 'Open my key' : 'Sign in to get your key'}</Link>
         </div>
       </div>
     </Page>
