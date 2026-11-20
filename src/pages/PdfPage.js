@@ -4,6 +4,37 @@ import { useQuranList, useSurahs } from '../gq/data';
 
 const ARABIC = 'quran-uthmani';
 const PER_SHEET = 6;
+const PDF_CDN = 'https://cdn.globalquran.com/resources/pdf';
+const READY = [
+  ['quran-arabic.pdf', 'Arabic only', 'Clean mushaf-style text, medium size'],
+  ['quran-arabic-en-sahih.pdf', 'Arabic + English', 'Saheeh International under every ayah'],
+  ['quran-arabic-large-print.pdf', 'Large print', 'Big Arabic text for easy reading'],
+];
+
+/** One-click files. Each link only shows once the file really exists on the CDN. */
+const ReadyMade = () => {
+  const [have, setHave] = useState({});
+  useEffect(() => {
+    READY.forEach(([f]) => {
+      fetch(`${PDF_CDN}/${f}`, { method: 'HEAD' }).then((r) => { if (r.ok) setHave((h) => ({ ...h, [f]: Number(r.headers.get('content-length')) || true })); }).catch(() => {});
+    });
+  }, []);
+  const list = READY.filter(([f]) => have[f]);
+  if (!list.length) return <div className="card" style={{ marginTop: 16 }}><div className="small mute">Ready-made files (Arabic only, Arabic + English, large print) are on the way, so one click can download them without the print step.</div></div>;
+  return (
+    <div style={{ marginTop: 16 }}>
+      <div className="h3" style={{ marginBottom: 10 }}>Ready-made, one click</div>
+      <div className="grid g3" style={{ gap: 12 }}>
+        {list.map(([f, t, d]) => (
+          <a key={f} className="tile" href={`${PDF_CDN}/${f}`} download>
+            <div className="h3">{t}</div><div className="mute small">{d}</div>
+            <span className="go">Download{typeof have[f] === 'number' ? ` · ${(have[f] / 1048576).toFixed(0)} MB` : ''} →</span>
+          </a>
+        ))}
+      </div>
+    </div>
+  );
+};
 
 /** Fetch ayahs for one scope. Returns [{n, surah, ayah, ar, tr}] sorted by global number. */
 async function load(scopePath, trId) {
@@ -125,7 +156,7 @@ const PdfPage = () => {
                 </div>
               </div>
             </div>
-            <div className="card" style={{ marginTop: 16 }}><div className="small mute">Ready-made files (Arabic only, Arabic + English, large print) are planned so a single click can download them without the print step.</div></div>
+            <ReadyMade />
           </div>
         </div>
       </div>

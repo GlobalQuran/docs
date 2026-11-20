@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Link, NavLink, useLocation } from 'react-router-dom';
-import { ThemeToggle, GITHUB, KEYS_URL } from './ui';
+import { ThemeToggle, GITHUB } from './ui';
+import { useSession, signInUrl, signOut, KEYS_URL } from './auth';
 
 const LINKS = [
   ['/', 'Docs', true],
@@ -33,6 +34,8 @@ function useRepoCounts() {
 
 const Bar = () => {
   const [open, setOpen] = useState(false);
+  const [acct, setAcct] = useState(false);
+  const { user } = useSession();
   const loc = useLocation();
   const counts = useRepoCounts();
   useEffect(() => { setOpen(false); }, [loc.pathname]);
@@ -50,7 +53,9 @@ const Bar = () => {
           </button>
           <div className="navlinks">
             {LINKS.map(([to, label, , isNew]) => (
-              <NavLink key={to} to={to} end={to === '/'} className={`lk ${on(to) ? 'on' : ''}`}>
+              to === '/api' && user ? (
+                <a key={to} href={KEYS_URL} className="lk" title="Your keys">{label}</a>
+              ) : <NavLink key={to} to={to} end={to === '/'} className={`lk ${on(to) ? 'on' : ''}`}>
                 {label}{isNew && <span className="new">NEW</span>}
               </NavLink>
             ))}
@@ -63,7 +68,25 @@ const Bar = () => {
             </span>
             <Link className="donate" to="/donate">Donate</Link>
             <ThemeToggle />
-            <a className="signin" href={KEYS_URL}>Sign in</a>
+            {user ? (
+              <>
+                <a className="keypill" href={KEYS_URL}>My key</a>
+                <span style={{ position: 'relative' }}>
+                  <button type="button" className="ib ibtn" aria-label="Account" aria-expanded={acct} onClick={() => setAcct(!acct)}
+                    style={{ background: '#2e3a3c', color: '#f0d98a', fontWeight: 700 }}>{(user.email || '?')[0].toUpperCase()}</button>
+                  {acct && (
+                    <div className="results" style={{ left: 'auto', right: 0, top: 44, width: 220 }}>
+                      <div style={{ padding: '10px 16px', fontSize: 12, color: 'var(--mute)', borderBottom: '1px solid var(--line2)', wordBreak: 'break-all' }}>{user.email}</div>
+                      <a href={KEYS_URL}>My key</a>
+                      <a href={`${KEYS_URL}/keys`}>All keys</a>
+                      <a href="#signout" onClick={(e) => { e.preventDefault(); setAcct(false); signOut(); }}>Sign out</a>
+                    </div>
+                  )}
+                </span>
+              </>
+            ) : (
+              <a className="signin" href={signInUrl()}>Sign in</a>
+            )}
           </div>
         </div>
       </div>

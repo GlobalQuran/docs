@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
 import { useTheme } from './theme';
+export { KEYS_URL } from './auth';
 
 export const API = 'https://api.globalquran.com';
 export const AUDIO = 'https://audio.globalquran.com';
 export const GITHUB = 'https://github.com/GlobalQuran';
-export const KEYS_URL = 'https://app.globalquran.com';
 
 export const ThemeToggle = () => {
   const { night, toggle } = useTheme();

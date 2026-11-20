@@ -3,10 +3,12 @@ import { Link, useNavigate } from 'react-router-dom';
 import { Page, KEYS_URL, GITHUB } from '../gq/ui';
 import { useQuranList, FALLBACK_COUNTS } from '../gq/data';
 import { searchIndex } from '../gq/search';
+import { useSession } from '../gq/auth';
 
 const HomePage = () => {
   const { textFormats, audioFormats } = useQuranList();
   const nav = useNavigate();
+  const { user } = useSession();
   const [q, setQ] = useState('');
   const hits = searchIndex(q);
   const translations = textFormats.filter((t) => t.type === 'translation').length || FALLBACK_COUNTS.texts;
@@ -37,12 +39,12 @@ const HomePage = () => {
       <div className="in" style={{ paddingTop: 26 }}>
         <div className="frame" style={{ display: 'flex', gap: 22, alignItems: 'center', flexWrap: 'wrap' }}>
           <div style={{ flex: 1, minWidth: 260 }}>
-            <div className="eyebrow">Start here</div>
-            <div className="h2" style={{ margin: '8px 0 6px' }}>Get your free API key</div>
-            <div className="mute small">Sign in, say what you are building, copy your key and a ready sample. About a minute.</div>
+            <div className="eyebrow">{user ? 'Welcome back' : 'Start here'}</div>
+            <div className="h2" style={{ margin: '8px 0 6px' }}>{user ? 'Your API key is ready' : 'Get your free API key'}</div>
+            <div className="mute small">{user ? 'Open your key page for your key, a ready sample and your other keys.' : 'Sign in, say what you are building, copy your key and a ready sample. About a minute.'}</div>
           </div>
-          <a className="btn g" href={KEYS_URL}>Get a key</a>
-          <a className="btn" href={KEYS_URL}>I already have one</a>
+          <a className="btn g" href={KEYS_URL}>{user ? 'Open my key' : 'Get a key'}</a>
+          {!user && <a className="btn" href={KEYS_URL}>I already have one</a>}
         </div>
       </div>
 
