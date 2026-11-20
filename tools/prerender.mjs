@@ -3,9 +3,6 @@
 import { createServer } from 'node:http';
 import { readFileSync, writeFileSync, mkdirSync, existsSync } from 'node:fs';
 import { join, extname, resolve } from 'node:path';
-import { execFileSync } from 'node:child_process';
-import { mkdtempSync } from 'node:fs';
-import { tmpdir } from 'node:os';
 
 const BUILD = resolve('build');
 const SITE = 'https://docs.globalquran.com';
@@ -31,16 +28,33 @@ const port = server.address().port;
 const shell = readFileSync(join(BUILD, 'index.html'), 'utf8');
 writeFileSync(join(BUILD, 'app-shell.html'), shell);
 
-for (const route of routes) {
-  let html;
-  try { html = execFileSync(CHROME, ['--headless=new', '--no-sandbox', `--user-data-dir=${mkdtempSync(join(tmpdir(), 'gq-prerender-'))}`, '--no-first-run', '--disable-gpu', '--virtual-time-budget=9000', '--dump-dom', `http://127.0.0.1:${port}${route}`], { encoding: 'utf8', maxBuffer: 64 * 1024 * 1024, timeout: 60000 }); } catch (e) { console.warn('skipped', route, String(e.message).slice(0, 80)); continue; }
-  if (!/<h1|<h2/.test(html)) { console.warn('no content for', route); continue; }
-  if (route === '/') { writeFileSync(join(BUILD, 'index.html'), html); }
-  else { const dir = join(BUILD, route); mkdirSync(dir, { recursive: true }); writeFileSync(join(dir, 'index.html'), html); }
-  console.log('prerendered', route);
+const puppeteer = (await import('puppeteer-core')).default;
+const browser = await puppeteer.launch({ executablePath: CHROME, headless: true, args: ['--no-sandbox', '--disable-gpu', '--disable-dev-shm-usage'] });
+const done = new Set();
+async function render(route) {
+  let page;
+  try {
+    page = await browser.newPage();
+    // only our own files load: live API data, frames and media are not part of the page text
+    await page.setRequestInterception(true);
+    page.on('request', (r) => (r.url().startsWith(`http://127.0.0.1:${port}`) ? r.continue() : r.abort()));
+    await page.goto(`http://127.0.0.1:${port}${route}`, { waitUntil: 'domcontentloaded', timeout: 20000 });
+    await page.waitForSelector('h1, h2', { timeout: 15000 });
+    await new Promise((r) => setTimeout(r, 300));
+    const html = '<!DOCTYPE html>' + (await page.evaluate(() => document.documentElement.outerHTML));
+    if (route === '/') writeFileSync(join(BUILD, 'index.html'), html);
+    else { const dir = join(BUILD, route); mkdirSync(dir, { recursive: true }); writeFileSync(join(dir, 'index.html'), html); }
+    done.add(route); console.log('prerendered', route);
+  } catch (e) { console.warn('skipped', route, String(e.message).slice(0, 80)); }
+  finally { try { if (page) await page.close(); } catch (e) { /* already gone */ } }
 }
+const queue = routes.filter((r) => r !== '/');
+await Promise.all(Array.from({ length: 4 }, async () => { while (queue.length) await render(queue.shift()); }));
+await render('/');
+await browser.close();
 server.close();
 
-const urls = routes.map((r) => `${SITE}${r === '/' ? '/' : r + '/'}`);
+if (done.size === 0) { console.warn('nothing prerendered, leaving the app as it is'); process.exit(0); }
+const urls = routes.filter((r) => done.has(r)).map((r) => `${SITE}${r === '/' ? '/' : r + '/'}`);
 writeFileSync(join(BUILD, 'sitemap.xml'), `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${urls.map((u) => `  <url><loc>${u}</loc></url>`).join('\n')}\n</urlset>\n`);
 writeFileSync(join(BUILD, 'robots.txt'), `User-agent: *\nAllow: /\nDisallow: /keys\n\nSitemap: ${SITE}/sitemap.xml\n`);

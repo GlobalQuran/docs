@@ -39,6 +39,7 @@ jobs:
 
       - name: Prerender pages and sitemap
         continue-on-error: true
+        timeout-minutes: 8
         run: node tools/prerender.mjs
         env:
           CHROME_BIN: /usr/bin/google-chrome
