@@ -1,434 +1,162 @@
-import React, { useState, useEffect, useCallback, useRef } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
-import { fetchQuranData } from '../store/slices/quranSlice';
-import JSZip from 'jszip';
-import { saveAs } from 'file-saver';
-import Footer from '../components/Footer';
+import React, { useMemo, useState } from 'react';
+import { Page, AUDIO, CopyButton, Seg } from '../gq/ui';
+import { useQuranList, useSurahs } from '../gq/data';
+
+const verseVariants = (r) => Object.values(r.media || {}).filter((m) => m.mode === 'versebyverse');
+const surahVariants = (r) => Object.values(r.media || {}).filter((m) => m.mode === 'surahbysurah');
+const statusDot = (st) => (st === 'active' ? '' : st === 'draft' || st === 'incomplete' ? 'd' : 'x');
 
 const AudioPage = () => {
-  const [selectedRecitor, setSelectedRecitor] = useState(null);
-  const [downloadProgress, setDownloadProgress] = useState(null);
-  const [playingRecitor, setPlayingRecitor] = useState(null);
-  const audioRefs = useRef({});
-  const dispatch = useDispatch();
+  const { audioFormats, loading, error } = useQuranList();
+  const surahs = useSurahs();
+  const [mode, setMode] = useState('versebyverse');
+  const [rid, setRid] = useState('ar.abdulbasitmurattal');
+  const [vidx, setVidx] = useState(0);
+  const [surah, setSurah] = useState(2);
+  const [ayah, setAyah] = useState(255);
+  const [q, setQ] = useState('');
+  const [lang, setLang] = useState('all');
+  const [limit, setLimit] = useState(20);
+  const [playing, setPlaying] = useState(null);
 
-  // Get data from Redux store
-  const { audioFormats: recitorData, loading, error, lastFetched } = useSelector(state => state.quran);
+  const withMode = useMemo(() => audioFormats.filter((r) => (mode === 'versebyverse' ? verseVariants(r) : surahVariants(r)).length), [audioFormats, mode]);
+  const rec = withMode.find((r) => r.id === rid) || withMode[0];
+  const variants = rec ? (mode === 'versebyverse' ? verseVariants(rec) : surahVariants(rec)) : [];
+  const variant = variants[Math.min(vidx, Math.max(variants.length - 1, 0))];
+  const s = surahs.find((x) => x.surah_number === Number(surah));
+  const maxAyah = s ? s.ayahs : 286;
+  const a = Math.min(Math.max(1, Number(ayah) || 1), maxAyah);
+  const n = mode === 'versebyverse' ? (s ? s.start_ayah + a - 1 : null) : Number(surah);
+  const url = variant && n ? `${AUDIO}/${variant.path}${n}.${variant.type}` : '';
 
-  // Total verses in Quran
-  const TOTAL_VERSES = 6236;
-
-  // Fetch data on component mount or if data is stale (older than 5 minutes)
-  useEffect(() => {
-    const CACHE_DURATION = 5 * 60 * 1000; // 5 minutes
-    const isDataStale = !lastFetched || (Date.now() - lastFetched) > CACHE_DURATION;
-    
-    if (recitorData.length === 0 || isDataStale) {
-      dispatch(fetchQuranData());
-    }
-  }, [dispatch, recitorData.length, lastFetched]);
-
-  const formatAudioUrl = (recitorId, format, kbs, verseNumber) => {
-    // Determine file extension based on format type
-    const extension = format === 'ogg' ? 'ogg' : 'mp3';
-    // Build audio URL: https://audio.globalquran.com/{recitorId}/{format}/{bitrate}kbs/{globalAyahNumber}.{extension}
-    // (files are named by the global ayah number, 1 to 6236, not by surah number)
-    const audioUrl = `https://audio.globalquran.com/${recitorId}/${format}/${kbs}kbs/${verseNumber}.${extension}`;
-    return audioUrl;
+  const languages = useMemo(() => [...new Set(audioFormats.map((r) => r.language))].sort(), [audioFormats]);
+  const rows = useMemo(() => {
+    const t = q.trim().toLowerCase();
+    return audioFormats.filter((r) => (lang === 'all' || r.language === lang) && (!t || `${r.id} ${r.name} ${r.localName}`.toLowerCase().includes(t)));
+  }, [audioFormats, q, lang]);
+  const sample = (r) => {
+    const v = verseVariants(r).sort((x, y) => (Number(y.kbs) - Number(x.kbs)))[0];
+    if (v) return `${AUDIO}/${v.path}1.${v.type}`;
+    const sv = surahVariants(r)[0];
+    return sv ? `${AUDIO}/${sv.path}1.${sv.type}` : '';
   };
-
-  const getHighestQualityFormat = (media) => {
-    // Find the format with highest kbs (bandwidth)
-    let highestFormat = null;
-    let highestKbs = 0;
-    
-    Object.entries(media).forEach(([format, info]) => {
-      const kbs = parseInt(info.kbs) || 0;
-      if (kbs > highestKbs) {
-        highestKbs = kbs;
-        highestFormat = format;
-      }
-    });
-    
-    return highestFormat;
-  };
-
-  const getDemoAudioUrl = useCallback((recitor) => {
-    const highestFormat = getHighestQualityFormat(recitor.media);
-    if (!highestFormat || !recitor.media[highestFormat]) return null;
-    
-    const formatInfo = recitor.media[highestFormat];
-    const formatType = formatInfo.type || 'mp3';
-    const kbs = formatInfo.kbs || '128';
-    
-    return formatAudioUrl(recitor.id, formatType, kbs, 1); // Use verse 1 for demo
-  }, []);
-
-  const toggleAudio = useCallback((recitorId) => {
-    const audioElement = audioRefs.current[recitorId];
-    if (!audioElement) return;
-    
-    if (playingRecitor === recitorId) {
-      audioElement.pause();
-      setPlayingRecitor(null);
-    } else {
-      // Pause any currently playing audio
-      Object.values(audioRefs.current).forEach(audio => audio.pause());
-      
-      audioElement.play().then(() => {
-        setPlayingRecitor(recitorId);
-      }).catch(error => {
-        console.error('Error playing audio:', error);
-        alert('Error playing audio. Please try again.');
-      });
-    }
-  }, [playingRecitor]);
-
-  const handleAudioEnded = useCallback((recitorId) => {
-    if (playingRecitor === recitorId) {
-      setPlayingRecitor(null);
-    }
-  }, [playingRecitor]);
-
-  const downloadAllVerses = async (recitor, format) => {
-    if (!recitor.media[format]) {
-      alert('Selected format is not available for this recitor.');
-      return;
-    }
-
-    const zip = new JSZip();
-    const formatInfo = recitor.media[format];
-    const formatType = formatInfo.type || 'mp3';
-    const kbs = formatInfo.kbs || '128';
-    
-    try {
-      setDownloadProgress({ current: 0, total: TOTAL_VERSES, recitor: recitor.name, format });
-      
-      // Create a folder for the recitor
-      const folder = zip.folder(`${recitor.id}-${format.replace('-', '_')}`);
-      
-      let successCount = 0;
-      let failCount = 0;
-      
-      for (let verse = 1; verse <= TOTAL_VERSES; verse++) {
-        try {
-          const audioUrl = formatAudioUrl(recitor.id, formatType, kbs, verse);
-          const response = await fetch(audioUrl);
-          
-          if (response.ok) {
-            const audioBlob = await response.blob();
-            // Use leading zeros for ZIP file organization (better sorting)
-            folder.file(`${verse.toString().padStart(3, '0')}.mp3`, audioBlob);
-            successCount++;
-          } else {
-            console.warn(`Failed to fetch verse ${verse}: ${response.status}`);
-            failCount++;
-          }
-        } catch (error) {
-          console.warn(`Error fetching verse ${verse}:`, error);
-          failCount++;
-        }
-        
-        // Update progress
-        setDownloadProgress({ current: verse, total: TOTAL_VERSES, recitor: recitor.name, format });
-        
-        // Small delay to avoid overwhelming the server
-        if (verse % 50 === 0) {
-          await new Promise(resolve => setTimeout(resolve, 100));
-        }
-      }
-      
-      // Add a README file with information
-      const readme = `Quran Audio Download - ${recitor.name}
-Format: ${format}
-Quality: ${formatInfo.kbs}kbps ${formatInfo.type.toUpperCase()}
-Generated on: ${new Date().toISOString()}
-Total verses: ${TOTAL_VERSES}
-Successfully downloaded: ${successCount}
-Failed downloads: ${failCount}
-
-Recitor Information:
-- Name: ${recitor.name}
-- Language: ${recitor.language}
-- Type: ${recitor.type}
-
-For more information, visit: https://globalquran.com/
-Audio source: https://audio.globalquran.com/${recitor.id}/${formatType}/${kbs}kbs/
-`;
-      
-      folder.file('README.txt', readme);
-      
-      // Generate and download the zip file
-      const zipBlob = await zip.generateAsync({ type: 'blob' });
-      saveAs(zipBlob, `quran-audio-${recitor.id}-${format}-${new Date().toISOString().split('T')[0]}.zip`);
-      
-      setDownloadProgress(null);
-      alert(`Download complete! ${successCount} verses downloaded successfully.${failCount > 0 ? ` ${failCount} verses failed to download.` : ''}`);
-      
-    } catch (error) {
-      console.error('Error creating audio zip file:', error);
-      setDownloadProgress(null);
-      alert('Error creating download file. Please try again.');
-    }
-  };
-
-  const generateVerseLinks = (recitor, format) => {
-    if (!recitor.media[format]) return [];
-    
-    const formatInfo = recitor.media[format];
-    const formatType = formatInfo.type || 'mp3';
-    const kbs = formatInfo.kbs || '128';
-    const links = [];
-    
-    for (let verse = 1; verse <= TOTAL_VERSES; verse++) {
-      links.push({
-        verse,
-        url: formatAudioUrl(recitor.id, formatType, kbs, verse)
-      });
-    }
-    
-    return links;
+  const togglePlay = (r) => {
+    const el = document.getElementById('gq-sample');
+    if (!el) return;
+    if (playing === r.id) { el.pause(); setPlaying(null); return; }
+    el.src = sample(r); el.play().catch(() => {}); setPlaying(r.id);
   };
 
   return (
-    <div className="row" id="top">
-      <div className="col-md-12">
-        <h1>Quran Audio Recitors</h1>
-        <p className="lead">Download verse-by-verse audio recitations of the Quran by renowned recitors.</p>
-        
-        {loading && (
-          <div className="alert alert-info text-center">
-            <div style={{ fontSize: '48px', marginBottom: '15px' }}>
-              <i className="fas fa-spinner fa-spin"></i>
-            </div>
-            <h4>Loading Recitor Data...</h4>
-            <p>Please wait while we fetch the latest audio recitors from the API.</p>
+    <Page>
+      <div className="hero">
+        <div className="in" style={{ paddingTop: 40, paddingBottom: 40, display: 'flex', gap: 36, alignItems: 'center', flexWrap: 'wrap' }}>
+          <div style={{ flex: '1 1 460px' }}>
+            <div className="eyebrow">Audio · {audioFormats.length || 193} reciters</div>
+            <h1 className="h1" style={{ fontSize: 38, margin: '12px 0 10px' }}>Link our audio.<br />Do not host it.</h1>
+            <p className="lead">Our servers already stream every reciter, worldwide, with no key and no sign-in. Point your player at the address and you are done: no storage, no bandwidth bill, no updates.</p>
           </div>
-        )}
-        
-        {error && (
-          <div className="alert alert-danger">
-            <h4>Error Loading Data</h4>
-            <p>{error}</p>
-            <button 
-              className="btn btn-primary" 
-              onClick={() => window.location.reload()}
-            >
-              Try Again
-            </button>
-          </div>
-        )}
-        
-        {downloadProgress && (
-          <div className="alert alert-warning">
-            <h4>Download in Progress</h4>
-            <p>
-              Downloading {downloadProgress.recitor} ({downloadProgress.format})...
-              <br />
-              Progress: {downloadProgress.current} / {downloadProgress.total} verses
-            </p>
-            <div style={{ 
-              width: '100%', 
-              backgroundColor: '#f0f0f0', 
-              borderRadius: '4px',
-              height: '20px',
-              marginTop: '10px'
-            }}>
-              <div style={{
-                width: `${(downloadProgress.current / downloadProgress.total) * 100}%`,
-                backgroundColor: '#b99c45',
-                height: '100%',
-                borderRadius: '4px',
-                transition: 'width 0.3s ease'
-              }} />
+          <div style={{ flex: '1 1 360px' }}>
+            <div className="card" style={{ background: '#263032', borderColor: '#465052', color: '#efe9d6' }}>
+              <div className="h3">Why this is better than copying the files</div>
+              <div className="step" style={{ marginTop: 10 }}><i>✓</i><div className="small">Free for you, we carry the cost</div></div>
+              <div className="step" style={{ marginTop: 8 }}><i>✓</i><div className="small">Works from any site or app (open access)</div></div>
+              <div className="step" style={{ marginTop: 8 }}><i>✓</i><div className="small">New reciters and fixes appear on their own</div></div>
             </div>
           </div>
-        )}
-        
-        {!loading && !error && recitorData.length === 0 && (
-          <div className="alert alert-warning">
-            <h4>No Recitors Available</h4>
-            <p>No audio recitors found. Please check back later.</p>
-          </div>
-        )}
+        </div>
+      </div>
 
-        {!loading && !error && recitorData.length > 0 && (
-          <div>
-            <table className="table table-striped table-hover">
-              <thead>
-                <tr>
-                  <th>Recitor</th>
-                  <th>Type</th>
-                  <th>Available Formats</th>
-                  <th>Actions</th>
-                </tr>
-              </thead>
+      <div className="in twocol" style={{ paddingTop: 28 }}>
+        <div className="main">
+          <div className="frame">
+            <div className="eyebrow">Address builder</div>
+            <div style={{ margin: '12px 0' }}><Seg value={mode} onChange={(m) => { setMode(m); setVidx(0); }} options={[{ value: 'versebyverse', label: 'Verse by verse' }, { value: 'surahbysurah', label: 'Surah by surah' }]} /></div>
+            {loading && <div className="loading">Loading reciters…</div>}
+            {error && <div className="err">Could not load reciters: {error}</div>}
+            {rec && (
+              <>
+                <div className="grid g3" style={{ gap: 12 }}>
+                  <div><div className="lbl">Reciter</div>
+                    <select className="sel" value={rec.id} onChange={(e) => { setRid(e.target.value); setVidx(0); }}>
+                      {withMode.map((r) => <option key={r.id} value={r.id}>{r.name} ({r.language})</option>)}</select></div>
+                  <div><div className="lbl">Format and quality</div>
+                    <select className="sel" value={vidx} onChange={(e) => setVidx(Number(e.target.value))}>
+                      {variants.map((v, i) => <option key={i} value={i}>{v.type} · {v.kbs} kbps{v.status !== 'active' ? ` (${v.status})` : ''}</option>)}</select></div>
+                  <div><div className="lbl">Surah</div>
+                    <select className="sel" value={surah} onChange={(e) => { setSurah(e.target.value); setAyah(1); }}>
+                      {surahs.map((x) => <option key={x.surah_number} value={x.surah_number}>{x.surah_number} · {x.name_english}</option>)}</select></div>
+                  {mode === 'versebyverse' && (
+                    <>
+                      <div><div className="lbl">Ayah (1 to {maxAyah})</div><input className="sel" type="number" min="1" max={maxAyah} value={ayah} onChange={(e) => setAyah(e.target.value)} /></div>
+                      <div><div className="lbl">Ayah number in the file name</div><div className="sel" style={{ cursor: 'default' }}><b>{n || '…'}</b><span className="small mute">worked out for you</span></div></div>
+                    </>
+                  )}
+                </div>
+                <div className="card url" style={{ margin: '14px 0 0', padding: '14px 16px' }}>{url || 'Loading…'}</div>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginTop: 14, flexWrap: 'wrap' }}>
+                  <audio controls preload="none" src={url} key={url} style={{ flex: 1, minWidth: 220 }} />
+                  <CopyButton text={url} label="Copy address" />
+                </div>
+                {variant && variant.status !== 'active' && <div className="small mute" style={{ marginTop: 8 }}>This one is marked {variant.status}: some files may be missing.</div>}
+              </>
+            )}
+          </div>
+
+          <h2 className="h2" style={{ margin: '30px 0 12px', fontSize: 22 }}>Reciters</h2>
+          <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap', marginBottom: 10 }}>
+            <div className="search" style={{ minHeight: 38, fontSize: 13.5, flex: 1, minWidth: 200, borderRadius: 19 }}><span>⌕</span><input placeholder="Search reciter" value={q} onChange={(e) => { setQ(e.target.value); setLimit(20); }} aria-label="Search reciter" /></div>
+            <select className="sel" style={{ width: 160 }} value={lang} onChange={(e) => { setLang(e.target.value); setLimit(20); }} aria-label="Language">
+              <option value="all">All languages</option>{languages.map((l) => <option key={l} value={l}>{l}</option>)}</select>
+          </div>
+          <audio id="gq-sample" preload="none" onEnded={() => setPlaying(null)} style={{ display: 'none' }} />
+          <div className="card" style={{ padding: 0 }}>
+            <table>
+              <thead><tr><th /><th>Reciter</th><th>Modes</th><th>Formats</th><th>Status</th><th /></tr></thead>
               <tbody>
-                                {recitorData.map((recitor) => (
-                  <React.Fragment key={recitor.id}>
-                    <tr>
-                      <td>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '15px' }}>
-                          <div>
-                            <strong>{recitor.name}</strong>
-                            {recitor.localName && recitor.localName !== recitor.name && (
-                              <div>
-                                <small className="text-muted">{recitor.localName}</small>
-                              </div>
-                            )}
-                          </div>
-                          <div>
-                            <button
-                              className={`btn ${playingRecitor === recitor.id ? 'btn-danger' : 'btn-success'} btn-lg`}
-                              onClick={() => toggleAudio(recitor.id)}
-                              style={{ 
-                                borderRadius: '50%', 
-                                width: '50px', 
-                                height: '50px',
-                                display: 'flex',
-                                alignItems: 'center',
-                                justifyContent: 'center'
-                              }}
-                              title={playingRecitor === recitor.id ? 'Stop Demo' : 'Play Demo (Verse 1)'}
-                            >
-                              <i className={`fas ${playingRecitor === recitor.id ? 'fa-stop' : 'fa-play'}`}></i>
-                            </button>
-                            <audio
-                              ref={(element) => {
-                                if (element) {
-                                  audioRefs.current[recitor.id] = element;
-                                } else {
-                                  delete audioRefs.current[recitor.id];
-                                }
-                              }}
-                              src={getDemoAudioUrl(recitor)}
-                              onEnded={() => handleAudioEnded(recitor.id)}
-                              preload="none"
-                            />
-                          </div>
-                        </div>
-                      </td>
-                      <td>
-                        <span className="badge badge-info">{recitor.type}</span>
-                      </td>
-                      <td>
-                        {Object.entries(recitor.media).map(([format, info]) => (
-                          <div key={format} style={{ marginBottom: '5px' }}>
-                            <strong>{format}:</strong> {info.kbs}kbps {info.type.toUpperCase()}
-                          </div>
-                        ))}
-                      </td>
-                      <td>
-                        <div className="btn-group-vertical" style={{ width: '100%' }}>
-                          {Object.keys(recitor.media).map((format) => (
-                            <button
-                              key={format}
-                              className="btn btn-primary btn-sm"
-                              onClick={() => downloadAllVerses(recitor, format)}
-                              disabled={downloadProgress !== null}
-                              title={`Download all ${TOTAL_VERSES} verses as ${format}`}
-                              style={{ marginBottom: '5px' }}
-                            >
-                              <i className="fas fa-download"></i> Download All ({format})
-                            </button>
-                          ))}
-                          <button
-                            className="btn btn-info btn-sm"
-                            onClick={() => setSelectedRecitor(selectedRecitor === recitor.id ? null : recitor.id)}
-                            title="Show individual verse links"
-                          >
-                            <i className="fas fa-volume-up"></i> {selectedRecitor === recitor.id ? 'Hide Links' : 'Show Links'}
-                          </button>
-                        </div>
-                      </td>
+                {rows.slice(0, limit).map((r) => {
+                  const all = Object.values(r.media || {});
+                  const modes = [verseVariants(r).length ? 'Verse' : null, surahVariants(r).length ? 'Surah' : null].filter(Boolean).join(' · ');
+                  const formats = [...new Set(all.map((m) => `${m.type} ${m.kbs}`))].join(', ');
+                  const st = all.some((m) => m.status === 'active') ? 'active' : (all[0] && all[0].status) || 'draft';
+                  return (
+                    <tr key={r.id}>
+                      <td><button type="button" className="play" style={{ border: 0, cursor: 'pointer' }} onClick={() => togglePlay(r)} aria-label={`Play ${r.name}`}>{playing === r.id ? '❚❚' : '▶'}</button></td>
+                      <td><b>{r.name}</b><div className="mono small mute">{r.id}</div></td>
+                      <td className="small">{modes}</td><td className="small">{formats}</td>
+                      <td><span className={`dot ${statusDot(st)}`} />{st}</td>
+                      <td><CopyButton text={r.id} label="Copy ID" /></td>
                     </tr>
-                    {selectedRecitor === recitor.id && (
-                      <tr>
-                        <td colSpan="4" style={{ backgroundColor: '#f9f9f9', padding: '15px' }}>
-                          <h4>Individual Links - {recitor.name}</h4>
-                          {Object.entries(recitor.media).map(([format, info]) => (
-                            <div key={format} style={{ marginBottom: '20px' }}>
-                              <h5>{format} ({info.kbs}kbps {info.type.toUpperCase()})</h5>
-                              <div style={{ 
-                                maxHeight: '400px', 
-                                overflowY: 'auto', 
-                                overflowX: 'hidden',
-                                border: '1px solid #ddd', 
-                                padding: '15px',
-                                backgroundColor: '#fff',
-                                fontSize: '12px',
-                                display: 'grid',
-                                gridTemplateColumns: 'repeat(auto-fill, minmax(50px, 1fr))',
-                                gap: '8px',
-                                WebkitOverflowScrolling: 'touch'
-                              }}>
-                                {generateVerseLinks(recitor, format).map(link => (
-                                  <a 
-                                    key={link.verse}
-                                    href={link.url} 
-                                    target="_blank" 
-                                    rel="noopener noreferrer"
-                                    style={{ 
-                                      textDecoration: 'none', 
-                                      fontSize: '11px',
-                                      padding: '4px 8px',
-                                      border: '1px solid #e0e0e0',
-                                      borderRadius: '3px',
-                                      textAlign: 'center',
-                                      backgroundColor: '#f8f9fa',
-                                      color: '#495057',
-                                      transition: 'all 0.2s ease',
-                                      display: 'block'
-                                    }}
-                                    onMouseEnter={(e) => {
-                                      e.target.style.backgroundColor = '#007bff';
-                                      e.target.style.color = 'white';
-                                    }}
-                                    onMouseLeave={(e) => {
-                                      e.target.style.backgroundColor = '#f8f9fa';
-                                      e.target.style.color = '#495057';
-                                    }}
-                                  >
-                                    {link.verse}
-                                  </a>
-                                ))}
-                              </div>
-                              <div style={{ marginTop: '10px', fontStyle: 'italic', color: '#666', fontSize: '12px' }}>
-                                Total: {TOTAL_VERSES} audio files available for download
-                              </div>
-                            </div>
-                          ))}
-                        </td>
-                      </tr>
-                    )}
-                  </React.Fragment>
-                ))}
+                  );
+                })}
               </tbody>
             </table>
-
-            <div className="alert alert-info" style={{ marginTop: '20px' }}>
-              <h4>About Audio Downloads</h4>
-              <p>
-                This page provides access to verse-by-verse Quran audio recitations. Each recitor may offer different audio formats and quality levels.
-              </p>
-              <ul>
-                <li><strong>Download All:</strong> Downloads all {TOTAL_VERSES} verses as a ZIP file</li>
-                <li><strong>Show Links:</strong> Displays individual verse URLs for selective downloading</li>
-                <li><strong>Format Options:</strong> Different audio qualities (32kbps, 64kbps, 128kbps, 192kbps) and formats (MP3, OGG)</li>
-              </ul>
-              <p>
-                <strong>Note:</strong> Full downloads may take several minutes depending on your internet connection and the selected quality.
-              </p>
-            </div>
           </div>
-        )}
+          <div className="small mute" style={{ marginTop: 8 }}>Showing {Math.min(limit, rows.length)} of {rows.length}. Active = checked and complete. Draft or incomplete = may have gaps.</div>
+          {rows.length > limit && <div style={{ marginTop: 10 }}><button type="button" className="btn s" onClick={() => setLimit(limit + 40)}>Show more</button></div>}
+        </div>
 
-        <hr />
-
-        <Footer />
+        <div className="aside">
+          <div className="card"><div className="h3">Two ways, two patterns</div>
+            <div className="lbl" style={{ marginTop: 12 }}>Verse by verse</div>
+            <div className="code" style={{ fontSize: 11.5 }}>{'.../{reciter}/{format}/{kbs}kbs/{ayah}.mp3'}</div>
+            <div className="lbl" style={{ marginTop: 12 }}>Surah by surah</div>
+            <div className="code" style={{ fontSize: 11.5 }}>{'.../{reciter}/{format}/{kbs}kbs/surah/{1-114}.mp3'}</div>
+            <div className="small mute" style={{ marginTop: 10 }}>{'{ayah}'} is the global number 1 to 6,236. File 0 is the a'udhu billah. The exact folder for each reciter is in the list below (the path field).</div></div>
+          <div className="card"><div className="h3">Play a whole surah, verse by verse</div>
+            <div className="mute small" style={{ margin: '6px 0 10px' }}>Play the next number when one ends. Surah 1 is 1 to 7.</div>
+            <div className="code" style={{ fontSize: 11.5 }}>{'a.onended = () => { n++; a.src = url(n); a.play(); }'}</div></div>
+          <div className="card"><div className="h3">Which quality?</div><div className="small mute" style={{ marginTop: 6 }}>32 to 64 kbps for phones and slow networks · 128 to 192 for home listening · ogg is smaller on the web.</div></div>
+          <div className="card"><div className="h3">Need the list in code?</div>
+            <div className="code" style={{ fontSize: 12, margin: '8px 0' }}>GET /v2/list/recitor</div><div className="small mute">Every reciter with the exact folder for each format.</div></div>
+          <div className="frame" style={{ padding: 18 }}><div className="h3">Keeping this online costs money</div>
+            <div className="small mute" style={{ margin: '6px 0 12px' }}>If you stream from us, please consider giving back.</div>
+            <a className="btn g s" href="/donate">Support the audio</a></div>
+          <div className="card"><div className="h3">Coming later</div><div className="small mute" style={{ marginTop: 6 }}>Ayah and word timing files, to highlight words as they are read.</div></div>
+        </div>
       </div>
-    </div>
+    </Page>
   );
 };
 
-export default AudioPage; 
+export default AudioPage;

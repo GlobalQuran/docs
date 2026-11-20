@@ -1,110 +1,38 @@
 import React from 'react';
-import Footer from '../components/Footer';
+import { Page, CopyButton } from '../gq/ui';
 
-const AssetsPage = () => {
-  const handleDownload = (url, filename) => {
-    const link = document.createElement('a');
-    link.href = url;
-    link.download = filename;
-    link.target = '_blank';
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-  };
+const CDN = 'https://cdn.globalquran.com/resources';
 
-  return (
-    <div className="row" id="top">
-      <div className="col-md-12">
-        <h1>Quran Assets</h1>
-        <p className="lead">Download useful Quran resources including fonts and images.</p>
-        
-        <div className="row" style={{ marginTop: '30px' }}>
-          <div className="col-md-6">
-            <div className="panel panel-default">
-              <div className="panel-heading">
-                <h3 className="panel-title">
-                  <i className="fas fa-font"></i> Quran Fonts
-                </h3>
-              </div>
-              <div className="panel-body">
-                <p>
-                  Collection of beautiful Arabic fonts specifically designed for Quran text display.
-                  These fonts ensure proper rendering of Arabic text and Quranic symbols.
-                </p>
-                <ul className="list-unstyled">
-                  <li><strong>Formats:</strong> TTF, OTF</li>
-                  <li><strong>Encoding:</strong> Unicode</li>
-                  <li><strong>Compatibility:</strong> Windows, Mac, Linux</li>
-                  <li><strong>License:</strong> Free for personal and commercial use</li>
-                </ul>
-                <button 
-                  className="btn btn-primary btn-lg btn-block"
-                  onClick={() => handleDownload('https://cdn.globalquran.com/resources/quran-fonts.zip', 'quran-fonts.zip')}
-                >
-                  <i className="fas fa-download"></i> Download Quran Fonts
-                </button>
-              </div>
-            </div>
-          </div>
-          
-          <div className="col-md-6">
-            <div className="panel panel-default">
-              <div className="panel-heading">
-                <h3 className="panel-title">
-                  <i className="fas fa-image"></i> Ayah Images
-                </h3>
-              </div>
-              <div className="panel-body">
-                <p>
-                  Complete collection of 6,236 individual verse (ayah) images in high quality.
-                  Each image contains the Arabic text of a single verse.
-                </p>
-                <ul className="list-unstyled">
-                  <li><strong>Total Images:</strong> 6,236 verses</li>
-                  <li><strong>Format:</strong> PNG</li>
-                  <li><strong>Quality:</strong> High resolution</li>
-                  <li><strong>Text:</strong> Arabic (Uthmani script)</li>
-                </ul>
-                <button 
-                  className="btn btn-primary btn-lg btn-block"
-                  onClick={() => handleDownload('https://cdn.globalquran.com/resources/quran-ayah-images.zip', 'quran-ayah-images.zip')}
-                >
-                  <i className="fas fa-download"></i> Download Ayah Images
-                </button>
-              </div>
-            </div>
-          </div>
+const AssetsPage = () => (
+  <Page>
+    <div className="in" style={{ paddingTop: 36 }}>
+      <h1 className="h1" style={{ fontSize: 38 }}>Assets</h1>
+      <p className="lead" style={{ margin: '8px 0 22px', maxWidth: 640 }}>Quran fonts and verse images, free to use. Download them, or link them from our CDN.</p>
+      <div className="grid g2">
+        <div className="card">
+          <div className="cap"><span>Quran fonts</span><span className="badge">TTF · OTF</span></div>
+          <div style={{ font: '400 34px/1.7 Amiri, "Scheherazade New", serif', direction: 'rtl', textAlign: 'right' }}>بِسْمِ ٱللَّهِ ٱلرَّحْمَٰنِ ٱلرَّحِيمِ</div>
+          <div className="small mute" style={{ margin: '6px 0 12px' }}>Unicode, made for Quran text. Windows, Mac, Linux. Free for personal and commercial use.</div>
+          <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}><a className="btn p s" href={`${CDN}/quran-fonts.zip`}>Download fonts (ZIP)</a><CopyButton text={`${CDN}/quran-fonts.zip`} label="Copy link" /></div>
         </div>
-
-        <div className="alert alert-info" style={{ marginTop: '30px' }}>
-          <h4>Usage Guidelines</h4>
-          <p>
-            These resources are provided free of charge for educational, personal, and commercial use. 
-            When using these assets in your projects:
-          </p>
-          <ul>
-            <li>Please maintain respect for the sacred nature of the Quranic content</li>
-            <li>Ensure proper attribution when required by the specific license</li>
-            <li>Test fonts thoroughly in your target environment</li>
-            <li>Consider the file size when using images in web applications</li>
-          </ul>
+        <div className="card">
+          <div className="cap"><span>Ayah images</span><span className="badge">6,236 PNG</span></div>
+          <div style={{ border: '1px solid var(--gold)', borderRadius: 6, background: '#fbfaf6', padding: 10, color: '#2b3434', marginBottom: 10 }}>
+            <div style={{ font: '400 22px/1.8 Amiri, serif', direction: 'rtl', textAlign: 'right' }}>ٱلْحَمْدُ لِلَّهِ رَبِّ ٱلْعَٰلَمِينَ</div></div>
+          <div className="small mute" style={{ marginBottom: 12 }}>One high-resolution image per verse, Uthmani script. Large download (about 50 MB), so use a stable connection.</div>
+          <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}><a className="btn p s" href={`${CDN}/quran-ayah-images.zip`}>Download images (ZIP)</a><CopyButton text={`${CDN}/quran-ayah-images.zip`} label="Copy link" /></div>
         </div>
-
-        <div className="alert alert-warning" style={{ marginTop: '20px' }}>
-          <h4>Technical Notes</h4>
-          <ul>
-            <li><strong>Fonts:</strong> Some fonts may require additional language packs for proper rendering</li>
-            <li><strong>Images:</strong> Large download size (~50MB+) - ensure stable internet connection</li>
-            <li><strong>Compatibility:</strong> Test in your target application before deploying</li>
-          </ul>
+      </div>
+      <div className="card" style={{ marginTop: 18 }}>
+        <div className="h3">Good to know</div>
+        <div className="grid g3" style={{ marginTop: 10, gap: 12 }}>
+          <div className="small mute">Treat the text with respect: no changes to the words.</div>
+          <div className="small mute">Check each font's licence and test it in your app before release.</div>
+          <div className="small mute">Fonts may need an Arabic language pack on some systems.</div>
         </div>
-
-        <hr />
-
-        <Footer />
       </div>
     </div>
-  );
-};
+  </Page>
+);
 
-export default AssetsPage; 
+export default AssetsPage;
