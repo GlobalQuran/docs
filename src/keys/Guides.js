@@ -2,7 +2,7 @@
 import React, { useState } from 'react'
 import { KCopy as CopyButton } from './ui'
 
-const DOCS = ''
+
 const READER = 'https://github.com/GlobalQuran/quran-anywhere'
 const API = 'https://api.globalquran.com/quran'
 

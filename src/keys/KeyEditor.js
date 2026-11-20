@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from 'react'
 import { activateAPIKey, deleteAPIKey, revokeAPIKey, updateRestrictions } from './api'
 import { splitLines } from './data'
-import { notifyError, notifySuccess, Spinner, useMode } from './ui'
+import { notifyError, notifySuccess } from './ui'
 import { KCopy as CopyButton } from './ui'
 
 
