@@ -1301,12 +1301,12 @@ const currentConfig = config[process.env.NODE_ENV || 'development'];
               beautiful, functional Quran applications for any platform or device.
             </p>
             <div style={{ marginTop: '25px' }}>
-              <a href="https://app.globalquran.com" target="_blank" rel="noopener noreferrer" 
+              <a href="/keys" 
                  className="btn btn-success btn-lg" style={{ marginRight: '15px' }}>
                 <i className="fas fa-key"></i> Get API Key
               </a>
-              <a href="/examples" className="btn btn-outline-primary btn-lg">
-                <i className="fas fa-code"></i> View Examples
+              <a href="/api/reference" className="btn btn-outline-primary btn-lg">
+                <i className="fas fa-code"></i> API Reference
               </a>
             </div>
           </div>

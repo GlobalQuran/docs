@@ -1,5 +1,6 @@
 /** "Put it to work": one guide per kind of project (website, mobile app, server or script), with the user's key already in the code. */
 import React, { useState } from 'react'
+import { Link } from 'react-router-dom'
 import { ReaderBuilder, ServerBuilder } from './Playground'
 
 
@@ -11,7 +12,7 @@ const Server = ({ k }) => <ServerBuilder apiKey={k} />
 
 const MORE = {
   website: [
-    { title: 'Rather build your own screens?', text: 'Call the API straight from your page. Same key.', links: [['API docs', '/api'], ['Code examples', '/examples']] },
+    { title: 'Rather build your own screens?', text: 'Call the API straight from your page. Same key.', links: [['API reference', '/api/reference']] },
     { title: 'Host your own copy', text: 'The whole reader is a folder of static files. No build step: git clone, then serve the folder.', links: [['Source on GitHub', READER]] },
   ],
   mobile: [
@@ -45,7 +46,7 @@ const Guides = ({ apiKey, initial }) => {
           <div className="k-card" key={c.title}>
             <h3 className="k-h3">{c.title}</h3>
             <div className="k-note" style={{ margin: '0 0 12.8px' }}>{c.text}</div>
-            <div className="k-links">{c.links.map(([t, h]) => <a key={t} className="k-btn s" href={h}>{t}</a>)}</div>
+            <div className="k-links">{c.links.map(([t, h]) => (h.startsWith('/') ? <Link key={t} className="k-btn s" to={h}>{t}</Link> : <a key={t} className="k-btn s" href={h} target="_blank" rel="noopener noreferrer">{t}</a>))}</div>
           </div>
         ))}
       </div>

@@ -47,7 +47,7 @@ const Mushaf = () => {
   return (
     <div className="card" style={{ marginTop: 18 }}>
       <style>{css}</style>
-      <div className="cap"><span>Mushaf pages (fonts from Quran.com)</span><span className="badge">604 pages</span></div>
+      <div className="cap"><span>Mushaf pages</span><span className="badge">604 pages</span></div>
       <div className="small mute" style={{ marginBottom: 12 }}>Every page of the printed mushaf is a font: one glyph per word, so text stays sharp and selectable. Pick a surah and compare plain with tajweed colours.</div>
       <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap', alignItems: 'flex-end', marginBottom: 14 }}>
         <div style={{ minWidth: 220 }}><div className="lbl">Surah</div>

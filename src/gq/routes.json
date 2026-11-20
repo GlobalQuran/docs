@@ -11,6 +11,5 @@
   { "path": "/donate", "title": "Donate: keep the Quran free for everyone", "description": "GlobalQuran is free, with no ads. Donations pay for servers, audio hosting and new tools to help people read and memorise the Quran." },
   { "path": "/about", "title": "About GlobalQuran: free Quran platform since 2006", "description": "The story, beliefs and people behind GlobalQuran, a free Quran platform with an open API since 2006." },
   { "path": "/contact", "title": "Contact GlobalQuran", "description": "Questions about the API, a bug, a translation or a partnership? Send us a message." },
-  { "path": "/examples", "title": "Quran API code examples", "description": "Copy-paste code examples for using the GlobalQuran API." },
   { "path": "/ai-instructions", "title": "AI instructions for the Quran API", "description": "Give your AI assistant these instructions and it can write a GlobalQuran integration for you." }
 ]

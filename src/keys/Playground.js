@@ -23,7 +23,7 @@ const attrsOf = (o, key) => {
   if (o.sidebar === '1') a.push(['data-sidebar', '1']);
   if (o.player === '0') a.push(['data-player', '0']);
   if (Number(o.height) !== 560) a.push(['data-height', o.height]);
-  a.push(['data-api-key', key]);
+  if (key) a.push(['data-api-key', key]);
   return a;
 };
 export const htmlSnippet = (o, key) => `<div class="globalquran-book"\n${attrsOf(o, key).map(([k, v]) => `     ${k}="${v}"`).join('\n')}></div>\n<script src="${READER}/embed.js" async></script>`;
@@ -74,7 +74,7 @@ const Step = ({ n, title, children }) => (
 );
 
 /** Website or mobile app: options, live preview, code that follows the options. */
-export const ReaderBuilder = ({ apiKey, app }) => {
+export const ReaderBuilder = ({ apiKey, app, defaultHeight }) => {
   const [o, set] = useOptions();
   const [os, setOs] = useState('iOS (Swift)');
   const html = htmlSnippet(o, apiKey);
