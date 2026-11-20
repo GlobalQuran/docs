@@ -204,3 +204,11 @@ html.night .gq-legacy{background:#fff}
 .gq-new .paper{background:#fbfaf6;border:1px solid var(--gold);border-radius:6px;padding:14px;position:relative}
 .gq-new .paper::after{content:"";position:absolute;inset:5px;border:3px double rgba(165,138,58,.38);border-radius:3px;pointer-events:none}
 .gq-new .team{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:12px}
+
+/* second row of the API section */
+.gq-new .subrow{background:var(--card);border-bottom:1px solid var(--line)}
+.gq-new .subrow .in{display:flex;gap:2px;flex-wrap:wrap;align-items:center;min-height:46px}
+.gq-new .subrow a{padding:12px 12px;border-bottom:2px solid transparent;color:var(--mute);font-weight:600;font-size:14px;text-decoration:none}
+.gq-new .subrow a:hover{color:var(--ink)}
+.gq-new .subrow a.on{color:var(--ink);border-bottom-color:var(--fill)}
+.gq-new .subrow a.help{margin-left:auto;color:var(--goldink)}

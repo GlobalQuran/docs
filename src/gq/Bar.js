@@ -70,15 +70,12 @@ const Bar = () => {
             <ThemeToggle />
             {user ? (
               <>
-                <Link className="keypill" to={KEYS_URL}>My key</Link>
                 <span style={{ position: 'relative' }}>
                   <button type="button" className="ib ibtn" aria-label="Account" aria-expanded={acct} onClick={() => setAcct(!acct)}
                     style={{ background: '#2e3a3c', color: '#f0d98a', fontWeight: 700 }}>{(user.email || '?')[0].toUpperCase()}</button>
                   {acct && (
                     <div className="results" style={{ left: 'auto', right: 0, top: 44, width: 220 }}>
                       <div style={{ padding: '10px 16px', fontSize: 12, color: 'var(--mute)', borderBottom: '1px solid var(--line2)', wordBreak: 'break-all' }}>{user.email}</div>
-                      <Link to={KEYS_URL} onClick={() => setAcct(false)}>My key</Link>
-                      <Link to="/keys/all" onClick={() => setAcct(false)}>All keys</Link>
                       <a href="#signout" onClick={(e) => { e.preventDefault(); setAcct(false); signOut(); }}>Sign out</a>
                     </div>
                   )}

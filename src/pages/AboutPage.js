@@ -25,7 +25,7 @@ const AboutPage = () => (
     <div className="in" style={{ paddingTop: 28 }}>
       <div className="card stats" style={{ padding: '22px 28px', justifyContent: 'space-between' }}>
         <div><b>2006</b><span>started</span></div>
-        <div><b>1st</b><span>free, open-source Quran app</span></div>
+        <div><b>Free</b><span>text, audio and API for everyone</span></div>
         <div><b>100+</b><span>languages</span></div>
         <div><b>Millions</b><span>of readers served</span></div>
       </div>
@@ -35,7 +35,7 @@ const AboutPage = () => (
       <div className="grid g2" style={{ gap: 18 }}>
         <div className="card">
           <div className="h3">How it began</div>
-          <p className="mute" style={{ margin: '8px 0 0', lineHeight: 1.7 }}>In 2006 Islamic websites had no easy, free way to show the Quran to their visitors: no simple interface, no API, nothing for people who could not code. We built it, and kept it free. It became the first complete Quran application released free and open source, so developers and organisations everywhere could share the Quran without barriers.</p>
+          <p className="mute" style={{ margin: '8px 0 0', lineHeight: 1.7 }}>In 2006 Islamic websites had no easy, free way to show the Quran to their visitors: no simple interface, no API, nothing for people who could not code. We built it, and kept it free. Over the years it grew into a free API, open data and a reader that developers and organisations everywhere use to share the Quran without barriers.</p>
         </div>
         <div className="card">
           <div className="h3">What we believe</div>
@@ -64,7 +64,7 @@ const AboutPage = () => (
           <div className="h3" style={{ color: '#fff' }}>Help us reach more people.</div>
           <div style={{ color: '#b9c1bf', fontSize: 14 }}>Write code, translate, or support the servers.</div>
         </div>
-        <a className="btn s" href={`${GITHUB}`} target="_blank" rel="noopener noreferrer">Contribute on GitHub</a>
+        <a className="btn s ghost" href={GITHUB} target="_blank" rel="noopener noreferrer">Contribute on GitHub</a>
         <Link className="btn g" to="/donate">Donate</Link>
       </div>
     </div>

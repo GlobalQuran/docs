@@ -39,7 +39,7 @@ const GetKey = () => {
       <form className="k-frame k-hero" onSubmit={submit}>
         <div>
           <div className="k-eyebrow">Free API key</div>
-          <h1 className="k-h1" style={{ marginTop: '.5rem' }}>One question, then your key is ready</h1>
+          <h1 className="k-h1" style={{ marginTop: '8px' }}>One question, then your key is ready</h1>
           <p className="k-sub">No project to set up, nothing else to fill in.</p>
         </div>
         <div>
@@ -53,7 +53,7 @@ const GetKey = () => {
             ))}
           </div>
         </div>
-        <div style={{ display: 'flex', gap: '.9rem', flexWrap: 'wrap' }}>
+        <div style={{ display: 'flex', gap: '14.4px', flexWrap: 'wrap' }}>
           {where === 'website' && (
             <div style={{ flex: '1 1 260px' }}>
               <label className="k-label" htmlFor="site">Your website address</label>
@@ -69,9 +69,9 @@ const GetKey = () => {
           <input type="checkbox" checked={commercial} onChange={(e) => setCommercial(e.target.checked)} />
           <span>This is for a commercial product <span className="k-muted">(optional, helps us plan)</span></span>
         </label>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '1rem', flexWrap: 'wrap' }}>
-          <span className="k-muted" style={{ fontSize: '.8rem' }}>You can change all of this later.</span>
-          <button type="submit" className="k-btn p" disabled={busy} style={{ minHeight: 48, padding: '0 1.6rem' }}>{busy ? 'Creating…' : 'Create my key'}</button>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '16px', flexWrap: 'wrap' }}>
+          <span className="k-muted" style={{ fontSize: '12.8px' }}>You can change all of this later.</span>
+          <button type="submit" className="k-btn p" disabled={busy} style={{ minHeight: 48, padding: '0 25.6px' }}>{busy ? 'Creating…' : 'Create my key'}</button>
         </div>
       </form>
     </div>

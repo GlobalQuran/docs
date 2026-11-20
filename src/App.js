@@ -5,6 +5,7 @@ import { store } from './store';
 import './App.css';
 import './styles/gq.css';
 import Bar from './gq/Bar';
+import Meta from './gq/Meta';
 import Foot from './gq/Foot';
 import HomePage from './pages/HomePage';
 import HowItWorksPage from './pages/HowItWorksPage';
@@ -21,6 +22,7 @@ import ExamplesHomePage from './pages/ExamplesHomePage';
 import AIInstructionsPage from './pages/AIInstructionsPage';
 import AboutPage from './pages/AboutPage';
 import ContactPage from './pages/ContactPage';
+import ApiShell from './gq/ApiShell';
 import Protected from './keys/Protected';
 import KeysHome from './keys/KeysHome';
 import GetKey from './keys/GetKey';
@@ -40,24 +42,27 @@ function App() {
     <Provider store={store}>
       <Router basename="/">
         <ScrollTop />
+        <Meta />
         <div className="gqapp">
           <Bar />
           <div className="gq-main">
             <Routes>
               <Route path="/" element={<HomePage />} />
-              <Route path="/how-it-works" element={<HowItWorksPage />} />
-              <Route path="/api" element={<ApiLandingPage />} />
-              <Route path="/api/reference" element={<ApiReferencePage />} />
-              <Route path="/api/reference/:slug" element={<ApiReferencePage />} />
+              <Route element={<ApiShell />}>
+                <Route path="/how-it-works" element={<HowItWorksPage />} />
+                <Route path="/api" element={<ApiLandingPage />} />
+                <Route path="/api/reference" element={<ApiReferencePage />} />
+                <Route path="/api/reference/:slug" element={<ApiReferencePage />} />
+                <Route path="/keys" element={<Protected><KeysHome /></Protected>} />
+                <Route path="/keys/start" element={<Protected><GetKey /></Protected>} />
+                <Route path="/keys/all" element={<Protected><AllKeys /></Protected>} />
+              </Route>
               <Route path="/embed" element={<EmbedPage />} />
               <Route path="/data" element={<DataPage />} />
               <Route path="/audio" element={<AudioPage />} />
               <Route path="/assets" element={<AssetsPage />} />
               <Route path="/pdf" element={<PdfPage />} />
               <Route path="/donate" element={<DonatePage />} />
-              <Route path="/keys" element={<Protected><KeysHome /></Protected>} />
-              <Route path="/keys/start" element={<Protected><GetKey /></Protected>} />
-              <Route path="/keys/all" element={<Protected><AllKeys /></Protected>} />
               <Route path="/about" element={<AboutPage />} />
               <Route path="/contact" element={<ContactPage />} />
               <Route path="/examples" element={<Legacy><ExamplesHomePage /></Legacy>} />

@@ -36,6 +36,12 @@ jobs:
         run: npm run build
         env:
           REACT_APP_RECAPTCHA_SITE_KEY: ${{ secrets.RECAPTCHA_SITE_KEY }}
+
+      - name: Prerender pages and sitemap
+        continue-on-error: true
+        run: node tools/prerender.mjs
+        env:
+          CHROME_BIN: /usr/bin/google-chrome
         
       - name: Setup Pages
         uses: actions/configure-pages@v4

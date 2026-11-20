@@ -65,16 +65,16 @@ const KeyEditor = ({ apiKey: k, label, advanced, onChanged, onClose }) => {
   const revoked = k.status !== 'active'
   return (
     <>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: '.75rem' }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: '12px' }}>
         <div>
-          <div style={{ fontSize: '1.1rem', fontWeight: 700 }}>{label}</div>
-          <div className="k-muted" style={{ fontSize: '.8rem', marginTop: 2 }}>Created {new Date(k.created_at).toLocaleDateString()}</div>
+          <div style={{ fontSize: '17.6px', fontWeight: 700 }}>{label}</div>
+          <div className="k-muted" style={{ fontSize: '12.8px', marginTop: 2 }}>Created {new Date(k.created_at).toLocaleDateString()}</div>
         </div>
         {onClose && <button className="k-btn s" onClick={onClose}>Close</button>}
       </div>
       <div>
         <div className="k-label">Your key</div>
-        <div style={{ display: 'flex', gap: '.5rem' }}>
+        <div style={{ display: 'flex', gap: '8px' }}>
           <input className="k-input k-mono" readOnly value={k.api_key} aria-label="API key" />
           <CopyButton text={k.api_key} primary />
         </div>
@@ -94,21 +94,21 @@ const KeyEditor = ({ apiKey: k, label, advanced, onChanged, onClose }) => {
           )}
         </>
       ) : (
-        <div role="radiogroup" aria-label="Where can this key be used?" style={{ display: 'flex', flexDirection: 'column', gap: '.5rem' }}>
+        <div role="radiogroup" aria-label="Where can this key be used?" style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
           <div className="k-label" style={{ marginBottom: 0 }}>Where can this key be used?</div>
           <div className="k-radio" role="radio" aria-checked={anywhere} tabIndex={0} onClick={() => setAnywhere(true)}>
-            <i /><div><b style={{ fontSize: '.9rem' }}>Anywhere</b><div className="k-muted" style={{ fontSize: '.75rem' }}>Easiest. Anyone who gets the key can use it.</div></div>
+            <i /><div><b style={{ fontSize: '14.4px' }}>Anywhere</b><div className="k-muted" style={{ fontSize: '12px' }}>Easiest. Anyone who gets the key can use it.</div></div>
           </div>
           <div className="k-radio" role="radio" aria-checked={!anywhere} tabIndex={0} onClick={() => setAnywhere(false)}>
             <i /><div style={{ flex: 1 }}>
-              <b style={{ fontSize: '.9rem' }}>Only my website</b><div className="k-muted" style={{ fontSize: '.75rem' }}>Safer for a site or web app.</div>
-              {!anywhere && <textarea className="k-textarea" style={{ marginTop: '.5rem', minHeight: 60 }} aria-label="Allowed websites, one per line" value={domains} onChange={(e) => setDomains(e.target.value)} placeholder="example.com" onClick={(e) => e.stopPropagation()} />}
+              <b style={{ fontSize: '14.4px' }}>Only my website</b><div className="k-muted" style={{ fontSize: '12px' }}>Safer for a site or web app.</div>
+              {!anywhere && <textarea className="k-textarea" style={{ marginTop: '8px', minHeight: 60 }} aria-label="Allowed websites, one per line" value={domains} onChange={(e) => setDomains(e.target.value)} placeholder="example.com" onClick={(e) => e.stopPropagation()} />}
             </div>
           </div>
         </div>
       )}
 
-      <div style={{ display: 'flex', gap: '.6rem', marginTop: 'auto' }}>
+      <div style={{ display: 'flex', gap: '9.6px', marginTop: 'auto' }}>
         <button className="k-btn p" style={{ flex: 1 }} onClick={save} disabled={busy}>Save</button>
         {k.status !== 'blocked' && <button className={`k-btn${revoked ? '' : ' d'}`} onClick={toggle} disabled={busy}>{revoked ? 'Activate' : 'Suspend'}</button>}
         <button className="k-btn d" onClick={remove} disabled={busy}>Delete</button>

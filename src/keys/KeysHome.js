@@ -3,6 +3,7 @@ import React, { useEffect, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { getKeyType, loadAllKeys, mainKey } from './data'
 import Guides from './Guides'
+import HelpLinks from './HelpLinks'
 import { KCopy as CopyButton, Spinner } from './ui'
 
 const KeysHome = () => {
@@ -31,7 +32,7 @@ const KeysHome = () => {
         <h1 className="k-h1">Your API key</h1>
         <p className="k-sub">{row.app.name || 'My project'}{domains ? ` · works on ${domains}` : ' · works anywhere'}</p>
       </div>
-      <div className="k-frame" style={{ padding: '1.4rem 1.6rem' }}>
+      <div className="k-frame" style={{ padding: '22.4px 25.6px' }}>
         <div className="k-lbl">Your key</div>
         <div className="k-keybox">
           <span className="k-mono">{row.key.api_key}</span>
@@ -42,6 +43,7 @@ const KeysHome = () => {
           {count > 1 ? ` You have ${count} keys.` : ''}
         </div>
       </div>
+      <HelpLinks />
       <Guides apiKey={row.key.api_key} initial={getKeyType()} />
     </div>
   )

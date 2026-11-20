@@ -6,7 +6,7 @@ const ContactPage = () => {
     firstName: '',
     email: '',
     phone: '',
-    subject: '',
+    subject: new URLSearchParams(window.location.search).get('subject') || '',
     message: ''
   });
   const [isSubmitting, setIsSubmitting] = useState(false);

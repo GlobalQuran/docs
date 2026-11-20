@@ -1,0 +1,16 @@
+[
+  { "path": "/", "title": "GlobalQuran Developers: Quran API, data, audio and embed", "description": "Free Quran API, a ready-made reader to embed on your website or app, downloadable text and translations, audio, fonts and PDF. No ads, no tracking." },
+  { "path": "/how-it-works", "title": "How the Quran API works: ayah numbers, text ids, URLs", "description": "Learn how ayahs, surahs, pages and juz are numbered, how text ids like en.sahih work, and how API addresses are built." },
+  { "path": "/api", "title": "Free Quran API: JSON for every ayah, surah, page and juz", "description": "Get a free API key and read the Quran as JSON with the translation you choose. Works for websites, mobile apps and servers." },
+  { "path": "/api/reference", "title": "Quran API reference: every endpoint", "description": "All GlobalQuran API endpoints in one simple list: lists, reading by ayah, surah, page or juz, complete text and audio. Try each with Run." },
+  { "path": "/embed", "title": "Embed the Quran reader on your website or app", "description": "Add a full Quran reader with audio and translations to your site or app with two lines of HTML. Pick the options and copy the code." },
+  { "path": "/data", "title": "Download Quran data: text and translations", "description": "Download the Quran text and translations in many languages as TXT or JSON, one at a time or as a ZIP." },
+  { "path": "/audio", "title": "Quran audio: reciters and file addresses", "description": "Browse reciters, hear a sample, and build direct audio file addresses from our CDN for your own player." },
+  { "path": "/assets", "title": "Quran fonts, mushaf pages and ayah images", "description": "Try Arabic Quran fonts, see mushaf pages with tajweed colours, and download fonts and ayah images, free to use." },
+  { "path": "/pdf", "title": "Quran PDF: preview, then download", "description": "Choose what goes in, preview the pages, then download the Quran as a PDF or print it. Free, no sign-in." },
+  { "path": "/donate", "title": "Donate: keep the Quran free for everyone", "description": "GlobalQuran is free, with no ads. Donations pay for servers, audio hosting and new tools to help people read and memorise the Quran." },
+  { "path": "/about", "title": "About GlobalQuran: free Quran platform since 2006", "description": "The story, beliefs and people behind GlobalQuran, a free Quran platform with an open API since 2006." },
+  { "path": "/contact", "title": "Contact GlobalQuran", "description": "Questions about the API, a bug, a translation or a partnership? Send us a message." },
+  { "path": "/examples", "title": "Quran API code examples", "description": "Copy-paste code examples for using the GlobalQuran API." },
+  { "path": "/ai-instructions", "title": "AI instructions for the Quran API", "description": "Give your AI assistant these instructions and it can write a GlobalQuran integration for you." }
+]

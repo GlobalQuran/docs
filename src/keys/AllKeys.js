@@ -34,7 +34,7 @@ const Simple = ({ apps, rows, reload }) => {
     <div className="k-page">
       <div className="k-layout">
         <div className="k-main">
-          <div style={{ display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between', gap: '1rem', flexWrap: 'wrap' }}>
+          <div style={{ display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between', gap: '16px', flexWrap: 'wrap' }}>
             <div>
               <h1 className="k-h1">API keys</h1>
               <p className="k-sub">A key lets your app read the Quran text and audio. Keep it private.</p>
@@ -53,7 +53,7 @@ const Simple = ({ apps, rows, reload }) => {
               </div>
             ))}
           </div>
-          <p className="k-muted" style={{ margin: 0, fontSize: '.8rem' }}>Free to use. Keep your keys private. Want projects, more restrictions or details? Switch to Advanced at the top.</p>
+          <p className="k-muted" style={{ margin: 0, fontSize: '12.8px' }}>Free to use. Keep your keys private. Want projects, more restrictions or details? Switch to Advanced at the top.</p>
         </div>
         {sel && (
           <div className="k-frame k-panel">
@@ -110,23 +110,23 @@ const Advanced = ({ apps, rows, reload }) => {
     <div className="k-page" style={{ maxWidth: 1240 }}>
       <div className="k-layout">
         <nav className="k-side" aria-label="Projects">
-          <div className="k-muted" style={{ fontSize: '.7rem', fontWeight: 600, padding: '0 .9rem .4rem' }}>PROJECTS</div>
+          <div className="k-muted" style={{ fontSize: '11.2px', fontWeight: 600, padding: '0 14.4px 6.4px' }}>PROJECTS</div>
           {apps.map((a) => (
             <button key={a.app_id} aria-current={a.app_id === app?.app_id} onClick={() => { setAppId(a.app_id); setSelected(null) }}>{a.name || 'My project'}</button>
           ))}
           {newName === null
-            ? <button className="k-btn s" style={{ marginTop: '.6rem' }} onClick={() => setNewName('')}>+ New project</button>
-            : <div style={{ display: 'flex', flexDirection: 'column', gap: '.4rem', marginTop: '.6rem' }}>
+            ? <button className="k-btn s" style={{ marginTop: '9.6px' }} onClick={() => setNewName('')}>+ New project</button>
+            : <div style={{ display: 'flex', flexDirection: 'column', gap: '6.4px', marginTop: '9.6px' }}>
                 <input className="k-input" autoFocus placeholder="Project name" aria-label="Project name" value={newName} onChange={(e) => setNewName(e.target.value)} onKeyDown={(e) => e.key === 'Enter' && createProject()} />
-                <div style={{ display: 'flex', gap: '.4rem' }}><button className="k-btn p s" onClick={createProject}>Create</button><button className="k-btn s" onClick={() => setNewName(null)}>Cancel</button></div>
+                <div style={{ display: 'flex', gap: '6.4px' }}><button className="k-btn p s" onClick={createProject}>Create</button><button className="k-btn s" onClick={() => setNewName(null)}>Cancel</button></div>
               </div>}
         </nav>
 
         {app && (
           <div className="k-main">
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: '1rem', flexWrap: 'wrap' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: '16px', flexWrap: 'wrap' }}>
               <div>
-                <h1 className="k-h1" style={{ fontSize: '1.5rem' }}>{app.name || 'My project'}</h1>
+                <h1 className="k-h1" style={{ fontSize: '24px' }}>{app.name || 'My project'}</h1>
                 <p className="k-sub">{[app.description, app.website].filter(Boolean).join(' · ') || 'No description yet'}</p>
               </div>
               <button className="k-btn p s" onClick={newKey}>+ New key</button>
@@ -155,24 +155,24 @@ const Advanced = ({ apps, rows, reload }) => {
 
             <div className="k-grid2">
               {sel && (
-                <div className="k-card" style={{ padding: '1.25rem', display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+                <div className="k-card" style={{ padding: '20px', display: 'flex', flexDirection: 'column', gap: '16px' }}>
                   <KeyEditor key={sel.key.api_key} apiKey={sel.key} label={`Restrictions for ${labelFor(sel, rows)}`} advanced onChanged={reload} />
                 </div>
               )}
-              <div className="k-card" style={{ padding: '1.25rem', display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+              <div className="k-card" style={{ padding: '20px', display: 'flex', flexDirection: 'column', gap: '16px' }}>
                 <div style={{ fontWeight: 700 }}>Project details</div>
                 <div><label className="k-label" htmlFor="pd-n">Name</label><input id="pd-n" className="k-input" value={name} onChange={(e) => setName(e.target.value)} /></div>
                 <div><label className="k-label" htmlFor="pd-w">Website</label><input id="pd-w" className="k-input" value={website} onChange={(e) => setWebsite(e.target.value)} placeholder="https://example.com" /></div>
                 <label className="k-check"><input type="checkbox" checked={commercial} onChange={(e) => setCommercial(e.target.checked)} />Commercial product</label>
-                <div style={{ display: 'flex', gap: '1.1rem', flexWrap: 'wrap' }}>
+                <div style={{ display: 'flex', gap: '17.6px', flexWrap: 'wrap' }}>
                   {ALL_SERVICES.map((s) => (
                     <label key={s} className="k-check" style={{ textTransform: 'capitalize' }}>
                       <input type="checkbox" checked={services.includes(s)} onChange={(e) => setServices(e.target.checked ? [...services, s] : services.filter((x) => x !== s))} />{s}
                     </label>
                   ))}
                 </div>
-                <div className="k-muted" style={{ fontSize: '.75rem', marginTop: 'auto' }}>Rate limits are set by GlobalQuran.</div>
-                <div style={{ display: 'flex', gap: '.6rem' }}>
+                <div className="k-muted" style={{ fontSize: '12px', marginTop: 'auto' }}>Rate limits are set by GlobalQuran.</div>
+                <div style={{ display: 'flex', gap: '9.6px' }}>
                   <button className="k-btn p s" onClick={saveDetails}>Save</button>
                   <button className="k-btn d s" onClick={removeProject}>Delete project</button>
                 </div>

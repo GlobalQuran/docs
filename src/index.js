@@ -5,6 +5,7 @@ import App from './App';
 import reportWebVitals from './reportWebVitals';
 import { initTheme } from './gq/theme';
 
+if (process.env.REACT_APP_MOCK === '1') { require('./keys/mock'); }
 initTheme();
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
