@@ -36,8 +36,8 @@ const EmbedPage = () => {
     <Page>
       <div className="in" style={{ paddingTop: 38 }}>
         <div className="eyebrow">Embeddable reader · Quran Anywhere</div>
-        <h1 className="h1" style={{ margin: '12px 0 10px', fontSize: 40 }}>A full Quran reader on your site.<br />Two lines, no account.</h1>
-        <p className="lead" style={{ maxWidth: 680 }}>Audio, translations, tajweed colours, night mode and search, already working. It lives in a frame, so your site cannot break it and it cannot break your site. Works in WordPress, Notion, a mosque site or an app's web view.</p>
+        <h1 className="h1" style={{ margin: '12px 0 10px', fontSize: 40 }}>A full Quran reader on your site or in your app.<br />Two lines, no account.</h1>
+        <p className="lead" style={{ maxWidth: 680 }}>Audio, translations, tajweed colours, night mode and search, already working. It lives in a frame, so your site cannot break it and it cannot break your site. Works in WordPress, Notion, a mosque site, or inside a mobile or desktop app through a web view.</p>
       </div>
 
       <div className="in twocol" style={{ paddingTop: 24 }}>

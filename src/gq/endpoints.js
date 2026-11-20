@@ -3,6 +3,14 @@ export const GROUPS = [
   { id: 'lists', title: 'Lists', blurb: 'What you can choose from.' },
   { id: 'read', title: 'Read', blurb: 'Give me this part, in this text. Add several texts with commas: en.sahih,ar.uthmani' },
   { id: 'complete', title: 'Complete text', blurb: 'The whole Quran in one text. Best for apps that keep a copy.' },
+  { id: 'audio', title: 'Audio', blurb: 'The API tells you which reciters exist. The audio itself is plain files on our CDN (no key): you build the address from the reciter, the format and the ayah or surah number. The Audio page explains it step by step and lets you play.' },
+];
+
+// Records of the Audio group that are not API calls. Each opens the page given in `to`.
+export const AUDIO_RECORDS = [
+  { title: 'List reciters', path: '/v2/list/recitor', to: '/api/reference/list-recitor' },
+  { title: 'Audio file, verse by verse', path: 'https://audio.globalquran.com/{reciter}/{format}/{kbs}kbs/{ayah}.mp3', to: '/audio', method: 'FILE' },
+  { title: 'Audio file, surah by surah', path: 'https://audio.globalquran.com/{reciter}/{format}/{kbs}kbs/surah/{surah}.mp3', to: '/audio', method: 'FILE' },
 ];
 
 export const ENDPOINTS = [

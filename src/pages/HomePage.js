@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Page, KEYS_URL, GITHUB } from '../gq/ui';
 import { useQuranList, FALLBACK_COUNTS } from '../gq/data';
-import { searchIndex } from '../gq/search';
+import { searchAll } from '../gq/search';
 import { useSession } from '../gq/auth';
 
 const HomePage = () => {
@@ -10,7 +10,7 @@ const HomePage = () => {
   const nav = useNavigate();
   const { user } = useSession();
   const [q, setQ] = useState('');
-  const hits = searchIndex(q);
+  const hits = searchAll(q, { texts: textFormats, reciters: audioFormats });
   const translations = textFormats.filter((t) => t.type === 'translation').length || FALLBACK_COUNTS.texts;
   const reciters = audioFormats.length || FALLBACK_COUNTS.reciters;
   const quranTexts = textFormats.filter((t) => t.type === 'quran').length || FALLBACK_COUNTS.quran;
@@ -26,11 +26,12 @@ const HomePage = () => {
             <span>⌕</span>
             <input value={q} onChange={(e) => setQ(e.target.value)} placeholder="Search docs, endpoints, reciters, translations"
               aria-label="Search the docs"
-              onKeyDown={(e) => { if (e.key === 'Enter' && hits[0]) nav(hits[0][1]); }} />
+              onKeyDown={(e) => { if (e.key === 'Enter' && hits[0]) { nav(hits[0].to); setQ(''); } if (e.key === 'Escape') setQ(''); }} />
           </div>
-          {hits.length > 0 && (
+          {q.trim() && (
             <div className="results">
-              {hits.map(([t, to]) => <Link key={to} to={to}>{t}<small>{to}</small></Link>)}
+              {hits.length === 0 && <div style={{ padding: '14px 16px', fontSize: 14, color: 'var(--mute)' }}>Nothing found for "{q}". Try a word like surah, translation, audio or embed.</div>}
+              {hits.map((h) => <Link key={h.group + h.to} to={h.to} onClick={() => setQ('')}>{h.title}<small>{h.group} · {h.sub}</small></Link>)}
             </div>
           )}
         </div>
@@ -51,8 +52,8 @@ const HomePage = () => {
       <div className="in" style={{ paddingTop: 34 }}>
         <div className="grid g3">
           <div className="frame">
-            <div className="eyebrow">A website</div>
-            <h2 className="h2" style={{ margin: '10px 0 8px' }}>Show the Quran on my site</h2>
+            <div className="eyebrow">A website or an app</div>
+            <h2 className="h2" style={{ margin: '10px 0 8px' }}>Show the Quran on my site or app</h2>
             <p className="mute small">Two lines of HTML give you a full reader with audio, translations and night mode. No account, no key.</p>
             <div className="code" style={{ margin: '14px 0', fontSize: 12 }}>{'<div class="globalquran-book"\n     data-surah="36"></div>'}</div>
             <Link className="btn p" to="/embed">Embed the reader</Link>

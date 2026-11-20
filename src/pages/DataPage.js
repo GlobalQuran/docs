@@ -1,5 +1,5 @@
-import React, { useMemo, useState } from 'react';
-import { Link } from 'react-router-dom';
+import React, { useEffect, useMemo, useState } from 'react';
+import { Link, useSearchParams } from 'react-router-dom';
 import JSZip from 'jszip';
 import { saveAs } from 'file-saver';
 import { Page, API, GITHUB, Seg } from '../gq/ui';
@@ -12,12 +12,19 @@ const DataPage = () => {
   const { textFormats, loading, error } = useQuranList();
   const [tab, setTab] = useState('translation');
   const [lang, setLang] = useState('all');
-  const [q, setQ] = useState('');
+  const [params] = useSearchParams();
+  const [q, setQ] = useState(params.get('q') || '');
   const [fmt, setFmt] = useState('txt');
   const [picked, setPicked] = useState({});
   const [progress, setProgress] = useState(null);
   const [limit, setLimit] = useState(25);
 
+  // arriving from search with an id: open the tab that holds it
+  useEffect(() => {
+    const id = params.get('q');
+    const hit = id && textFormats.find((t) => t.id === id);
+    if (hit) setTab(hit.type);
+  }, [params, textFormats]);
   const counts = useMemo(() => { const c = {}; textFormats.forEach((t) => { c[t.type] = (c[t.type] || 0) + 1; }); return c; }, [textFormats]);
   const ofTab = useMemo(() => textFormats.filter((t) => t.type === tab), [textFormats, tab]);
   const languages = useMemo(() => [...new Set(ofTab.map((t) => t.language))].sort(), [ofTab]);
@@ -83,7 +90,7 @@ const DataPage = () => {
                       <td className="mono small"><b>{r.id}</b></td>
                       <td>{r.name}{r.localName && r.localName !== r.name ? <div className="small mute">{r.localName}</div> : null}</td>
                       <td>{r.language}</td>
-                      <td className="small"><a href={url(r.id, 'txt')}>TXT</a> · <a href={url(r.id, 'json')}>JSON</a> · <a href={`https://globalquran.com/${r.id}/1.1`} target="_blank" rel="noopener noreferrer">View</a></td>
+                      <td className="small"><a href={url(r.id, 'txt')}>TXT</a> · <a href={url(r.id, 'json')}>JSON</a> · <a href={`https://globalquran.com/1:1?tr=${encodeURIComponent(r.id)}`} target="_blank" rel="noopener noreferrer">View</a></td>
                     </tr>
                   ))}
                   {allShown.length === 0 && <tr><td colSpan="5" className="mute">Nothing matches.</td></tr>}

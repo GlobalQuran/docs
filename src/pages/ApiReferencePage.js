@@ -1,13 +1,14 @@
 import React, { useState } from 'react';
-import { Link, useParams } from 'react-router-dom';
+import { Link, useNavigate, useParams } from 'react-router-dom';
 import { Page, API, Seg, CopyButton, KEYS_URL } from '../gq/ui';
-import { GROUPS, ENDPOINTS, bySlug } from '../gq/endpoints';
+import { GROUPS, ENDPOINTS, AUDIO_RECORDS, bySlug } from '../gq/endpoints';
 
 const readKey = () => { try { return localStorage.getItem('gq_key') || ''; } catch (e) { return ''; } };
 const saveKey = (v) => { try { localStorage.setItem('gq_key', v); } catch (e) { /* ignore */ } };
 
 const Overview = () => {
   const [key, setKey] = useState(readKey());
+  const nav = useNavigate();
   return (
     <div style={{ flex: 1, minWidth: 0, maxWidth: 820 }}>
       <h1 className="h1" style={{ fontSize: 36 }}>API reference</h1>
@@ -28,14 +29,17 @@ const Overview = () => {
           <div className="mute small" style={{ marginBottom: 12 }}>{g.blurb}</div>
           <div className="card" style={{ padding: 0 }}>
             <table><tbody>
-              {ENDPOINTS.filter((e) => e.group === g.id).map((e) => (
-                <tr key={e.slug}>
-                  <td style={{ width: 56 }}><span className="m">GET</span></td>
-                  <td className="mono small"><b>{e.path}</b></td>
-                  <td className="mute">{e.title}</td>
-                  <td style={{ textAlign: 'right' }}><Link to={`/api/reference/${e.slug}`}>Details →</Link></td>
-                </tr>
-              ))}
+              {(g.id === 'audio' ? AUDIO_RECORDS : ENDPOINTS.filter((e) => e.group === g.id)).map((e) => {
+                const to = e.to || `/api/reference/${e.slug}`;
+                return (
+                  <tr key={e.path + (e.title || '')} className="rowlink" tabIndex={0} onClick={() => nav(to)} onKeyDown={(ev) => { if (ev.key === 'Enter') nav(to); }}>
+                    <td style={{ width: 64 }}><span className="m">{e.method || 'GET'}</span></td>
+                    <td className="mono small" style={{ wordBreak: 'break-all' }}><b>{e.path}</b></td>
+                    <td className="mute">{e.title}</td>
+                    <td style={{ textAlign: 'right', whiteSpace: 'nowrap' }}><Link to={to} onClick={(ev) => ev.stopPropagation()}>Details →</Link></td>
+                  </tr>
+                );
+              })}
             </tbody></table>
           </div>
         </div>
@@ -134,6 +138,8 @@ const ApiReferencePage = () => {
               ))}
             </div>
           ))}
+          <div className="grp">Audio</div>
+          <Link to="/audio">Audio files</Link>
           <div className="grp">Also</div>
           <Link to="/how-it-works">How it works</Link><Link to="/ai-instructions">AI instructions</Link>
         </div>

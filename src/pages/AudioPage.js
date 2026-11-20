@@ -1,4 +1,5 @@
 import React, { useMemo, useState } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { Page, AUDIO, CopyButton, Seg } from '../gq/ui';
 import { useQuranList, useSurahs } from '../gq/data';
 
@@ -14,7 +15,8 @@ const AudioPage = () => {
   const [vidx, setVidx] = useState(0);
   const [surah, setSurah] = useState(2);
   const [ayah, setAyah] = useState(255);
-  const [q, setQ] = useState('');
+  const [params] = useSearchParams();
+  const [q, setQ] = useState(params.get('q') || '');
   const [lang, setLang] = useState('all');
   const [limit, setLimit] = useState(20);
   const [playing, setPlaying] = useState(null);
