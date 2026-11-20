@@ -57,4 +57,6 @@ server.close();
 if (done.size === 0) { console.warn('nothing prerendered, leaving the app as it is'); process.exit(0); }
 const urls = routes.filter((r) => done.has(r)).map((r) => `${SITE}${r === '/' ? '/' : r + '/'}`);
 writeFileSync(join(BUILD, 'sitemap.xml'), `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${urls.map((u) => `  <url><loc>${u}</loc></url>`).join('\n')}\n</urlset>\n`);
+// Sign-in pages are not prerendered (and not indexed), but they still get a real file so the host answers 200, not 404.
+for (const r of ['/keys', '/keys/start', '/keys/all']) { const d = join(BUILD, r); mkdirSync(d, { recursive: true }); writeFileSync(join(d, 'index.html'), shell); }
 writeFileSync(join(BUILD, 'robots.txt'), `User-agent: *\nAllow: /\nDisallow: /keys\n\nSitemap: ${SITE}/sitemap.xml\n`);
