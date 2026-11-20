@@ -38,7 +38,12 @@ const Meta = () => {
     setMeta('meta[property="og:description"]', 'property', 'og:description', m.description);
     setMeta('meta[property="og:url"]', 'property', 'og:url', url);
     setMeta('meta[property="og:type"]', 'property', 'og:type', 'website');
-    setMeta('meta[name="twitter:card"]', 'name', 'twitter:card', 'summary');
+    setMeta('meta[name="twitter:card"]', 'name', 'twitter:card', 'summary_large_image');
+    const img = 'https://docs.globalquran.com/og-image.png';
+    setMeta('meta[property="og:image"]', 'property', 'og:image', img);
+    setMeta('meta[property="og:image:width"]', 'property', 'og:image:width', '1200');
+    setMeta('meta[property="og:image:height"]', 'property', 'og:image:height', '630');
+    setMeta('meta[name="twitter:image"]', 'name', 'twitter:image', img);
     setMeta('meta[name="robots"]', 'name', 'robots', PRIVATE.test(pathname) ? 'noindex, nofollow' : 'index, follow');
   }, [pathname]);
   return null;
