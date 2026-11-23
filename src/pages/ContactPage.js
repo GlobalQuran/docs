@@ -91,7 +91,7 @@ const ContactPage = () => {
         return;
       }
 
-      const response = await fetch('https://us-central1-globalquran-prod.cloudfunctions.net/sendContactEmail', {
+      const response = await fetch('/api/contact', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
