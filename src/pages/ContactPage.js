@@ -15,7 +15,7 @@ const ContactPage = () => {
   const recaptchaRef = useRef(null);
   
   // Get reCAPTCHA site key from environment variable
-  const RECAPTCHA_SITE_KEY = process.env.REACT_APP_RECAPTCHA_SITE_KEY || '6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI'; // Fallback to test key
+  const RECAPTCHA_SITE_KEY = process.env.REACT_APP_RECAPTCHA_SITE_KEY || '6LePCE4rAAAAAGSblsacbm8Zi-GhmwkkZS9-XfO9'; // public site key (the secret is in the gq-contact Worker)
 
 
   // Load reCAPTCHA v2 script
