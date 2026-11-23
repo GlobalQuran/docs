@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Page, GITHUB } from '../gq/ui';
-import { ReaderBuilder } from '../keys/Playground';
+import { ReaderBuilder, VerseCardBuilder } from '../keys/Playground';
 import { KCopy } from '../keys/ui';
 import '../keys/keys.css';
 
@@ -28,6 +28,13 @@ const EmbedPage = () => {
           <div style={{ height: 18 }} />
           <ReaderBuilder key={kind} app={kind === 'app'} />
           <div className="k-note" style={{ marginTop: 16 }}>No key needed to start. Add <span className="chip">data-api-key</span> when you have one: <Link to="/keys" style={{ textDecoration: 'underline' }}>get a free key</Link>.</div>
+        </section>
+
+        <section className="k-card" style={{ padding: '24px 26px', marginTop: 20 }} aria-labelledby="card-h">
+          <h2 className="k-h2" id="card-h">Just one verse? Make a verse card</h2>
+          <div className="k-note" style={{ margin: '6px 0 0' }}>Pick a verse and a translation and get the card the Global Quran reader shares: Mushaf script with tajweed colours, the golden frame, the translation underneath. Copy it into a page, a post, a message or a document, or share the link.</div>
+          <div style={{ height: 10 }} />
+          <VerseCardBuilder />
         </section>
 
         <div className="k-grid3" style={{ marginTop: 20 }}>

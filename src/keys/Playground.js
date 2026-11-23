@@ -139,3 +139,78 @@ export const ServerBuilder = ({ apiKey }) => {
     </div>
   );
 };
+
+/**
+ * Verse card: pick a verse and a translation, get the picture the Global Quran reader shares (Mushaf script with tajweed colours,
+ * the golden frame, the translation under it) and the code to put it anywhere: HTML, Markdown, a plain link, or the WordPress plugin's shortcode.
+ * The picture is drawn on request by the card service on globalquran.com (a few seconds the first time, instant after).
+ */
+const CARD_LOOKS = [['both', 'Arabic + translation'], ['ar', 'Arabic only'], ['tr', 'Translation only']];
+
+export const VerseCardBuilder = () => {
+  const surahs = useSurahs();
+  const { textFormats } = useQuranList();
+  const translations = useMemo(() => textFormats.filter((t) => t.type === 'translation'), [textFormats]);
+  const [c, setC] = useState({ surah: 2, ayah: 255, tr: 'en.sahih', m: 'both' });
+  const [out, setOut] = useState('HTML');
+  const [loaded, setLoaded] = useState(false);
+  const set = (k, v) => { setLoaded(false); setC((p) => ({ ...p, [k]: v })); };
+  const sur = surahs.find((x) => Number(x.surah_number) === Number(c.surah));
+  const max = sur ? Number(sur.ayahs) : 286;
+  const ayah = Math.min(Math.max(1, Number(c.ayah) || 1), max);
+  const name = sur ? sur.name_english : `Surah ${c.surah}`;
+  const q = `t=${encodeURIComponent(c.tr === 'none' ? 'en.sahih' : c.tr)}&m=${c.tr === 'none' ? 'ar' : c.m}`;
+  const img = `${READER}/card/${c.surah}-${ayah}.jpg?${q}`;
+  const link = `${READER}/${c.surah}:${ayah}?${q}`;
+  const alt = `${name} ${c.surah}:${ayah}`;
+  const code = {
+    HTML: `<a href="${link}" target="_blank" rel="noopener">\n  <img src="${img}" alt="${alt}" style="max-width:100%;height:auto">\n</a>`,
+    Markdown: `[![${alt}](${img})](${link})`,
+    Link: link,
+    Image: img,
+    WordPress: `[globalquran_verse ref="${c.surah}:${ayah}" translation="${c.tr === 'none' ? 'none' : c.tr}" font="mushaf" tajweed="yes" style="day"]`,
+  }[out];
+  const note = {
+    HTML: 'Paste it into any page or post. The picture links to the verse on globalquran.com.',
+    Markdown: 'For READMEs, forums, Notion, Reddit and chat tools that read Markdown.',
+    Link: 'Share this address anywhere: it opens the verse, and chat apps show the card as the preview.',
+    Image: 'The picture on its own, for a post, a slide or a message. Open it and save it.',
+    WordPress: 'With the free Global Quran plugin the card is real text on your page, with a Listen button. Search “Global Quran” under Plugins.',
+  }[out];
+  return (
+    <div className="k-builder">
+      <div className="k-bl">
+        <Step n={1} title="Choose the verse">
+          <div className="grid g3" style={{ gap: 12 }}>
+            <div><div className="lbl">Surah</div>
+              <select className="sel" value={c.surah} onChange={(e) => set('surah', e.target.value)}>
+                {surahs.length ? surahs.map((x) => <option key={x.surah_number} value={x.surah_number}>{x.surah_number} · {x.name_english}</option>) : Array.from({ length: 114 }, (_, i) => <option key={i + 1} value={i + 1}>Surah {i + 1}</option>)}</select></div>
+            <div><div className="lbl">Ayah (1 to {max})</div><input className="sel" type="number" min="1" max={max} value={c.ayah} onChange={(e) => set('ayah', e.target.value)} /></div>
+            <div><div className="lbl">Translation</div>
+              <select className="sel" value={c.tr} onChange={(e) => set('tr', e.target.value)}>
+                <option value="en.sahih">en.sahih</option><option value="none">None (Arabic only)</option>
+                {translations.filter((t) => t.id !== 'en.sahih').map((t) => <option key={t.id} value={t.id}>{t.id} · {t.name}</option>)}</select></div>
+          </div>
+          <div className="k-seg2" role="group" aria-label="What the card shows" style={{ margin: '14px 0 0' }}>
+            {CARD_LOOKS.map(([id, label]) => <button key={id} aria-pressed={c.m === id} disabled={c.tr === 'none' && id !== 'ar'} onClick={() => set('m', id)}>{label}</button>)}
+          </div>
+        </Step>
+        <Step n={2} title="Copy it and share it">
+          <div className="k-seg2" role="group" aria-label="Format" style={{ margin: '0 0 11.2px' }}>
+            {['HTML', 'Markdown', 'Link', 'Image', 'WordPress'].map((x) => <button key={x} aria-pressed={out === x} onClick={() => setOut(x)}>{x === 'Image' ? 'Image address' : x}</button>)}</div>
+          <Cap title={out === 'Image' ? 'Image address' : out} text={code} />
+          <pre className="k-code" tabIndex={0} style={{ whiteSpace: 'pre-wrap', wordBreak: 'break-all' }}>{code}</pre>
+          <div className="k-note">{note}</div>
+          <div className="k-links" style={{ marginTop: 12 }}>
+            <a className="k-btn s" href={img} target="_blank" rel="noopener noreferrer">Open the picture</a>
+            <a className="k-btn s" href={link} target="_blank" rel="noopener noreferrer">Open the verse</a>
+          </div>
+        </Step>
+      </div>
+      <div className="k-br">
+        <div className="cap"><span>Your card</span><span className="small mute">{loaded ? 'ready' : 'drawing… a few seconds the first time'}</span></div>
+        <img key={img} src={img} alt={alt} onLoad={() => setLoaded(true)} style={{ display: 'block', width: '100%', height: 'auto', borderRadius: 10, border: '1px solid var(--k-line, rgba(128,128,128,.3))', background: 'rgba(128,128,128,.08)', minHeight: 160 }} />
+      </div>
+    </div>
+  );
+};
