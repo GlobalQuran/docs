@@ -6,10 +6,10 @@ import { useSession, signInUrl, signOut, KEYS_URL } from './auth';
 const LINKS = [
   ['/', 'Docs', true],
   ['/api', 'API'],
+  ['/mcp', 'MCP'],
   ['/embed', 'Embed'],
   ['/data', 'Data'],
   ['/audio', 'Audio'],
-  ['/mcp', 'MCP'],
   ['/assets', 'Assets'],
   ['/pdf', 'Quran PDF', false, true],
 ];
