@@ -1,0 +1,63 @@
+/* The printed page: same look as the Quran Anywhere reader (golden frame, surah cartouche, mushaf glyph font with tajweed colours).
+   Sizes are written for an A4 sheet (794px wide) and multiplied by --u, so every paper size looks the same. */
+@font-face { font-family: "SurahNames"; src: url(/pdf-assets/sura_names.woff2) format("woff2"); font-display: block; }
+
+.pdf-root { --u: 1; --k: 1; --fz: calc(.9 * var(--u)); --pb-ink: #131313; --pb-tr-ink: #4c4c4c; --pb-line: #d4d2c8; --pb-cite: #8a7027; --pb-gold: #a58a3a; --pb-paper: #fbfbf9;
+  --ins: calc(10px * var(--u) + 27px * var(--u) + 16px * var(--u));
+  -webkit-print-color-adjust: exact; print-color-adjust: exact; direction: ltr; }
+.pdf-root * { box-sizing: border-box; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+
+.pdf-sheet { position: relative; width: var(--w); height: var(--h); overflow: hidden; background: var(--pb-paper) !important; color: var(--pb-ink); font-family: Georgia, "Times New Roman", serif;
+  break-after: page; page-break-after: always; }
+.pdf-sheet.plain { --pb-paper: #fff; --pb-ink: #000; --pb-tr-ink: #222; --pb-cite: #000; --pb-line: #999; --ins: calc(56px * var(--u)); }
+.pdf-sheet:last-child { break-after: auto; page-break-after: auto; }
+
+/* the golden frame (same pieces as the reader) */
+.pdf-sheet .pb-frame { position: absolute; inset: calc(10px * var(--u)); pointer-events: none; --f: calc(30px * var(--fz)); }
+.pdf-sheet .pb-frame i { position: absolute; display: block; background-repeat: no-repeat; }
+.mf-t { left: var(--f); right: var(--f); top: 0; height: var(--f); background-image: url(/pdf-assets/frame_tm@4x.webp) !important; background-size: calc(45px * var(--fz)) calc(270px * var(--fz)) !important; background-repeat: repeat-x !important; }
+.mf-b { left: var(--f); right: var(--f); bottom: 0; height: var(--f); background-image: url(/pdf-assets/frame_bm@4x.webp) !important; background-size: calc(45px * var(--fz)) calc(487px * var(--fz)) !important; background-position: 0 100% !important; background-repeat: repeat-x !important; }
+.mf-l { left: 0; top: var(--f); bottom: var(--f); width: var(--f); background-image: url(/pdf-assets/frame_ml@4x.webp) !important; background-size: calc(135px * var(--fz)) calc(45px * var(--fz)) !important; background-repeat: repeat-y !important; }
+.mf-r { right: 0; top: var(--f); bottom: var(--f); width: var(--f); background-image: url(/pdf-assets/frame_mr@4x.webp) !important; background-size: calc(316px * var(--fz)) calc(45px * var(--fz)) !important; background-position: 100% 0 !important; background-repeat: repeat-y !important; }
+.mf-tl, .mf-tr, .mf-bl, .mf-br { width: var(--f); height: var(--f); }
+.mf-tl { left: 0; top: 0; background-image: url(/pdf-assets/frame_tl@4x.webp) !important; background-size: calc(135px * var(--fz)) calc(270px * var(--fz)) !important; }
+.mf-tr { right: 0; top: 0; background-image: url(/pdf-assets/frame_tr@4x.webp) !important; background-size: calc(316px * var(--fz)) calc(270px * var(--fz)) !important; background-position: 100% 0 !important; }
+.mf-bl { left: 0; bottom: 0; background-image: url(/pdf-assets/frame_bl@4x.webp) !important; background-size: calc(135px * var(--fz)) calc(487px * var(--fz)) !important; background-position: 0 100% !important; }
+.mf-br { right: 0; bottom: 0; background-image: url(/pdf-assets/frame_br@4x.webp) !important; background-size: calc(316px * var(--fz)) calc(487px * var(--fz)) !important; background-position: 100% 100% !important; }
+
+.pdf-body { position: absolute; left: var(--ins); right: var(--ins); top: var(--ins); bottom: calc(var(--ins) + 6px * var(--u)); overflow: hidden; display: flex; flex-direction: column; justify-content: center; }
+.pdf-sheet.vs .pdf-body { justify-content: flex-start; }
+.pdf-foot { position: absolute; left: 0; right: 0; bottom: calc(10px * var(--u) + 27px * var(--u) + 3px * var(--u)); text-align: center; font: 600 calc(11px * var(--u)) / 1 Georgia, serif; letter-spacing: .08em; color: var(--pb-cite) !important; }
+.pdf-sheet.plain .pdf-foot { bottom: calc(22px * var(--u)); }
+
+/* mushaf text */
+.pdf-root .qcf { font-size: calc(var(--ar) * var(--u) * var(--k)); line-height: 1.95; direction: rtl; }
+.pdf-root .qcf .w, .pdf-root .qcf .qe { margin-left: .12em; }
+.pdf-root .sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+.pdf-root .flow { text-align: justify; text-align-last: center; text-justify: inter-word; }
+.pdf-root .bism { text-align: center; font-size: calc(var(--ar) * var(--u) * var(--k) * 1.1); padding: calc(6px * var(--u)) 0 calc(8px * var(--u)); }
+.pdf-root .bism .w { margin: 0 .08em; }
+
+/* surah heading: the cartouche with the calligraphic name, English underneath */
+.pdf-root .head { text-align: center; padding: calc(8px * var(--u)) 0 calc(2px * var(--u)); }
+.pdf-root .cart { position: relative; width: min(100%, calc(360px * var(--u))); aspect-ratio: 322 / 46; margin: 0 auto; }
+.pdf-root .cart img { display: block; width: 100%; height: 100%; }
+.pdf-root .sn { position: absolute; inset: 0; display: grid; place-items: center; font-family: "SurahNames", serif; font-weight: 400; font-size: calc(34px * var(--u)); line-height: 1; white-space: nowrap; color: var(--pb-ink); }
+.pdf-root .s-info { margin: calc(8px * var(--u)) 0 0; font: 500 calc(12px * var(--u)) / 1.4 Georgia, serif; letter-spacing: .02em; color: var(--pb-tr-ink); }
+.pdf-root .s-info b { color: var(--pb-cite) !important; font-weight: 700; }
+.pdf-root .ph-ar { font: 700 calc(26px * var(--u)) / 1.5 "Amiri", "Traditional Arabic", "Geeza Pro", "Noto Naskh Arabic", serif; direction: rtl; border-bottom: 1px solid var(--pb-ink); padding-bottom: calc(4px * var(--u)); display: inline-block; min-width: 40%; }
+
+/* verse by verse (when a translation or transliteration is on) */
+.pdf-root .ayah { padding: calc(10px * var(--u)) calc(6px * var(--u)); border-top: 1px solid var(--pb-line); }
+.pdf-root .head + .ayah, .pdf-root .bism + .ayah { border-top: 0; }
+.pdf-root .ayah .ar { text-align: right; }
+.pdf-root .tlit { margin-top: calc(4px * var(--u)); font: italic calc(13px * var(--u)) / 1.5 Georgia, serif; color: var(--pb-cite) !important; direction: ltr; text-align: left; }
+.pdf-sheet.plain .tlit { color: #333 !important; }
+.pdf-root .trs { margin-top: calc(5px * var(--u)); font: calc(14px * var(--u)) / 1.55 Georgia, serif; color: var(--pb-tr-ink); direction: ltr; text-align: left; }
+.pdf-root .trs.rtl { direction: rtl; text-align: right; font-size: calc(17px * var(--u)); line-height: 1.8; }
+
+/* plain: black and white, no graphics (the glyph font stays mono) */
+
+/* preview and print */
+.pdf-prev { transform-origin: top left; }
+.gq-printonly .pdf-sheet { margin: 0; }

@@ -1,9 +1,8 @@
-import React, { useEffect, useMemo, useState } from 'react';
-import { Page, API, Seg } from '../gq/ui';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
+import { Page, Seg } from '../gq/ui';
 import { useQuranList, useSurahs } from '../gq/data';
+import { MM, SIZES, ensureTranslation, loadFonts, loadMeta, pageSheets, preloadArt, pageSurahs, rootVars, scopePages } from '../gq/pdfBook';
 
-const ARABIC = 'quran-uthmani';
-const PER_SHEET = 6;
 const PDF_CDN = 'https://cdn.globalquran.com/resources/pdf';
 const READY = [
   ['quran-arabic.pdf', 'Arabic only', 'Clean mushaf-style text, medium size'],
@@ -36,67 +35,121 @@ const ReadyMade = () => {
   );
 };
 
-/** Fetch ayahs for one scope. Returns [{n, surah, ayah, ar, tr}] sorted by global number. */
-async function load(scopePath, trId) {
-  const ids = trId ? `${ARABIC},${trId}` : ARABIC;
-  const r = await fetch(`${API}/v1/${scopePath}/${ids}`);
-  const j = await r.json();
-  const q = j.quran || {};
-  const ar = q[ARABIC] || {};
-  const tr = trId ? q[trId] || {} : {};
-  return Object.keys(ar).map(Number).sort((a, b) => a - b).map((n) => ({
-    n, surah: ar[n].surah, ayah: ar[n].ayah, ar: ar[n].verse, tr: tr[n] ? tr[n].verse : '',
-  }));
+const PREVIEW_W = 360;
+/** the page's own stylesheet (frame pictures and fonts are addressed from /pdf-assets, so it is served as a plain file) */
+function useBookCss() {
+  useEffect(() => {
+    if (document.getElementById('pdfbook-css')) return;
+    const l = document.createElement('link'); l.id = 'pdfbook-css'; l.rel = 'stylesheet'; l.href = '/pdf-assets/pdfbook.css'; document.head.appendChild(l);
+  }, []);
 }
+const rootStyle = (size, textSize) => rootVars(size, textSize);
+
+const Check = ({ checked, onChange, children, disabled, note }) => (
+  <label style={{ display: 'flex', gap: 9, alignItems: 'flex-start', margin: '8px 0', opacity: disabled ? 0.5 : 1, cursor: disabled ? 'default' : 'pointer' }}>
+    <input type="checkbox" checked={checked} disabled={disabled} onChange={(e) => onChange(e.target.checked)} style={{ marginTop: 3 }} />
+    <span><b style={{ fontWeight: 700 }}>{children}</b>{note && <span className="small mute" style={{ display: 'block' }}>{note}</span>}</span>
+  </label>
+);
 
 const PdfPage = () => {
+  useBookCss();
   const surahs = useSurahs();
   const { textFormats } = useQuranList();
   const translations = useMemo(() => textFormats.filter((t) => t.type === 'translation'), [textFormats]);
   const [scope, setScope] = useState('surah');
   const [num, setNum] = useState(1);
-  const [content, setContent] = useState('both');
-  const [tr, setTr] = useState('en.sahih');
+  const [trId, setTrId] = useState('');
+  const [tlit, setTlit] = useState(false);
+  const [tajweed, setTajweed] = useState(true);
+  const [look, setLook] = useState('original');       // original: frame, cartouche, colours · plain: text only, black and white
   const [size, setSize] = useState('A4');
   const [fontSize, setFontSize] = useState('md');
-  const [rows, setRows] = useState([]);
-  const [sheet, setSheet] = useState(0);
+  const [info, setInfo] = useState(null);             // { pages, allowed } of the chosen scope
+  const [pi, setPi] = useState(0);                    // index into info.pages (mushaf page)
+  const [sub, setSub] = useState(0);                  // sheet within that page (long pages with a translation take several)
+  const [view, setView] = useState(null);             // sheets of the current mushaf page
   const [busy, setBusy] = useState(false);
+  const [progress, setProgress] = useState('');
   const [err, setErr] = useState('');
-  const [printRows, setPrintRows] = useState(null);
-  const trId = content === 'both' ? tr : '';
+  const [printSheets, setPrintSheets] = useState(null);
+  const cache = useRef(new Map());
+  const plain = look === 'plain';
+  const opts = useMemo(() => ({ size, textSize: fontSize, plain, tajweed: tajweed && !plain, tlit, trId }), [size, fontSize, plain, tajweed, tlit, trId]);
+  const optKey = `${scope}:${num}:${size}:${fontSize}:${opts.plain}:${opts.tajweed}:${tlit}:${trId}`;
 
-  const path = scope === 'surah' ? `surah/${num}` : scope === 'juz' ? `juz/${num}` : `page/${num}`;
+  // 1. which mushaf pages the choice covers
   useEffect(() => {
-    let live = true;
-    setBusy(true); setErr('');
-    load(path, trId).then((r) => { if (live) { setRows(r); setSheet(0); } }).catch((e) => live && setErr(e.message)).finally(() => live && setBusy(false));
+    let live = true; setErr(''); setInfo(null);
+    scopePages(scope, num).then((r) => { if (live) { setInfo(r); setPi(0); setSub(0); } }).catch((e) => live && setErr(`Could not load the pages: ${e.message}`));
     return () => { live = false; };
-  }, [path, trId]);
+  }, [scope, num]);
 
-  const sheets = Math.max(1, Math.ceil(rows.length / PER_SHEET));
-  const shown = rows.slice(sheet * PER_SHEET, sheet * PER_SHEET + PER_SHEET);
-  const sName = (n) => { const s = surahs.find((x) => x.surah_number === n); return s ? `${s.name_english} · ${n}` : `Surah ${n}`; };
-  const max = scope === 'surah' ? 114 : scope === 'juz' ? 30 : 604;
-  const sizes = { sm: 20, md: 24, lg: 30 };
+  // 2. the sheets of the page being previewed (fonts and text are loaded first, so what you see is what prints)
+  const pageNo = info ? info.pages[pi] : 0;
+  useEffect(() => {
+    if (!info || !pageNo) return undefined;
+    let live = true; setBusy(true);
+    (async () => {
+      const key = `${optKey}|${pageNo}`;
+      if (!cache.current.has(key)) {
+        const meta = await loadMeta();
+        await loadFonts([1, pageNo], opts.tajweed);
+        const trMap = trId ? await ensureTranslation(trId, pageSurahs(pageNo, meta)) : null;
+        cache.current.set(key, await pageSheets(pageNo, meta, { ...opts, trMap, allowed: info.allowed }));
+      }
+      return cache.current.get(key);
+    })().then((r) => { if (live) { setView(r); setSub((x) => (x < 0 ? r.length - 1 : Math.min(x, r.length - 1))); setErr(''); } })
+      .catch((e) => live && setErr(`Could not build the page: ${e.message}`)).finally(() => live && setBusy(false));
+    return () => { live = false; };
+  }, [info, pageNo, optKey, opts, trId]);
+
+  const sheet = view && view[Math.min(Math.max(sub, 0), view.length - 1)];
+  const last = info ? info.pages.length - 1 : 0;
+  const atStart = pi === 0 && sub <= 0;
+  const atEnd = pi >= last && (!view || sub >= view.length - 1);
+  const prev = () => { if (sub > 0) setSub(sub - 1); else if (pi > 0) { setPi(pi - 1); setSub(-1); } };
+  const next = () => { if (view && sub < view.length - 1) setSub(sub + 1); else if (pi < last) { setPi(pi + 1); setSub(0); } };
+  const [W, H] = SIZES[size];
+  const k = PREVIEW_W / W;
+  const vars = rootStyle(size, fontSize);
 
   const savePdf = async () => {
-    setBusy(true); setErr('');
+    setBusy(true); setErr(''); setPrintSheets(null);
     try {
-      const all = scope === 'whole' ? await load('complete', trId) : rows;
-      setPrintRows(all);
-      setTimeout(() => { window.print(); setBusy(false); }, 400);
-    } catch (e) { setErr(`Could not prepare the file: ${e.message}`); setBusy(false); }
+      const meta = await loadMeta();
+      const pages = info.pages;
+      await loadFonts([1, ...pages], opts.tajweed, (d, t) => setProgress(`Loading the Quran fonts ${d}/${t}`));
+      const trMap = trId ? await ensureTranslation(trId, [...new Set(pages.flatMap((p) => pageSurahs(p, meta)))]) : null;
+      const out = [];
+      for (let i = 0; i < pages.length; i++) {
+        const key = `${optKey}|${pages[i]}`;
+        if (!cache.current.has(key)) cache.current.set(key, await pageSheets(pages[i], meta, { ...opts, trMap, allowed: info.allowed }));
+        cache.current.get(key).forEach((s) => out.push(s.html));
+        if (i % 6 === 0) { setProgress(`Laying out the pages ${i + 1}/${pages.length}`); await new Promise((r) => setTimeout(r, 0)); }
+      }
+      await preloadArt();
+      setPrintSheets(out);
+      setProgress('');
+      setTimeout(() => { window.print(); setBusy(false); }, 900);
+    } catch (e) { setErr(`Could not prepare the file: ${e.message}`); setBusy(false); setProgress(''); }
   };
+  useEffect(() => {
+    const done = () => setPrintSheets(null);
+    window.addEventListener('afterprint', done);
+    return () => window.removeEventListener('afterprint', done);
+  }, []);
 
+  const sName = (n) => { const s = surahs.find((x) => x.surah_number === n); return s ? `${s.name_english}` : `Surah ${n}`; };
+  const whole = scope === 'whole';
   return (
     <Page>
-      <style>{`@page{size:${size};margin:14mm}@media print{.gq-noprint{display:none!important}.gq-printonly{display:block!important}body{background:#fff!important}.pp .ar{font:400 ${sizes[fontSize]}px/2.2 Amiri,"Traditional Arabic",serif;direction:rtl;text-align:right;color:#000}.pp .tr{font:${Math.round(sizes[fontSize] / 2)}px/1.5 Georgia,serif;color:#222;margin:0 0 10px}.pp .sh{font:700 14px Georgia,serif;margin:18px 0 6px;text-align:center}}.gq-printonly{display:none}`}</style>
+      <style>{`@page{size:${MM[size][0]} ${MM[size][1]};margin:0}@media print{.gq-noprint{display:none!important}.gq-printonly{display:block!important}html,body,#root{background:#fff!important;margin:0!important;padding:0!important;height:auto!important;min-height:0!important}.gqapp,.gq-main,.gq-new:not(.gq-noprint){display:block!important;padding:0!important;margin:0!important;min-height:0!important;height:auto!important}}.gq-printonly{display:none}`}</style>
       <div className="gq-noprint">
         <div className="in" style={{ paddingTop: 34 }}>
           <div className="eyebrow">New · free · no sign-in</div>
           <h1 className="h1" style={{ margin: '12px 0 8px', fontSize: 38 }}>The Quran as a PDF.<br />See it first, then download.</h1>
-          <p className="lead" style={{ maxWidth: 680 }}>Choose what goes in, check the preview, and only then save it. Read it on any device or print it.</p>
+          <p className="lead" style={{ maxWidth: 680 }}>Real mushaf pages in the Quran Anywhere design: the mushaf font with tajweed colours, the golden frame and the surah titles. Or just plain black and white text. Check the preview, then save it.</p>
         </div>
 
         <div className="in twocol" style={{ paddingTop: 22 }}>
@@ -104,27 +157,37 @@ const PdfPage = () => {
             <div className="card">
               <div className="step"><i>1</i><div className="h3">What to include</div></div>
               <div style={{ margin: '12px 0' }}><Seg value={scope} onChange={(v) => { setScope(v); setNum(1); }} options={[{ value: 'whole', label: 'Whole Quran' }, { value: 'surah', label: 'Surah' }, { value: 'juz', label: 'Juz' }]} /></div>
-              {scope === 'surah' && (<><div className="lbl">Surah</div><select className="sel" style={{ marginBottom: 10 }} value={num} onChange={(e) => setNum(Number(e.target.value))}>{surahs.map((x) => <option key={x.surah_number} value={x.surah_number}>{x.surah_number} · {x.name_english}</option>)}</select></>)}
-              {scope === 'juz' && (<><div className="lbl">Juz</div><select className="sel" style={{ marginBottom: 10 }} value={num} onChange={(e) => setNum(Number(e.target.value))}>{Array.from({ length: 30 }, (_, i) => <option key={i + 1} value={i + 1}>Juz {i + 1}</option>)}</select></>)}
-              {scope === 'whole' && <div className="small mute" style={{ marginBottom: 10 }}>The preview below shows mushaf pages. Use the page box to jump.</div>}
-              <div className="lbl">Content</div>
-              <select className="sel" style={{ marginBottom: 10 }} value={content} onChange={(e) => setContent(e.target.value)}><option value="both">Arabic + translation</option><option value="ar">Arabic only</option></select>
-              {content === 'both' && (<><div className="lbl">Translation</div>
-                <select className="sel" value={tr} onChange={(e) => setTr(e.target.value)}>
-                  <option value="en.sahih">English · Saheeh International</option>
-                  {translations.filter((t) => t.id !== 'en.sahih').map((t) => <option key={t.id} value={t.id}>{t.id} · {t.name}</option>)}</select></>)}
+              {scope === 'surah' && (<><div className="lbl">Surah</div><select className="sel" style={{ marginBottom: 6 }} value={num} onChange={(e) => setNum(Number(e.target.value))}>{surahs.map((x) => <option key={x.surah_number} value={x.surah_number}>{x.surah_number} · {x.name_english}</option>)}</select></>)}
+              {scope === 'juz' && (<><div className="lbl">Juz</div><select className="sel" style={{ marginBottom: 6 }} value={num} onChange={(e) => setNum(Number(e.target.value))}>{Array.from({ length: 30 }, (_, i) => <option key={i + 1} value={i + 1}>Juz {i + 1}</option>)}</select></>)}
+              {whole && <div className="small mute">604 mushaf pages. Flip through the preview, or jump to a page.</div>}
             </div>
             <div className="card">
-              <div className="step"><i>2</i><div className="h3">Layout</div></div>
-              <div className="grid g2" style={{ gap: 10, marginTop: 12 }}>
+              <div className="step"><i>2</i><div className="h3">Text</div></div>
+              <div className="small mute" style={{ margin: '8px 0 4px' }}>The Arabic is always the mushaf font. Add what helps you read it.</div>
+              <Check checked={tajweed && !plain} disabled={plain} onChange={setTajweed} note={plain ? 'Not in the text-only look (black and white).' : 'Colours the tajweed rules, as in the reader.'}>Tajweed colours</Check>
+              <Check checked={tlit} onChange={setTlit} note="The Arabic in Latin letters, under each verse.">Transliteration</Check>
+              <div className="lbl" style={{ marginTop: 8 }}>Translation</div>
+              <select className="sel" value={trId} onChange={(e) => setTrId(e.target.value)}>
+                <option value="">None</option>
+                <option value="en.sahih">English · Saheeh International</option>
+                {translations.filter((t) => t.id !== 'en.sahih').map((t) => <option key={t.id} value={t.id}>{t.id} · {t.name}</option>)}
+              </select>
+              {(tlit || trId) && <div className="small mute" style={{ marginTop: 8 }}>With a translation or transliteration the pages go verse by verse, so a page may take more than one sheet.</div>}
+            </div>
+            <div className="card">
+              <div className="step"><i>3</i><div className="h3">Look</div></div>
+              <div style={{ margin: '12px 0' }}><Seg value={look} onChange={setLook} options={[{ value: 'original', label: 'Original design' }, { value: 'plain', label: 'Text only' }]} /></div>
+              <div className="small mute" style={{ marginBottom: 10 }}>{plain ? 'No frame or graphics, black on white. Saves ink.' : 'The Quran Anywhere look: golden frame, surah title and colours.'}</div>
+              <div className="grid g2" style={{ gap: 10 }}>
                 <div><div className="lbl">Page size</div><select className="sel" value={size} onChange={(e) => setSize(e.target.value)}><option>A4</option><option>A5</option><option>Letter</option></select></div>
-                <div><div className="lbl">Text size</div><select className="sel" value={fontSize} onChange={(e) => setFontSize(e.target.value)}><option value="sm">Small</option><option value="md">Medium</option><option value="lg">Large</option></select></div>
+                <div><div className="lbl">Arabic size</div><select className="sel" value={fontSize} onChange={(e) => setFontSize(e.target.value)}><option value="sm">Small</option><option value="md">Medium</option><option value="lg">Large</option></select></div>
               </div>
             </div>
             <div className="frame" style={{ padding: '18px 20px' }}>
-              <div className="step"><i>3</i><div className="h3">Save</div></div>
-              <div className="small mute" style={{ margin: '8px 0 12px' }}>Opens your browser's print window. Choose <b>Save as PDF</b> as the printer.{scope === 'whole' ? ' The whole Quran is a few hundred pages, so give it a moment.' : ''}</div>
-              <button type="button" className="btn p" style={{ width: '100%' }} onClick={savePdf} disabled={busy}>{busy ? 'Preparing…' : 'Save as PDF'}</button>
+              <div className="step"><i>4</i><div className="h3">Save</div></div>
+              <div className="small mute" style={{ margin: '8px 0 12px' }}>Opens your browser's print window. Choose <b>Save as PDF</b> as the printer, and in More settings switch on <b>Background graphics</b> for the frame and colours.{whole ? ' The whole Quran is a few hundred pages, so give it a moment.' : ''}</div>
+              <button type="button" className="btn p" style={{ width: '100%' }} onClick={savePdf} disabled={busy || !info}>{busy && progress ? progress : busy ? 'Preparing…' : 'Save as PDF'}</button>
+              {info && info.pages.length * (opts.tajweed ? 0.55 : 0.15) > 15 && <div className="small mute" style={{ marginTop: 10 }}>A big file: about {Math.round(info.pages.length * (opts.tajweed ? 0.55 : 0.15) / 10) * 10} MB{opts.tajweed ? ' with tajweed colours. Turn them off, or choose Text only, for a much smaller file.' : '.'}</div>}
               {err && <div className="err" style={{ marginTop: 10 }}>{err}</div>}
               <div className="small mute" style={{ marginTop: 10, textAlign: 'center' }}>Free to share. <a href="/donate" style={{ fontWeight: 700 }}>A donation</a> keeps it online.</div>
             </div>
@@ -132,27 +195,24 @@ const PdfPage = () => {
 
           <div className="main" style={{ flex: '1 1 520px' }}>
             <div className="card" style={{ background: 'var(--sub)' }}>
-              <div className="cap"><span>Preview</span><span className="small mute">real text, as it will print</span></div>
+              <div className="cap"><span>Preview</span><span className="small mute">the real page, as it will print</span></div>
               <div style={{ display: 'flex', gap: 22, alignItems: 'flex-start', flexWrap: 'wrap', justifyContent: 'center', padding: '6px 0' }}>
-                <div className="sheet" style={{ width: 340, minHeight: 440 }}>
-                  <div className="hd">{shown[0] ? sName(shown[0].surah).toUpperCase() : '…'}</div>
-                  {busy && !rows.length && <div className="loading">Loading…</div>}
-                  {shown.map((r) => (
-                    <div key={r.n}>
-                      <div className="ayah" style={{ fontSize: sizes[fontSize] - 2 }}>{r.ar} ﴿{r.ayah}﴾</div>
-                      {content === 'both' && <p className="tr">{r.tr}</p>}
-                    </div>
-                  ))}
-                  <div style={{ textAlign: 'center', fontSize: 11, color: '#4f5b5a', marginTop: 12 }}>{sheet + 1}</div>
+                <div style={{ width: PREVIEW_W, height: Math.round((H - 1) * k) + 2, boxShadow: '0 6px 22px rgba(15,28,26,.25)', borderRadius: 3, overflow: 'hidden', background: '#fff', position: 'relative', opacity: busy && sheet ? 0.55 : 1, transition: 'opacity .15s' }}>
+                  {sheet
+                    ? <div className={`pdf-root pdf-prev${opts.tajweed ? ' tj' : ''}`} style={{ ...vars, transform: `scale(${k})`, width: W, height: H }} dangerouslySetInnerHTML={{ __html: sheet.html }} />
+                    : <div className="loading" style={{ padding: 24 }}>{err ? '' : 'Loading the page…'}</div>}
                 </div>
-                <div style={{ flex: 1, minWidth: 150 }}>
-                  <div className="h3">{scope === 'whole' ? `Mushaf page ${num}` : `Sheet ${sheet + 1} of ${sheets}`}</div>
-                  <div className="small mute" style={{ margin: '6px 0 12px' }}>Flip through to check the look before you save.</div>
-                  <div style={{ display: 'flex', gap: 8, marginBottom: 14 }}>
-                    <button type="button" className="btn s" disabled={sheet === 0 && (scope !== 'whole' || num === 1)} onClick={() => { if (sheet > 0) setSheet(sheet - 1); else if (scope === 'whole' && num > 1) setNum(num - 1); }}>← Prev</button>
-                    <button type="button" className="btn s" disabled={sheet >= sheets - 1 && (scope !== 'whole' || num >= max)} onClick={() => { if (sheet < sheets - 1) setSheet(sheet + 1); else if (scope === 'whole' && num < max) setNum(num + 1); }}>Next →</button>
+                <div style={{ flex: 1, minWidth: 170 }}>
+                  <div className="h3">Mushaf page {pageNo || '…'}</div>
+                  <div className="small mute" style={{ margin: '6px 0 12px' }}>
+                    {info ? `${whole ? 'Page' : 'Page'} ${pi + 1} of ${info.pages.length}` : ''}{view && view.length > 1 ? ` · sheet ${Math.min(sub, view.length - 1) + 1} of ${view.length}` : ''}
+                    {scope === 'surah' ? ` · ${sName(num)}` : ''}
                   </div>
-                  {scope === 'whole' && (<><div className="lbl">Go to mushaf page (1 to 604)</div><input className="sel" type="number" min="1" max="604" value={num} onChange={(e) => setNum(Math.min(604, Math.max(1, Number(e.target.value) || 1)))} /></>)}
+                  <div style={{ display: 'flex', gap: 8, marginBottom: 14 }}>
+                    <button type="button" className="btn s" disabled={atStart || !info} onClick={prev}>← Prev</button>
+                    <button type="button" className="btn s" disabled={atEnd || !info} onClick={next}>Next →</button>
+                  </div>
+                  {whole && info && (<><div className="lbl">Go to mushaf page (1 to 604)</div><input className="sel" type="number" min="1" max="604" value={pageNo || 1} onChange={(e) => { const v = Math.min(604, Math.max(1, Number(e.target.value) || 1)); setPi(v - 1); setSub(0); }} /></>)}
                 </div>
               </div>
             </div>
@@ -161,21 +221,8 @@ const PdfPage = () => {
         </div>
       </div>
 
-      <div className="gq-printonly pp">
-        {printRows && (() => {
-          let last = 0;
-          return printRows.map((r) => {
-            const head = r.surah !== last ? <div className="sh" key={`h${r.surah}`}>{sName(r.surah)}</div> : null;
-            last = r.surah;
-            return (
-              <React.Fragment key={r.n}>
-                {head}
-                <div className="ar">{r.ar} ﴿{r.ayah}﴾</div>
-                {content === 'both' && <p className="tr">{r.tr}</p>}
-              </React.Fragment>
-            );
-          });
-        })()}
+      <div className="gq-printonly">
+        {printSheets && <div className={`pdf-root${opts.tajweed ? ' tj' : ''}`} style={vars} dangerouslySetInnerHTML={{ __html: printSheets.join('') }} />}
       </div>
     </Page>
   );
