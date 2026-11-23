@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { Page, Seg } from '../gq/ui';
 import { useQuranList, useSurahs } from '../gq/data';
-import { MM, SIZES, ensureTranslation, loadFonts, loadMeta, pageSheets, preloadArt, pageSurahs, rootVars, scopePages } from '../gq/pdfBook';
+import { MM, SIZES, ensureTranslation, loadFonts, loadMeta, backSheet, coverSheet, pageSheets, preloadArt, pageSurahs, rootVars, scopePages } from '../gq/pdfBook';
 
 const PDF_CDN = 'https://cdn.globalquran.com/resources/pdf';
 const READY = [
@@ -66,6 +66,7 @@ const PdfPage = () => {
   const [size, setSize] = useState('A4');
   const [fontSize, setFontSize] = useState('md');
   const [info, setInfo] = useState(null);             // { pages, allowed } of the chosen scope
+  const [cover, setCover] = useState(true);          // cover and closing page with the branding
   const [pi, setPi] = useState(0);                    // index into info.pages (mushaf page)
   const [sub, setSub] = useState(0);                  // sheet within that page (long pages with a translation take several)
   const [view, setView] = useState(null);             // sheets of the current mushaf page
@@ -74,26 +75,44 @@ const PdfPage = () => {
   const [err, setErr] = useState('');
   const [printSheets, setPrintSheets] = useState(null);
   const cache = useRef(new Map());
+  const coverRef = useRef(true);
+  useEffect(() => { coverRef.current = cover; setPi((x) => (cover ? (x === 0 ? -1 : x) : Math.max(0, Math.min(x, info ? info.pages.length - 1 : 0)))); }, [cover]); // eslint-disable-line react-hooks/exhaustive-deps
   const plain = look === 'plain';
   const opts = useMemo(() => ({ size, textSize: fontSize, plain, tajweed: tajweed && !plain, tlit, trId }), [size, fontSize, plain, tajweed, tlit, trId]);
   const optKey = `${scope}:${num}:${size}:${fontSize}:${opts.plain}:${opts.tajweed}:${tlit}:${trId}`;
 
+  const coverText = (meta) => {
+    const t = translations.find((x) => x.id === trId);
+    const lines = [plain ? 'Mushaf text, black and white' : opts.tajweed ? 'Mushaf text with tajweed colours' : 'Mushaf text', tlit && 'With transliteration',
+      trId && `Translation: ${trId === 'en.sahih' ? 'Saheeh International' : (t && t.name) || trId}`].filter(Boolean);
+    if (scope === 'surah') { const m = meta.surahs[num - 1]; return { title: `Surah ${m.en}`, sub: `${m.me} · ${m.c} verses`, ar: num, arName: m.ar, lines }; }
+    if (scope === 'juz') return { title: `Juz ${num}`, sub: `Part ${num} of 30 · The Holy Quran`, ar: 0, lines };
+    return { title: 'The Holy Quran', sub: 'The complete mushaf · 604 pages', ar: 0, lines };
+  };
+
   // 1. which mushaf pages the choice covers
   useEffect(() => {
     let live = true; setErr(''); setInfo(null);
-    scopePages(scope, num).then((r) => { if (live) { setInfo(r); setPi(0); setSub(0); } }).catch((e) => live && setErr(`Could not load the pages: ${e.message}`));
+    scopePages(scope, num).then((r) => { if (live) { setInfo(r); setPi(coverRef.current ? -1 : 0); setSub(0); } }).catch((e) => live && setErr(`Could not load the pages: ${e.message}`));
     return () => { live = false; };
   }, [scope, num]);
 
   // 2. the sheets of the page being previewed (fonts and text are loaded first, so what you see is what prints)
-  const pageNo = info ? info.pages[pi] : 0;
+  const isCover = !!info && pi === -1, isBack = !!info && pi === info.pages.length;
+  const pageNo = info && !isCover && !isBack ? info.pages[pi] : 0;
   useEffect(() => {
-    if (!info || !pageNo) return undefined;
+    if (!info || !(pageNo || isCover || isBack)) return undefined;
     let live = true; setBusy(true);
     (async () => {
-      const key = `${optKey}|${pageNo}`;
+      const key = `${optKey}|${isCover ? 'cover' : isBack ? 'back' : pageNo}`;
       if (!cache.current.has(key)) {
         const meta = await loadMeta();
+        if (isCover || isBack) {
+          await loadFonts([1], opts.tajweed);
+          const html = isCover ? await coverSheet(coverText(meta), opts) : backSheet(opts);
+          cache.current.set(key, [{ html, p: 0, sub: 0, of: 1 }]);
+          return cache.current.get(key);
+        }
         await loadFonts([1, pageNo], opts.tajweed);
         const trMap = trId ? await ensureTranslation(trId, pageSurahs(pageNo, meta)) : null;
         cache.current.set(key, await pageSheets(pageNo, meta, { ...opts, trMap, allowed: info.allowed }));
@@ -102,13 +121,14 @@ const PdfPage = () => {
     })().then((r) => { if (live) { setView(r); setSub((x) => (x < 0 ? r.length - 1 : Math.min(x, r.length - 1))); setErr(''); } })
       .catch((e) => live && setErr(`Could not build the page: ${e.message}`)).finally(() => live && setBusy(false));
     return () => { live = false; };
-  }, [info, pageNo, optKey, opts, trId]);
+  }, [info, pageNo, isCover, isBack, optKey, opts, trId]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const sheet = view && view[Math.min(Math.max(sub, 0), view.length - 1)];
-  const last = info ? info.pages.length - 1 : 0;
-  const atStart = pi === 0 && sub <= 0;
+  const last = info ? info.pages.length - 1 + (cover ? 1 : 0) : 0;
+  const first = cover ? -1 : 0;
+  const atStart = pi === first && sub <= 0;
   const atEnd = pi >= last && (!view || sub >= view.length - 1);
-  const prev = () => { if (sub > 0) setSub(sub - 1); else if (pi > 0) { setPi(pi - 1); setSub(-1); } };
+  const prev = () => { if (sub > 0) setSub(sub - 1); else if (pi > first) { setPi(pi - 1); setSub(-1); } };
   const next = () => { if (view && sub < view.length - 1) setSub(sub + 1); else if (pi < last) { setPi(pi + 1); setSub(0); } };
   const [W, H] = SIZES[size];
   const k = PREVIEW_W / W;
@@ -122,12 +142,14 @@ const PdfPage = () => {
       await loadFonts([1, ...pages], opts.tajweed, (d, t) => setProgress(`Loading the Quran fonts ${d}/${t}`));
       const trMap = trId ? await ensureTranslation(trId, [...new Set(pages.flatMap((p) => pageSurahs(p, meta)))]) : null;
       const out = [];
+      if (cover) out.push(await coverSheet(coverText(meta), opts));
       for (let i = 0; i < pages.length; i++) {
         const key = `${optKey}|${pages[i]}`;
         if (!cache.current.has(key)) cache.current.set(key, await pageSheets(pages[i], meta, { ...opts, trMap, allowed: info.allowed }));
         cache.current.get(key).forEach((s) => out.push(s.html));
         if (i % 6 === 0) { setProgress(`Laying out the pages ${i + 1}/${pages.length}`); await new Promise((r) => setTimeout(r, 0)); }
       }
+      if (cover) out.push(backSheet(opts));
       await preloadArt();
       setPrintSheets(out);
       setProgress('');
@@ -178,6 +200,7 @@ const PdfPage = () => {
               <div className="step"><i>3</i><div className="h3">Look</div></div>
               <div style={{ margin: '12px 0' }}><Seg value={look} onChange={setLook} options={[{ value: 'original', label: 'Original design' }, { value: 'plain', label: 'Text only' }]} /></div>
               <div className="small mute" style={{ marginBottom: 10 }}>{plain ? 'No frame or graphics, black on white. Saves ink.' : 'The Quran Anywhere look: golden frame, surah title and colours.'}</div>
+              <Check checked={cover} onChange={setCover} note="Global Quran cover and closing page, and a link to each verse in every footer.">Cover and closing page</Check>
               <div className="grid g2" style={{ gap: 10 }}>
                 <div><div className="lbl">Page size</div><select className="sel" value={size} onChange={(e) => setSize(e.target.value)}><option>A4</option><option>A5</option><option>Letter</option></select></div>
                 <div><div className="lbl">Arabic size</div><select className="sel" value={fontSize} onChange={(e) => setFontSize(e.target.value)}><option value="sm">Small</option><option value="md">Medium</option><option value="lg">Large</option></select></div>
@@ -203,16 +226,16 @@ const PdfPage = () => {
                     : <div className="loading" style={{ padding: 24 }}>{err ? '' : 'Loading the page…'}</div>}
                 </div>
                 <div style={{ flex: 1, minWidth: 170 }}>
-                  <div className="h3">Mushaf page {pageNo || '…'}</div>
+                  <div className="h3">{isCover ? 'Cover' : isBack ? 'Closing page' : `Mushaf page ${pageNo || '…'}`}</div>
                   <div className="small mute" style={{ margin: '6px 0 12px' }}>
-                    {info ? `${whole ? 'Page' : 'Page'} ${pi + 1} of ${info.pages.length}` : ''}{view && view.length > 1 ? ` · sheet ${Math.min(sub, view.length - 1) + 1} of ${view.length}` : ''}
+                    {info && !isCover && !isBack ? `Page ${pi + 1} of ${info.pages.length}` : ''}{view && view.length > 1 ? ` · sheet ${Math.min(sub, view.length - 1) + 1} of ${view.length}` : ''}
                     {scope === 'surah' ? ` · ${sName(num)}` : ''}
                   </div>
                   <div style={{ display: 'flex', gap: 8, marginBottom: 14 }}>
                     <button type="button" className="btn s" disabled={atStart || !info} onClick={prev}>← Prev</button>
                     <button type="button" className="btn s" disabled={atEnd || !info} onClick={next}>Next →</button>
                   </div>
-                  {whole && info && (<><div className="lbl">Go to mushaf page (1 to 604)</div><input className="sel" type="number" min="1" max="604" value={pageNo || 1} onChange={(e) => { const v = Math.min(604, Math.max(1, Number(e.target.value) || 1)); setPi(v - 1); setSub(0); }} /></>)}
+                  {whole && info && !isCover && !isBack && (<><div className="lbl">Go to mushaf page (1 to 604)</div><input className="sel" type="number" min="1" max="604" value={pageNo || 1} onChange={(e) => { const v = Math.min(604, Math.max(1, Number(e.target.value) || 1)); setPi(v - 1); setSub(0); }} /></>)}
                 </div>
               </div>
             </div>

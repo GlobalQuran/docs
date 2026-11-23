@@ -28,7 +28,34 @@
 .pdf-body { position: absolute; left: var(--ins); right: var(--ins); top: var(--ins); bottom: calc(var(--ins) + 6px * var(--u)); overflow: hidden; display: flex; flex-direction: column; justify-content: center; }
 .pdf-sheet.vs .pdf-body { justify-content: flex-start; }
 .pdf-foot { position: absolute; left: 0; right: 0; bottom: calc(10px * var(--u) + 27px * var(--u) + 3px * var(--u)); text-align: center; font: 600 calc(11px * var(--u)) / 1 Georgia, serif; letter-spacing: .08em; color: var(--pb-cite) !important; }
+/* footer: link to the first verse on the sheet, page number, brand */
+.pdf-foot { display: flex; justify-content: space-between; align-items: baseline; left: var(--ins); right: var(--ins); }
+.pdf-foot a { color: var(--pb-cite) !important; text-decoration: none; letter-spacing: .02em; font-weight: 700; }
+.pdf-foot .fc { flex: none; }
+.pdf-foot .fr { opacity: .75; font-weight: 600; }
+.pdf-foot .fl, .pdf-foot .fr { flex: 1; } .pdf-foot .fr { text-align: right; }
 .pdf-sheet.plain .pdf-foot { bottom: calc(22px * var(--u)); }
+
+/* cover and closing page */
+.pdf-sheet.cover .pdf-body { justify-content: center; }
+.pdf-root .cv { text-align: center; display: flex; flex-direction: column; align-items: center; gap: calc(14px * var(--u)); }
+.pdf-root a::after { content: none !important; }
+.pdf-root .cv-logo { width: calc(92px * var(--u)); height: calc(92px * var(--u)); object-fit: contain; border-radius: calc(20px * var(--u)); }
+.pdf-root .cv-brand { font: 600 calc(24px * var(--u)) / 1 Georgia, serif; letter-spacing: .06em; color: var(--pb-ink); }
+.pdf-root .cv-brand b { color: var(--pb-cite) !important; font-weight: 700; }
+.pdf-root .cv .cv-bism { font-size: calc(46px * var(--u)); margin-top: calc(40px * var(--u)); text-align: center; }
+.pdf-root .cv .cv-cart { width: min(100%, calc(520px * var(--u))); margin: calc(40px * var(--u)) auto 0; }
+.pdf-root .cv-cart .sn { font-size: calc(60px * var(--u)); }
+.pdf-root .cv .cv-ar { margin-top: calc(40px * var(--u)); font: 700 calc(54px * var(--u)) / 1.5 "Amiri", "Traditional Arabic", "Geeza Pro", serif; direction: rtl; }
+.pdf-root .cv-t { margin: calc(12px * var(--u)) 0 0; font: 700 calc(40px * var(--u)) / 1.2 Georgia, serif; color: var(--pb-ink); }
+.pdf-root .cv-s { font: calc(18px * var(--u)) / 1.4 Georgia, serif; color: var(--pb-tr-ink); }
+.pdf-root .cv-l { margin-top: calc(20px * var(--u)); font: italic calc(14px * var(--u)) / 1.7 Georgia, serif; color: var(--pb-tr-ink); }
+.pdf-root .cv-u, .pdf-root .cv-f a, .pdf-root .bk a { color: var(--pb-cite) !important; font-weight: 700; text-decoration: none; letter-spacing: .03em; }
+.pdf-root .cv-u { margin-top: calc(34px * var(--u)); font-size: calc(18px * var(--u)); }
+.pdf-root .bk { margin-top: calc(18px * var(--u)); width: 100%; }
+.pdf-root .bk-r { display: grid; gap: calc(3px * var(--u)); padding: calc(12px * var(--u)) 0; border-top: 1px solid var(--pb-line); font-size: calc(15px * var(--u)); }
+.pdf-root .bk-r small { color: var(--pb-tr-ink); font-size: calc(12.5px * var(--u)); }
+.pdf-root .cv-f { margin: calc(26px * var(--u)) 0 0; font: calc(13px * var(--u)) / 1.6 Georgia, serif; color: var(--pb-tr-ink); }
 
 /* mushaf text */
 .pdf-root .qcf { font-size: calc(var(--ar) * var(--u) * var(--k)); line-height: 1.95; direction: rtl; }

@@ -158,7 +158,9 @@ export function rootVars(size, textSize) {
 }
 
 const FRAME = '<div class="pb-frame" aria-hidden="true"><i class="mf-t"></i><i class="mf-b"></i><i class="mf-l"></i><i class="mf-r"></i><i class="mf-tl"></i><i class="mf-tr"></i><i class="mf-bl"></i><i class="mf-br"></i></div>';
-const sheetHtml = (inner, p, label, plain, k, verse) => `<section class="pdf-sheet${plain ? ' plain' : ''}${verse ? ' vs' : ''}" style="--k:${k}">${plain ? '' : FRAME}<div class="pdf-body">${inner}</div><div class="pdf-foot">${label || p}</div></section>`;
+const SITE = 'https://globalquran.com';
+const sheetHtml = (inner, p, label, plain, k, verse, ref, cls = '') => `<section class="pdf-sheet${plain ? ' plain' : ''}${verse ? ' vs' : ''}${cls ? ' ' + cls : ''}" style="--k:${k}">${plain ? '' : FRAME}<div class="pdf-body">${inner}</div>` +
+  (cls ? '' : `<div class="pdf-foot"><a class="fl" href="${SITE}/${ref || ''}">globalquran.com${ref ? '/' + ref : ''}</a><span class="fc">${label || p}</span><span class="fr">Global Quran</span></div>`) + '</section>';
 
 let probe;
 function getProbe(o) {
@@ -184,7 +186,7 @@ export async function pageSheets(p, meta, o) {
   const rtlTr = isRtl(o.trId);
   const box = getProbe(o);
   const measure = (inner, k) => {
-    box.innerHTML = sheetHtml(inner, p, p, o.plain, k, verse);
+    box.innerHTML = sheetHtml(inner, p, p, o.plain, k, verse, '');
     const body = box.querySelector('.pdf-body');
     return { body, over: body.scrollHeight > body.clientHeight + 1 };
   };
@@ -207,7 +209,9 @@ export async function pageSheets(p, meta, o) {
     const inner = innerHtml(g, verse, rtlTr);
     let k = 1;
     if (!verse) { let r = measure(inner, k); while (r.over && k > 0.5) { k = Math.round((k - 0.02) * 100) / 100; r = measure(inner, k); } }
-    return { html: sheetHtml(inner, p, groups.length > 1 ? `${p} · ${i + 1}/${groups.length}` : p, o.plain, k, verse), p, sub: i, of: groups.length };
+    const a = g.find((x) => x.kind === 'ayah');
+    const ref = a ? `${a.s}:${a.n}` : '';
+    return { html: sheetHtml(inner, p, groups.length > 1 ? `${p} · ${i + 1}/${groups.length}` : p, o.plain, k, verse, ref), p, sub: i, of: groups.length };
   });
 }
 
@@ -215,6 +219,35 @@ export async function pageSheets(p, meta, o) {
 export function preloadArt() {
   const names = ['tl', 'tm', 'tr', 'ml', 'mr', 'bl', 'bm', 'br'].map((x) => `frame_${x}@4x.webp`).concat('title_border@4x.webp');
   return Promise.all(names.map((n) => new Promise((res) => { const i = new Image(); i.onload = i.onerror = () => res(); i.src = `${ASSETS}/${n}`; if (i.decode) i.decode().then(res, res); })));
+}
+
+/**
+ * Cover and closing page, with the Global Quran branding.
+ * c: { title, sub, ar (surah number for the calligraphy title, or 0 for the bismillah), lines: [text] }
+ */
+export async function coverSheet(c, o) {
+  const plain = o.plain;
+  const art = c.ar
+    ? (plain ? `<div class="cv-ar" lang="ar">${esc(c.arName || '')}</div>` : `<div class="cart cv-cart"><img src="${ASSETS}/title_border@4x.webp" alt=""><b class="sn">${pad3(c.ar)}</b></div>`)
+    : '';
+  let bism = '';
+  if (!c.ar) { const f = (await loadQcf(1))[0].slice(0, 4); bism = `<div class="cv-bism qcf" lang="ar">${wordsHtml(f)}</div>`; }
+  const logo = plain ? '' : `<img class="cv-logo" src="${ASSETS}/logo.png" alt="Global Quran">`;
+  const inner = `<div class="cv">${logo}<div class="cv-brand">Global<b>Quran</b></div>${bism}${art}<h1 class="cv-t">${esc(c.title)}</h1>` +
+    (c.sub ? `<div class="cv-s">${esc(c.sub)}</div>` : '') + `<div class="cv-l">${(c.lines || []).map((l) => `<div>${esc(l)}</div>`).join('')}</div>` +
+    `<a class="cv-u" href="${SITE}">globalquran.com</a></div>`;
+  return sheetHtml(inner, 0, '', plain, 1, false, '', 'cover');
+}
+export function backSheet(o) {
+  const plain = o.plain;
+  const logo = plain ? '' : `<img class="cv-logo" src="${ASSETS}/logo.png" alt="Global Quran">`;
+  const row = (t, u, d) => `<div class="bk-r"><a href="https://${u}">${u}</a><span>${esc(t)}</span><small>${esc(d)}</small></div>`;
+  const inner = `<div class="cv">${logo}<div class="cv-brand">Global<b>Quran</b></div><h1 class="cv-t" style="font-size:calc(26px*var(--u))">Read, listen, search and build with the Quran</h1>` +
+    `<div class="bk">${row('Read and listen', 'globalquran.com', 'The reader: mushaf, tajweed, translations, audio')}` +
+    `${row('For developers', 'docs.globalquran.com', 'The free Quran API, data and downloads')}` +
+    `${row('Make your own PDF', 'docs.globalquran.com/pdf', 'Any surah, juz or the whole Quran')}</div>` +
+    `<p class="cv-f">Free to read, share and print. A donation keeps Global Quran online: <a href="https://docs.globalquran.com/donate">docs.globalquran.com/donate</a></p></div>`;
+  return sheetHtml(inner, 0, '', plain, 1, false, '', 'cover back');
 }
 
 export function disposeProbe() { if (probe) { probe.remove(); probe = null; } }
