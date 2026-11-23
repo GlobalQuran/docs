@@ -277,6 +277,7 @@ const ExamplePage = () => {
     };
 
     fetchSourceCode();
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- ensureApiKeyPlaceholder is a stable helper; the CI build fails on this warning
   }, [currentExample.id, activeTab]);
 
   // Effect to apply syntax highlighting
