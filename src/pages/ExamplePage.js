@@ -10,6 +10,7 @@ import 'prismjs/plugins/line-numbers/prism-line-numbers.css';
 import 'prismjs/plugins/line-numbers/prism-line-numbers';
 import '../styles/prism-custom.css';
 import '../styles/examples.css';
+import { DOCS_API_KEY } from '../gq/ui';
 import Footer from '../components/Footer';
 
 const ExamplePage = () => {
@@ -22,8 +23,8 @@ const ExamplePage = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const codeRef = useRef(null);
   
-  // Real API key for preview functionality
-  const REAL_API_KEY = '7YuepfqaL3bdYYxAglTc7JwxZmwJd6g1jLvYXOLDo2vyW';
+  // The docs site's own key for the live preview (limited to docs.globalquran.com by the API, see src/gq/ui.js)
+  const REAL_API_KEY = DOCS_API_KEY;
   const API_KEY_PLACEHOLDER = 'REPLACE_WITH_YOUR_KEY';
 
   const examples = [

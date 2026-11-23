@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchQuranData } from '../store/slices/quranSlice';
-import { API } from './ui';
+import { API, DOCS_API_KEY } from './ui';
 
 /** The list of every text and reciter, from the existing redux store (cached 5 minutes). */
 export function useQuranList() {
@@ -20,7 +20,7 @@ export function useSurahs() {
   const [list, setList] = useState(surahCache || []);
   useEffect(() => {
     if (surahCache) return;
-    fetch(`${API}/surah`).then((r) => r.json()).then((j) => {
+    fetch(`${API}/surah?key=${DOCS_API_KEY}`).then((r) => r.json()).then((j) => {
       const arr = Object.values(j.surahList || {}).sort((a, b) => a.surah_number - b.surah_number);
       surahCache = arr; setList(arr);
     }).catch(() => {});

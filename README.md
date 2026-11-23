@@ -208,3 +208,6 @@ The site automatically deploys to GitHub Pages when changes are pushed to the `m
 **Made with ❤️ for the global Muslim community**
 
 *"And We have certainly made the Quran easy for remembrance, so is there any who will remember?" - Quran 54:17*
+
+## The docs site's own API key
+The live examples, the donate-page verse and the surah list call the API with the docs site's key (so what visitors test is counted as "docs site" in the admin usage pages). The key is not in this repository: put `REACT_APP_DOCS_API_KEY=<key>` in `.env.local` (git-ignored) before `npm run build:seo` / `npm run deploy`. The key is in the private `microservices/gq-app-rules` notes (api.md) and in the admin under info@globalquran.com. The API only accepts it from docs.globalquran.com, so it does not work on `npm start` (localhost): examples there fall back to the API's keyless access.

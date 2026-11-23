@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Page, GITHUB } from '../gq/ui';
+import { Page, GITHUB, DOCS_API_KEY } from '../gq/ui';
 
 const DB = 'https://donorbox.org/embed/sadaqah-jariyah-help-spread-the-quran-globally';
 const AMOUNTS = [[5, ''], [10, 'feeds audio for a day'], [25, ''], [50, ''], [100, '']];
@@ -15,7 +15,7 @@ const AyahQuote = () => {
   const [v, setV] = useState(null);
   useEffect(() => {
     let live = true; setV(null);
-    fetch(`https://api.globalquran.com/ayah/${ref}/quran-uthmani,en.sahih`).then((r) => r.json()).then((j) => {
+    fetch(`https://api.globalquran.com/ayah/${ref}/quran-uthmani,en.sahih?key=${DOCS_API_KEY}`).then((r) => r.json()).then((j) => {
       if (!live) return;
       const ar = Object.values(j.quran['quran-uthmani'])[0].verse;
       const en = Object.values(j.quran['en.sahih'])[0].verse;

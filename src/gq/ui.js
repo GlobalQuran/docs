@@ -3,6 +3,10 @@ import { useTheme } from './theme';
 export { KEYS_URL } from './auth';
 
 export const API = 'https://api.globalquran.com';
+/** The docs site's own API key: used for its live examples, the donate-page verse and the surah list, so what visitors test here is counted as "docs site".
+ *  It is NOT kept in this public repository: it is read at build time from REACT_APP_DOCS_API_KEY (the git-ignored .env.local, see README). Built without it the
+ *  site still works (the API answers keyless for now), it is just not counted under the docs key. The API only accepts the key from docs.globalquran.com. */
+export const DOCS_API_KEY = process.env.REACT_APP_DOCS_API_KEY || '';
 export const AUDIO = 'https://audio.globalquran.com';
 export const GITHUB = 'https://github.com/GlobalQuran';
 
