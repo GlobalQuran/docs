@@ -34,8 +34,7 @@ jobs:
         
       - name: Build
         run: npm run build
-        env:
-          REACT_APP_RECAPTCHA_SITE_KEY: ${{ secrets.RECAPTCHA_SITE_KEY }}
+        # the reCAPTCHA site key is public and lives in src/pages/ContactPage.js (the old RECAPTCHA_SITE_KEY secret held Google's test key)
 
       - name: Prerender pages and sitemap
         continue-on-error: true
