@@ -11,5 +11,7 @@
   { "path": "/donate", "title": "Donate: keep the Quran free for everyone", "description": "GlobalQuran is free, with no ads. Donations pay for servers, audio hosting and new tools to help people read and memorise the Quran." },
   { "path": "/about", "title": "About GlobalQuran: free Quran platform since 2006", "description": "The story, beliefs and people behind GlobalQuran, a free Quran platform with an open API since 2006." },
   { "path": "/contact", "title": "Contact GlobalQuran", "description": "Questions about the API, a bug, a translation or a partnership? Send us a message." },
+  { "path": "/mcp", "title": "Quran MCP server for Claude and ChatGPT", "description": "Connect Claude, ChatGPT or any MCP client to the Quran: Arabic text, 95 translations, tafsir and audio links. Free, read-only, no sign-in." },
+  { "path": "/mcp/privacy", "title": "Privacy: Global Quran MCP server", "description": "What the Global Quran MCP server receives and stores. No account, no conversation data." },
   { "path": "/ai-instructions", "title": "AI instructions for the Quran API", "description": "Give your AI assistant these instructions and it can write a GlobalQuran integration for you." }
 ]

@@ -9,6 +9,7 @@ const LINKS = [
   ['/embed', 'Embed'],
   ['/data', 'Data'],
   ['/audio', 'Audio'],
+  ['/mcp', 'MCP'],
   ['/assets', 'Assets'],
   ['/pdf', 'Quran PDF', false, true],
 ];

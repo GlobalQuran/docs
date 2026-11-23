@@ -10,6 +10,7 @@ const PAGES = [
   ['Audio', '/audio', 'audio mp3 ogg reciter recitor cdn verse surah url sound recitation'],
   ['Assets', '/assets', 'fonts images ayah images logo mushaf tajweed typeface'],
   ['Quran PDF', '/pdf', 'pdf print download whole quran book'],
+  ['MCP for AI assistants', '/mcp', 'mcp model context protocol claude chatgpt connector ai assistant server tools'],
   ['AI instructions', '/ai-instructions', 'ai assistant chatgpt claude prompt build llm'],
   ['Donate', '/donate', 'donate donation support sadaqah wall donors'],
   ['About', '/about', 'about us team'],

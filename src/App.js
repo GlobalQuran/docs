@@ -20,6 +20,7 @@ import DonatePage from './pages/DonatePage';
 import ExamplePage from './pages/ExamplePage';
 import ExamplesHomePage from './pages/ExamplesHomePage';
 import AIInstructionsPage from './pages/AIInstructionsPage';
+import McpPage, { McpPrivacyPage } from './pages/McpPage';
 import AboutPage from './pages/AboutPage';
 import ContactPage from './pages/ContactPage';
 import ApiShell from './gq/ApiShell';
@@ -60,6 +61,8 @@ function App() {
               <Route path="/embed" element={<EmbedPage />} />
               <Route path="/data" element={<DataPage />} />
               <Route path="/audio" element={<AudioPage />} />
+              <Route path="/mcp" element={<McpPage />} />
+              <Route path="/mcp/privacy" element={<McpPrivacyPage />} />
               <Route path="/assets" element={<AssetsPage />} />
               <Route path="/pdf" element={<PdfPage />} />
               <Route path="/donate" element={<DonatePage />} />
