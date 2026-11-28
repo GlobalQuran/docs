@@ -43,7 +43,7 @@ const Simple = ({ apps, rows, reload }) => {
           </div>
           <div className="k-card" style={{ overflow: 'hidden' }}>
             {rows.map((r) => (
-              <div key={r.key.api_key} className={`k-row${r.key.api_key === selected ? ' sel' : ''}`}>
+              <div key={r.key.api_key} className={`k-row${r.key.api_key === selected ? ' picked' : ''}`}>
                 <button type="button" className="grow" onClick={() => setSelected(r.key.api_key)} style={{ all: 'unset', cursor: 'pointer', flex: 1, minWidth: 180 }} aria-label={`Open ${labelFor(r, rows)}`}>
                   <div style={{ fontWeight: 600 }}>{labelFor(r, rows)}</div>
                   <div className="k-mono k-muted" style={{ marginTop: 4 }}>{maskKey(r.key.api_key)}</div>
@@ -137,7 +137,7 @@ const Advanced = ({ apps, rows, reload }) => {
                 <thead><tr><th>Key</th><th>Restrictions</th><th>Status</th><th /></tr></thead>
                 <tbody>
                   {appRows.map((r) => (
-                    <tr key={r.key.api_key} className={r.key.api_key === sel?.key.api_key ? 'sel' : ''}>
+                    <tr key={r.key.api_key} className={r.key.api_key === sel?.key.api_key ? 'picked' : ''}>
                       <td>
                         <button type="button" onClick={() => setSelected(r.key.api_key)} style={{ all: 'unset', cursor: 'pointer' }} aria-label={`Select ${labelFor(r, rows)}`}>
                           <div style={{ fontWeight: 600 }}>{labelFor(r, rows)}</div>
